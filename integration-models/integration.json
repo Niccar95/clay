@@ -1,0 +1,1237 @@
+{
+  "name": "integration",
+  "localized_name": "Integration",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "calculatedFields": {},
+  "defaultSimilaritySortField": "name",
+  "children": {
+    "incomings": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Inläsningar",
+      "name": "incomings",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Namn",
+          "is_available_in_reference": true
+        },
+        "active": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Aktiverad",
+          "is_available_in_reference": true,
+          "default": false
+        },
+        "incomingChannel": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            {
+              "value": "FTP-file",
+              "label": "FTP-fil"
+            },
+            {
+              "value": "HTTP-POST",
+              "label": "HTTP-POST"
+            },
+            {
+              "value": "FORTNOX",
+              "label": "FORTNOX"
+            },
+            {
+              "value": "CRONJOB",
+              "label": "CRONJOB"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Kanal",
+          "is_available_in_reference": true
+        },
+        "filter": {
+          "tab": "Detaljer",
+          "type": "string",
+          "name": "Filter",
+          "default": "''",
+          "localized_name": "Filter",
+          "explanation": "Globby för filer, endpoint namn för HTTP-POST",
+          "is_available_in_reference": true,
+          "required_in_ui": true
+        },
+        "reader": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "EDIFACTD96APRICAT",
+              "label": "EDIFACTD96APRICAT"
+            },
+            {
+              "value": "EDIFACTD96AORDERS",
+              "label": "EDIFACTD96AORDERS"
+            },
+            {
+              "value": "D96AORDERRSP",
+              "label": "D96AORDERRSP"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "CSV semicolon",
+              "label": "CSV semikolon"
+            },
+            {
+              "value": "PYRAMIDPRICEREADER",
+              "label": "PYRAMIDPRICEREADER"
+            },
+            {
+              "value": "FRESHXMLREADER",
+              "label": "FRESHXMLREADER"
+            },
+            {
+              "value": "FRESHCSVARTICLEREADER",
+              "label": "FRESHCSVARTICLEREADER"
+            },
+            {
+              "value": "FXORDER",
+              "label": "FXORDER"
+            },
+            {
+              "value": "FXORDERFEEDBACK",
+              "label": "FXORDERFEEDBACK"
+            },
+            {
+              "value": "FXCUSTOMER",
+              "label": "FXCUSTOMER"
+            },
+            {
+              "value": "FXARTICLESANDPRICES",
+              "label": "FXARTICLESANDPRICES"
+            },
+            {
+              "value": "FXSTOCKQUANTITIES",
+              "label": "FXSTOCKQUANTITIES"
+            },
+            {
+              "value": "WHGROUPPRICES",
+              "label": "WHGROUPPRICES"
+            },
+            {
+              "value": "BRIGHTCOMCUSTOMER",
+              "label": "BRIGHTCOMCUSTOMER"
+            },
+            {
+              "value": "BRIGHTCOMSTOCKQUANTITY",
+              "label": "BRIGHTCOMSTOCKQUANTITY"
+            },
+            {
+              "value": "BRIGHTCOMPRICELISTENTRY",
+              "label": "BRIGHTCOMPRICELISTENTRY"
+            },
+            {
+              "value": "BRIGHTCOMPRICELISTS",
+              "label": "BRIGHTCOMPRICELISTS"
+            },
+            {
+              "value": "BRIGHTCOMORDER",
+              "label": "BRIGHTCOMORDER"
+            },
+            {
+              "value": "BRIGHTCOMARTICLE",
+              "label": "BRIGHTCOMARTICLE"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Läsformat",
+          "is_available_in_reference": true
+        },
+        "mapping": {
+          "type": "mapping",
+          "disableValidations": true,
+          "description": "Mappning",
+          "localized_name": "Mappning"
+        }
+      }
+    },
+    "outgoings": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Skrivningar",
+      "name": "outgoings",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Namn",
+          "is_available_in_reference": true
+        },
+        "active": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Aktiverad",
+          "is_available_in_reference": true,
+          "default": false
+        },
+        "triggeredByEvent": {
+          "type": "string",
+          "description": "",
+          "localized_name": "Vilken händelse triggar?",
+          "is_available_in_reference": true,
+          "restrictedValues": [
+            {
+              "value": "ORDER_APPROVED",
+              "label": "ORDER_APPROVED"
+            },
+            {
+              "value": "ORDER_UPDATED",
+              "label": "ORDER_UPDATED"
+            },
+            {
+              "value": "ORDER_CANCELLED",
+              "label": "ORDER_CANCELLED"
+            },
+            {
+              "value": "ORDER_CONNECTED_TO_SUPPLIER_CUSTOMER",
+              "label": "ORDER_CONNECTED_TO_SUPPLIER_CUSTOMER"
+            },
+            {
+              "value": "ORDER_*",
+              "label": "ORDER_*"
+            },
+            {
+              "value": "SUPPLIER_CUSTOMER_*",
+              "label": "SUPPLIER_CUSTOMER_*"
+            },
+            {
+              "value": "SUPPLIER_CUSTOMER_CREATED",
+              "label": "SUPPLIER_CUSTOMER_CREATED"
+            },
+            {
+              "value": "ARTICLE_*",
+              "label": "ARTICLE_*"
+            },
+            {
+              "value": "SUPPLIER_*",
+              "label": "SUPPLIER_*"
+            },
+            {
+              "value": "SUPPLIER_SALES_REPORT_SENT_TO_SUPPLIER",
+              "label": "SUPPLIER_SALES_REPORT_SENT_TO_SUPPLIER"
+            },
+            {
+              "value": "SETTLEMENT_SENT_TO_SUPPLIER_ORGANIZATION",
+              "label": "SETTLEMENT_SENT_TO_SUPPLIER_ORGANIZATION"
+            }
+          ]
+        },
+        "filter": {
+          "type": "text",
+          "description": "",
+          "disableValidations": true,
+          "name": "Filter",
+          "localized_name": "Filter: vad i eventet ska trigga?",
+          "explanation": "JavaScript funktion för att se vad som skall triggas på",
+          "is_available_in_reference": true,
+          "required": true
+        },
+        "writer": {
+          "type": "string",
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96AORDERS",
+              "label": "Edifact - D96AORDERS"
+            },
+            {
+              "value": "PEPPOLBISORDERING32",
+              "label": "PEPPOL - BIS Ordering 3.2"
+            },
+            {
+              "value": "TEMPLATE",
+              "label": "Mall"
+            },
+            {
+              "value": "PYRAMIDORDER",
+              "label": "PYRAMID - Order"
+            },
+            {
+              "value": "NOOP",
+              "label": "NOOP"
+            },
+            {
+              "value": "EVENT",
+              "label": "EVENT"
+            },
+            {
+              "value": "FXORDER",
+              "label": "FXORDER"
+            },
+            {
+              "value": "FXCUSTOMER",
+              "label": "FXCUSTOMER"
+            },
+            {
+              "value": "BRIGHTCOMORDER",
+              "label": "BRIGHTCOMORDER"
+            },
+            {
+              "value": "BRIGHTCOMCUSTOMER",
+              "label": "BRIGHTCOMCUSTOMER"
+            },
+            {
+              "value": "BRIGHTCOMARTICLE",
+              "label": "BRIGHTCOMARTICLE"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Skrivformat",
+          "is_available_in_reference": false
+        },
+        "options": {
+          "type": "text",
+          "description": "",
+          "localized_name": "Tillägg",
+          "disableValidations": true,
+          "is_available_in_reference": false
+        },
+        "outputTemplate": {
+          "type": "text",
+          "description": "",
+          "localized_name": "Skrivmall",
+          "disableValidations": true,
+          "is_available_in_reference": false,
+          "display_if": "entity.writer === 'TEMPLATE'"
+        },
+        "outputFileNameTemplate": {
+          "type": "string",
+          "description": "",
+          "disableValidations": true,
+          "localized_name": "Mall för filnamn",
+          "is_available_in_reference": false
+        },
+        "outgoingChannel": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            {
+              "value": "v1.outgoingMessage.writeFtpFile",
+              "label": "v1.outgoingMessage.writeFtpFile"
+            },
+            {
+              "value": "v1.email.sendEmail",
+              "label": "v1.email.sendEmail"
+            },
+            {
+              "value": "v1.fortnox-external.sendOrder",
+              "label": "v1.fortnox-external.sendOrder"
+            },
+            {
+              "value": "v1.fortnox-external.sendCustomer",
+              "label": "v1.fortnox-external.sendCustomer"
+            },
+            {
+              "value": "v1.fortnox-external.sendArticle",
+              "label": "v1.fortnox-external.sendArticle"
+            },
+            {
+              "value": "v1.fortnox-external.sendSupplier",
+              "label": "v1.fortnox-external.sendSupplier"
+            },
+            {
+              "value": "v1.fortnox-external.sendSupplierSalesReport",
+              "label": "v1.fortnox-external.sendSupplierSalesReport"
+            },
+            {
+              "value": "v1.fortnox-external.sendSettlement",
+              "label": "v1.fortnox-external.sendSettlement"
+            },
+            {
+              "value": "v1.brightcom.sendOrder",
+              "label": "v1.brightcom.sendOrder"
+            },
+            {
+              "value": "v1.brightcom.sendCustomer",
+              "label": "v1.brightcom.sendCustomer"
+            },
+            {
+              "value": "v1.brightcom.sendArticle",
+              "label": "v1.brightcom.sendArticle"
+            },
+            {
+              "value": "v1.whgroup.sendOrder",
+              "label": "v1.whgroup.sendOrder"
+            },
+            {
+              "value": "v1.whgroup.sendCustomer",
+              "label": "v1.whgroup.sendCustomer"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Kanal",
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "scheduledExports": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Schemalagda skrivningar",
+      "name": "scheduledExports",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Namn",
+          "is_available_in_reference": true
+        },
+        "active": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Aktiverad",
+          "is_available_in_reference": true,
+          "default": false
+        },
+        "action": {
+          "localized_name": "Action",
+          "type": "string",
+          "tab": "Detaljer",
+          "required_in_ui": true,
+          "restrictedValues": [
+            {
+              "value": "v1.article.list",
+              "label": "v1.article.list"
+            },
+            {
+              "value": "v1.pricedArticle.list",
+              "label": "v1.pricedArticle.list"
+            },
+            {
+              "value": "v1.supplier.list",
+              "label": "v1.supplier.list"
+            }
+          ]
+        },
+        "params": {
+          "localized_name": "Parametrar",
+          "type": "object"
+        },
+        "schedule": {
+          "type": "string",
+          "tab": "Detaljer",
+          "localized_name": "Frekvens",
+          "required_in_ui": true,
+          "restrictedValues": [
+            {
+              "value": "24h",
+              "label": "Dagligen"
+            },
+            {
+              "value": "1h",
+              "label": "Varje timma"
+            }
+          ]
+        },
+        "writer": {
+          "type": "string",
+          "localized_name": "Skrivformat",
+          "required_in_ui": true,
+          "is_available_in_reference": false,
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96AORDERS",
+              "label": "Edifact - D96AORDERS"
+            },
+            {
+              "value": "PEPPOLBISORDERING32",
+              "label": "PEPPOL - BIS Ordering 3.2"
+            },
+            {
+              "value": "TEMPLATE",
+              "label": "Mall"
+            },
+            {
+              "value": "FRESHXARTICLES",
+              "label": "Fresh X artiklar och priser"
+            },
+            {
+              "value": "PYRAMIDORDER",
+              "label": "PYRAMID - Order"
+            },
+            {
+              "value": "NOOP",
+              "label": "NOOP"
+            }
+          ]
+        },
+        "mapping": {
+          "type": "mapping",
+          "disableValidations": true,
+          "description": "",
+          "localized_name": "Mappning"
+        },
+        "outputFileNameTemplate": {
+          "type": "string",
+          "description": "",
+          "disableValidations": true,
+          "localized_name": "Mall för filnamn",
+          "is_available_in_reference": false
+        },
+        "outgoingChannel": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            {
+              "value": "v1.outgoingMessage.writeFtpFile",
+              "label": "v1.outgoingMessage.writeFtpFile"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Kanal",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn",
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "unique": true
+    },
+    "incomingAuthorization": {
+      "tab": "API",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "label": "Bearer autentisering",
+          "value": "Bearer"
+        }
+      ],
+      "required_in_ui": false,
+      "localized_name": "Inkommande autentisering"
+    },
+    "incomingAccessToken": {
+      "tab": "API",
+      "type": "text",
+      "localized_name": "Inkommande access token",
+      "display_if": "entity.incomingAuthorization === 'Bearer'"
+    },
+    "outgoingAuthorization": {
+      "tab": "API",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "label": "Bearer autentisering",
+          "value": "Bearer"
+        },
+        {
+          "label": "Basic autentisering",
+          "value": "Basic"
+        }
+      ],
+      "required_in_ui": false,
+      "localized_name": "Utgående autentisering"
+    },
+    "apiKey": {
+      "tab": "API",
+      "type": "string",
+      "localized_name": "API-nyckel"
+    },
+    "endpoint": {
+      "tab": "API",
+      "type": "string",
+      "localized_name": "Endpoint"
+    },
+    "organizationId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Organizationsid",
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "type": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "EDI",
+          "label": "EDI"
+        },
+        {
+          "value": "FORTNOX",
+          "label": "FORTNOX"
+        },
+        {
+          "value": "WHGROUP",
+          "label": "WHGROUP"
+        },
+        {
+          "value": "OTHER",
+          "label": "ANNAT"
+        }
+      ],
+      "required_in_ui": true,
+      "localized_name": "Typ av integration",
+      "is_available_in_reference": true
+    },
+    "status": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "waiting",
+          "label": "Kö"
+        },
+        {
+          "value": "files received",
+          "label": "Tagit emot filer"
+        },
+        {
+          "value": "development",
+          "label": "Utveckling"
+        },
+        {
+          "value": "test",
+          "label": "Test"
+        },
+        {
+          "value": "production",
+          "label": "Produktion"
+        }
+      ],
+      "required_in_ui": true,
+      "localized_name": "Tillstånd",
+      "is_available_in_reference": true
+    },
+    "comment": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Kommentar"
+    },
+    "systemNameOfIntegratingPartner": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Namn på system med vilket vi integrerar",
+      "required_in_ui": true
+    },
+    "technicalContactName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Tekniskkontaktperson",
+      "required_in_ui": true
+    },
+    "technicalContactEmail": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "Epost till tekniskkontakt",
+      "required_in_ui": true
+    },
+    "technicalContactPhone": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Telefon till tekniskkontakt",
+      "required_in_ui": true
+    },
+    "commericalContactName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundkontaktperson",
+      "required_in_ui": true
+    },
+    "commericalContactEmail": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "Epost till kundkontakt",
+      "required_in_ui": true
+    },
+    "commericalContactPhone": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Telefon till kundkontakt",
+      "required_in_ui": true
+    },
+    "settings": {
+      "tab": "Inställningar",
+      "type": "object",
+      "localized_name": "Inställningar"
+    },
+    "ftpHost": {
+      "tab": "FTP utgående",
+      "type": "string",
+      "localized_name": "FTP-server",
+
+      "is_available_in_reference": true
+    },
+    "ftpPort": {
+      "tab": "FTP utgående",
+      "type": "number",
+      "localized_name": "FTP-port",
+
+      "is_available_in_reference": true
+    },
+    "ftpWriteDir": {
+      "tab": "FTP utgående",
+      "type": "string",
+      "localized_name": "FTP-skrivkatalog",
+
+      "is_available_in_reference": true
+    },
+    "ftpReadDir": {
+      "tab": "FTP utgående",
+      "type": "string",
+      "localized_name": "FTP-läskatalog"
+    },
+    "ftpUsername": {
+      "tab": "FTP utgående",
+      "type": "string",
+      "localized_name": "FTP-användare",
+
+      "is_available_in_reference": true
+    },
+    "ftpPassword": {
+      "tab": "FTP utgående",
+      "type": "string",
+      "localized_name": "FTP-lösenord",
+
+      "is_available_in_reference": true
+    },
+    "ftpPasswordAtFlaivy": {
+      "tab": "FTP Ingående",
+      "type": "string",
+      "localized_name": "FTP-lösenord"
+    },
+    "ftpDevPasswordAtFlaivy": {
+      "tab": "FTP Ingående",
+      "type": "string",
+      "localized_name": "FTP-lösenord - Utveckling (sftp-dev.flaivy.com)"
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "markdown",
+      "localized_name": "Beskrivning",
+      "is_available_in_reference": false,
+      "required_in_ui": true
+    }
+  },
+  "events": {
+    "INTEGRATION_CREATED": {
+      "localized_name": "Integration skapats",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "INTEGRATION_UPDATED": {
+      "localized_name": "Integration uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "INTEGRATION_ACTIVATED": {
+      "localized_name": "Integration aktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "INTEGRATION_DEACTIVATED": {
+      "localized_name": "Integration inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {
+    "\"*\"": {
+      "WARNING": "NAME BELOW IS EMPTY FOR A REASON AND IM SORRY FOR THAT",
+      "name": "",
+      "reactions": ["handleEvents"]
+    },
+    "ORGANIZATION_PUBLISHED_ON_QVANTI": {
+      "name": "ORGANIZATION_PUBLISHED_ON_QVANTI",
+      "reactions": ["startExportOfOrganizationToQvanti"]
+    },
+    "CUSTOMER_SUB_UNIT_CONNECTED_TO_QVANTI": {
+      "name": "CUSTOMER_SUB_UNIT_CONNECTED_TO_QVANTI",
+      "reactions": ["startExportOfCustomerSubUnitToQvanti"]
+    },
+    "SUPPLIER_CONNECTION_CREATED": {
+      "name": "SUPPLIER_CONNECTION_CREATED",
+      "reactions": ["startExportOfSupplierConnectionToQvanti"]
+    }
+  },
+  "actions": {
+    "createIntegration": {
+      "name": "createIntegration",
+      "localized_name": "Skapa integration",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "name": {
+          "linked_field": "name"
+        },
+        "technicalContactName": {
+          "linked_field": "technicalContactName"
+        },
+        "technicalContactEmail": {
+          "linked_field": "technicalContactEmail"
+        },
+        "technicalContactPhone": {
+          "linked_field": "technicalContactPhone"
+        },
+        "commericalContactName": {
+          "linked_field": "commericalContactName"
+        },
+        "commericalContactEmail": {
+          "linked_field": "commericalContactEmail"
+        },
+        "commericalContactPhone": {
+          "linked_field": "commericalContactPhone"
+        },
+        "type": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required_in_ui": true,
+          "linked_field": "type"
+        },
+        "sendOrder": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Skicka order från Flaivy"
+        },
+        "sendOrderType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.sendOrder === true",
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96AORDERS",
+              "label": "EDIFACTD96A - ORDERS"
+            },
+            {
+              "value": "PEPPOLBISORDERING32",
+              "label": "PEPPOL - BIS Ordering 3.2"
+            },
+            {
+              "value": "TEMPLATE",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att skicka order från Flaivy i"
+        },
+        "readOrderResponse": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Läs ordersvar"
+        },
+        "readOrderResponseType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.readOrderResponse === true",
+          "skipTSEnumGeneration": true,
+          "restrictedValues": [
+            {
+              "value": "D96AORDERRSP",
+              "label": "EDIFACTD96A - ORDRSP"
+            },
+            {
+              "value": "XML",
+              "label": "PEPPOL -  BIS Ordering 3.2"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att läsa ordersvar i"
+        },
+        "articleImages": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Importera artikelbilder"
+        },
+        "articleImagesType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.articleImages === true",
+          "skipTSEnumGeneration": true,
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96APRICAT",
+              "label": "EDIFACTD96A"
+            },
+            {
+              "value": "XML",
+              "label": "PEPPOL - BIS Catalogue 3.1"
+            },
+            {
+              "value": "VALIDOO",
+              "label": "VALIDOO"
+            },
+            {
+              "value": "DABAS",
+              "label": "DABAS"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format för artikelbilder"
+        },
+        "priceLists": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Importera prislistor"
+        },
+        "priceListsType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.priceLists === true",
+          "skipTSEnumGeneration": true,
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96APRICAT",
+              "label": "EDIFACTD96A-PRICAT"
+            },
+            {
+              "value": "XML",
+              "label": "PEPPOL - BIS Catalogue 3.1"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att importera prislistor i"
+        },
+        "articleInfo": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Importera artikelgrunddata"
+        },
+        "articleInfoType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.articleInfo === true",
+          "skipTSEnumGeneration": true,
+          "restrictedValues": [
+            {
+              "value": "EDIFACTD96APRICAT",
+              "label": "EDIFACTD96A"
+            },
+            {
+              "value": "XML",
+              "label": "PEPPOL - BIS Catalogue 3.1"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "Dabas",
+              "label": "Dabas"
+            },
+            {
+              "value": "Validoo",
+              "label": "Validoo"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att importera artikelgrunddata i"
+        },
+        "articleCategories": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Importera artikelkategorisering"
+        },
+        "articleCategoriesType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.articleCategories === true",
+          "skipTSEnumGeneration": true,
+          "restrictedValues": [
+            {
+              "value": "Dabas",
+              "label": "Dabas"
+            },
+            {
+              "value": "Validoo",
+              "label": "Validoo"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "CSV",
+              "label": "CSV"
+            },
+            {
+              "value": "XML",
+              "label": "XML"
+            },
+            {
+              "value": "JSON",
+              "label": "JSON"
+            },
+            {
+              "value": "Manuellt",
+              "label": "Manuellt"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att importera artikelkategorisering i"
+        },
+        "sendComplaints": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "display_if": "entity.type === 'EDI'",
+          "localized_name": "Skicka reklamationer"
+        },
+        "sendComplaintsType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "entity.sendComplaints === true",
+          "restrictedValues": [
+            {
+              "value": "EPost",
+              "label": "EPost"
+            },
+            {
+              "value": "Manuellt",
+              "label": "Manuellt"
+            },
+            {
+              "value": "Annat",
+              "label": "Annat"
+            }
+          ],
+          "required_in_ui": true,
+          "localized_name": "Format att importera artikelkategorisering i"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "localized_name": "Aktivera",
+      "availableIf": "entity.active === false",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "availableIf": "entity.active",
+      "localized_name": "Inaktivera",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "sendTechnicalEmail": {
+      "name": "sendTechnicalEmail",
+      "localized_name": "Skicka teknisk information",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "setUpExternalFortnoxConnection": {
+      "localized_name": "Aktivera Fortnox-integration",
+      "name": "setUpExternalFortnoxConnection",
+      "requiredRole": ["supplier", "super"],
+      "canCreate": "true",
+      "parameters": {
+        "commericalContactName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Namn på kontaktperson som hanterar Fortnox",
+          "required": true
+        },
+        "commericalContactEmail": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "E-postadress till kontaktperson (E-post kan tex handla om saknade artiklar och eller kunder)",
+          "required": true
+        },
+        "shouldSyncOrder": {
+          "tab": "Orderinformation",
+          "type": "boolean",
+          "default": true,
+          "localized_name": "Flaivy ska skicka och uppdatera ordrar i min Fortnox"
+        },
+        "usesPackageCountInTheirSystem": {
+          "tab": "Orderinformation",
+          "type": "boolean",
+          "default": false,
+          "localized_name": "Försäljningsenhet: I mitt Fortnox skulle ett 6-pack Coca Cola säljas som 1 förpackning",
+          "explanation": "Om ett 6-pack Coca Cola säljs som 6 stycken burkar så lämna denna oförändrad"
+        },
+        "shouldSyncAllArticles": {
+          "tab": "Artiklar",
+          "type": "boolean",
+          "default": true,
+          "localized_name": "Flaivy ska hämta mitt leverantörs- och artikelregister och hålla det uppdaterat med Fortnox"
+        },
+        "defaultPriceList": {
+          "tab": "Artiklar",
+          "type": "string",
+          "default": "'A'",
+          "required_in_ui": true,
+          "max_length": 100,
+          "display_if": "entity.shouldSyncAllArticles",
+          "localized_name": "Standard prislista för listpriser"
+        },
+        "shouldSyncAllCustomers": {
+          "tab": "Kunder",
+          "type": "boolean",
+          "default": true,
+          "localized_name": "Flaivy ska hämta mitt kundregister och hålla det uppdaterat med Fortnox"
+        },
+        "shouldSendSupplierSalesReport": {
+          "tab": "Avräkningar",
+          "type": "boolean",
+          "default": false,
+          "localized_name": "Flaivy ska skicka avräkningar till Fortnox",
+          "explanation": "Om du inte vet vad detta är så ska du inte kryssa i denna"
+        },
+        "ourCustomerNumber": {
+          "tab": "Avräkningar",
+          "type": "string",
+          "explanation": "Används för att kunna sätt rätt kund på ordern som skapas för en avräkning",
+          "localized_name": "Vad har Flaivy för kundnummer i er Fortnox",
+          "required_in_ui": true,
+          "display_if": "entity.shouldSendSupplierSalesReport"
+        },
+        "authorizationCode": {
+          "tab": "Detaljer",
+          "localized_name": "API-kod (authorization-code) för fortnox-integration.",
+          "type": "string",
+          "description": "Key created by fortnox when logged in user adds flaivy-app as integration"
+        }
+      }
+    }
+  }
+}

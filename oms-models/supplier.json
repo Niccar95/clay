@@ -1,0 +1,797 @@
+{
+  "name": "supplier",
+  "localized_name": "Leverantör",
+  "description": "Bryggeri, vinhus, indipendent spirits...",
+  "alias": ["varuägare", "producent"],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {
+    "hasPublishedArticles": {
+      "tab": "Webshop",
+      "type": "boolean",
+      "selfContainedQuery": "EXISTS(select a.id FROM articles a WHERE a.\"supplierId\" = ${globals.tableName}.id AND a.\"isPublishedOnOurStore\" = true AND a.\"active\" = true)",
+      "localized_name": "Har denna leverantör publicerade artiklar?",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "hasDropshipArticles": {
+      "tab": "Webshop",
+      "type": "boolean",
+      "selfContainedQuery": "EXISTS(select a.id FROM articles a WHERE a.\"supplierId\" = ${globals.tableName}.id AND a.\"salesType\" = 'DropShipping' AND a.\"active\" = true)",
+      "localized_name": "Har denna leverantör artiklar på dropship?",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "hasStandAloneArticles": {
+      "tab": "Webshop",
+      "type": "boolean",
+      "selfContainedQuery": "EXISTS(select a.id FROM articles a WHERE a.\"supplierId\" = ${globals.tableName}.id AND a.\"salesType\" = 'StandAlone' AND a.\"active\" = true)",
+      "localized_name": "Har denna leverantör ett fristående flaivy?",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "supplierNumber": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "SupplierNumber",
+      "type": "string",
+      "localized_name": "Leverantörsnummer",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "searchable": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "max_length": 255,
+      "default": "'SEK'",
+      "fortnox_equivalent": "Currency",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Name",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Namn",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "logo": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Logotyp",
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "width": 640,
+      "height": 360
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "OrganisationNumber",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Organisationsnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "ourReference": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "OurReference",
+      "type": "string",
+      "localized_name": "Kontaktperson",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitPurchaser",
+        "customerSubUnit"
+      ]
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "description": "email som används för att skicka avräkning och lagerrapport",
+      "allow_multiple": true,
+      "localized_name": "E-post för avräkning och lagerrapport",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"],
+      "is_available_in_reference": true
+    },
+    "emailForPurchaseOrder": {
+      "tab": "Detaljer",
+      "type": "email",
+      "allow_multiple": true,
+      "description": "email som skickas till leverantör vid beställning",
+      "localized_name": "E-post för inleverans",
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"],
+      "is_available_in_reference": true
+    },
+    "phone": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Phone1",
+      "type": "string",
+      "pattern": "[0-9,\\+,\\-,\\(,\\),\\s]*",
+      "localized_name": "Telefonnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "bank": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Bank",
+      "type": "string",
+      "localized_name": "Bank",
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "bg": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "BG",
+      "type": "string",
+      "pattern": "[0-9,\\-]*",
+      "localized_name": "Bankgiro",
+      "required": false,
+      "max_length": 12,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "pg": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "PG",
+      "type": "string",
+      "pattern": "[0-9,\\-]*",
+      "localized_name": "Postgiro",
+      "required": false,
+      "max_length": 12,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "bic": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "BIC",
+      "type": "string",
+      "localized_name": "BIC",
+      "required": false,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "iban": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "IBAN",
+      "type": "string",
+      "localized_name": "IBAN",
+      "required": false,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "homepage": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "WWW",
+      "type": "string",
+      "localized_name": "Webbsida",
+      "required": false,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "serviceAgreement": {
+      "tab": "Avtal",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "skipTSEnumGeneration": true,
+      "restrictedValues": [
+        {
+          "label": "v2.5 - minimum serviceavgift och taggade kunder - Använder order och reklamationer",
+          "value": "v2.5"
+        },
+        {
+          "label": "v3",
+          "value": "v3"
+        }
+      ],
+      "localized_name": "Serviceavtal",
+      "required_in_ui": true
+    },
+    "supplierCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "description": "Kommision som utgår till leverantörer (B), I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på leverantörsorder(%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "customerCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "description": "Kommision vid försäljning till (R). I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på weborder(%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "salesCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "description": "Kommission till säljare (S). I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på internorder (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "environmentFee": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Miljöavgift",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "purchaseOrderPriceExacta": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super"],
+      "localized_name": "Kostnad inleverans Exacta (per artikel per pall)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "purchaseOrderPriceVinden": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super"],
+      "localized_name": "Kostnad inleverans Vinden (per artikel per pall)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "monthlyBaseFee": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Basavgift per månad",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "monthlyExcessFee": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Månadsavgift per extra 10 artiklar",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "thresholdForEnvironmentFee": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Gränsvärde för miljöavgift",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "systembolagetCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Marginal på systembolag order (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "stockfillerCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Marginal på stockfiller order (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "dropshippingCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Marginal på dropshiporder (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100
+    },
+    "whiteLabelCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Marginal på order från egen webshop (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "threasholdForDiscountedSupplierCommission": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Gränsvärde för storköp (exklusive pant och moms)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "largeOrderDiscount": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Rabatt på leverantörs kommission vid storköp (procentenheter)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 20,
+
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "exactaFreightCostPerKg": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "exacta: fraktkostnad per kg",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "exactaHandlingCostPerColli": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Hanteringskostnad per DFP för Systembolaget",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "vindenHandlingCostPerColli": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Hanteringskostnad per DFP från Webblager",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "freightDiscountPercentage": {
+      "tab": "Avtal",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Rabatterad distribution från Webblager (%)",
+      "required_in_ui": true,
+      "max_length": 4,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "utilitySupplier": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "roles_for_read": ["super", "supplier"],
+      "description": "Z värde för att ta bort leveratörer som inte används i hedgehog",
+      "localized_name": "Z-markerad",
+      "required": false
+    },
+    "active": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Active",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "default": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceAddress": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "Address1",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Adress",
+      "required_in_ui": false,
+      "max_length": 255
+    },
+    "invoiceZipCode": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "ZipCode",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Postnummer",
+      "required_in_ui": false,
+      "max_length": 10
+    },
+    "invoiceCity": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "City",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Stad",
+      "required_in_ui": false,
+      "max_length": 255
+    },
+    "invoiceCountry": {
+      "tab": "Fakturering",
+      "include": "restricted_values/country_codes",
+      "fortnox_equivalent": "CountryCode",
+      "localized_name": "Land",
+      "required_in_ui": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "VATNumber": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "VATNumber",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Momsregistreringsnummer",
+      "required_in_ui": false
+    },
+    "GLNNumber": {
+      "tab": "Fakturering",
+      "type": "GLN",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "GLN-nummer",
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "ourCustomerNumber": {
+      "tab": "Fakturering",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "fortnox_equivalent": "OurCustomerNumber",
+      "localized_name": "Flaivys kundnummer",
+      "required_in_ui": false
+    },
+    "prognosisOrderCount": {
+      "tab": "Fakturering",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Prognos antal order per 12 månader",
+      "required_in_ui": false
+    },
+    "prognosisRevenue": {
+      "tab": "Fakturering",
+      "type": "number",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Prognos omsättning per 12 månader",
+      "required_in_ui": false
+    },
+    "handlesOwnInvoicing": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "localized_name": "Leverantören fakturerar själv",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "emailForInvoicing": {
+      "tab": "Fakturering",
+      "type": "email",
+      "roles_for_read": ["super", "supplier"],
+      "allow_multiple": true,
+      "description": "email som skickas till leverantören med fakturaunderlag vid levererad order",
+      "localized_name": "E-post för fakturering",
+      "max_length": 255,
+      "require_in_ui": true,
+      "display_if": "entity.handlesOwnInvoicing === true"
+    },
+    "hasArticlesAtExacta": {
+      "tab": "Systembolaget",
+      "type": "boolean",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Har artiklar hos Exacta"
+    },
+    "preDefinedAccount": {
+      "tab": "Bokföring",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "restrictedValues": [
+        {
+          "label": "4000 - Inköp övriga varor 25%",
+          "value": 4000
+        },
+        {
+          "label": "4004 - Inköp Livsmedel LG (12%)",
+          "value": 4004
+        },
+        {
+          "label": "4005 - Inköp Livsmedel KM (12%)",
+          "value": 4005
+        },
+        {
+          "label": "4010 - Inköp Alkoholhaltiga varor LG (25%)",
+          "value": 4010
+        },
+        {
+          "label": "4011 - Inköp Alkoholhaltiga varor KM (25%)",
+          "value": 4011
+        },
+        {
+          "label": "4014 - Inköp Alkoholfritt LG (12%)",
+          "value": 4014
+        },
+        {
+          "label": "4017 - Inköp Alkoholfritt KM 12%",
+          "value": 4017
+        }
+      ],
+      "fortnox_equivalent": "PreDefinedAccount",
+      "localized_name": "Fördefinierat Konto",
+      "required_in_ui": true
+    },
+    "exciseNumberAtVinden": {
+      "tab": "Detaljer",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "localized_name": "Eget punktskattenummer hos vinden (om skiljt från flaivys) (13tecken)",
+      "description": "exciseNumberAtVinden is wrong field name. this should be taxWarehouseNumberAtVinden",
+      "max_length": 13,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "SUPPLIER_PUBLISHED_ON_QVANTI": {
+      "localized_name": "Leverantör publicerad till Qvanti",
+      "depracated": true,
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_UNPUBLISHED_ON_QVANTI": {
+      "localized_name": "Leverantör avpublicerad hos Qvanti",
+      "depracated": true,
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_UPDATED": {
+      "localized_name": "Leverantör uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CREATED": {
+      "localized_name": "Leverantör skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "suggestNewSupplier": {
+      "name": "suggestNewSupplier",
+      "requiredRole": [],
+      "localized_name": "Tipsa om ny leverantör eller artikel!",
+      "submitButtonText": "Skicka tips",
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "yourEmail": {
+          "tab": "Detaljer",
+          "name": "yourEmail",
+          "localized_name": "Din E-post",
+          "type": "email",
+          "required_in_ui": true
+        },
+        "yourCompany": {
+          "tab": "Detaljer",
+          "name": "yourCompany",
+          "localized_name": "Ditt företag",
+          "type": "string"
+        },
+        "productName": {
+          "tab": "Detaljer",
+          "name": "productName",
+          "localized_name": "Artikelnamn (ett eller flera)",
+          "type": "text",
+          "required_in_ui": true
+        },
+        "supplierName": {
+          "tab": "Detaljer",
+          "name": "supplierName",
+          "localized_name": "Leverantörens namn",
+          "type": "string"
+        },
+        "supplierArticleNumber": {
+          "tab": "Detaljer",
+          "name": "articleNumber",
+          "localized_name": "Leverantörens artikelnummer (ett eller flera)",
+          "type": "text"
+        },
+        "brandName": {
+          "tab": "Detaljer",
+          "name": "brandName",
+          "localized_name": "Varumärke (ett eller flera)",
+          "type": "text"
+        }
+      }
+    },
+    "publishOnExacta": {
+      "name": "publishOnExacta",
+      "requiredRole": ["super"],
+      "localized_name": "Förbered för systembolaget",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "exactaFreightCostPerKg": {
+          "linked_field": "exactaFreightCostPerKg",
+          "required_in_ui": true,
+          "display_if": true
+        },
+        "exactaHandlingCostPerColli": {
+          "linked_field": "exactaHandlingCostPerColli",
+          "required_in_ui": true,
+          "display_if": true
+        },
+        "GLNNumber": {
+          "linked_field": "GLNNumber",
+          "required_in_ui": true
+        },
+        "extendClientId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Extends client id",
+          "pattern": "8.*-3P",
+          "explanation": "Alla klient id:n på Exacta börjar med 8 och slutar med -3P",
+          "required_in_ui": true
+        }
+      }
+    },
+    "ensureOrders": {
+      "name": "ensureOrders",
+      "requiredRole": ["super"],
+      "localized_name": "Räkna om order för tidsperiod",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "startDate": {
+          "tab": "Detaljer",
+          "explanation": "vi tillåter max ett år åt gången",
+          "type": "date",
+          "localized_name": "Start",
+          "required": true
+        },
+        "endDate": {
+          "tab": "Detaljer",
+          "type": "date",
+          "localized_name": "Slut",
+          "required": true
+        }
+      }
+    },
+    "requestDemo": {
+      "name": "requestDemo",
+      "requiredRole": [],
+      "localized_name": "BOKA DEMO",
+      "alternateEndpoint": "public/demoRequests",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "tab": "Detaljer",
+          "name": "email",
+          "localized_name": "E-post",
+          "type": "email",
+          "required_in_ui": true
+        },
+        "name": {
+          "tab": "Detaljer",
+          "name": "name",
+          "localized_name": "Namn",
+          "type": "string",
+          "required_in_ui": true
+        },
+        "supplierName": {
+          "tab": "Detaljer",
+          "name": "supplierName",
+          "localized_name": "Företag",
+          "type": "string"
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "name": "phone",
+          "max_length": 255,
+          "localized_name": "Telefon",
+          "type": "string"
+        },
+        "message": {
+          "tab": "Detaljer",
+          "name": "message",
+          "localized_name": "Meddelande",
+          "type": "text"
+        }
+      }
+    },
+    "writeSupplier": {
+      "name": "writeSupplier",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Spara leverantör",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": [
+          "bank",
+          "bg",
+          "pg",
+          "bic",
+          "iban",
+          "serviceAgreement",
+          "supplierCommission",
+          "customerCommission",
+          "salesCommission",
+          "environmentFee",
+          "purchaseOrderPriceExacta",
+          "purchaseOrderPriceVinden",
+          "monthlyBaseFee",
+          "monthlyExcessFee",
+          "thresholdForEnvironmentFee",
+          "systembolagetCommission",
+          "stockfillerCommission",
+          "dropshippingCommission",
+          "whiteLabelCommission",
+          "threasholdForDiscountedSupplierCommission",
+          "largeOrderDiscount",
+          "exactaFreightCostPerKg",
+          "exactaHandlingCostPerColli",
+          "vindenHandlingCostPerColli",
+          "freightDiscountPercentage",
+          "utilitySupplier",
+          "prognosisOrderCount",
+          "prognosisRevenue",
+          "handlesOwnInvoicing",
+          "hasArticlesAtExacta",
+          "preDefinedAccount",
+          "exciseNumberAtVinden",
+          "ourCustomerNumber",
+          "emailForPurchaseOrder"
+        ]
+      }
+    }
+  }
+}

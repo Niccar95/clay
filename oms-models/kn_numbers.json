@@ -1,0 +1,1316 @@
+{
+  "restrictedValues": [
+    {
+      "value": 15071010,
+      "label": "15071010 - Soya-bean oil, crude, whether or not degummed, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15079010,
+      "label": "15079010 - Soya-bean oil, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15081010,
+      "label": "15081010 - Groundnut oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15089010,
+      "label": "15089010 - Groundnut oil, whether or not refined, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15092000,
+      "label": "15092000 - Extra virgin olive oil"
+    },
+    {
+      "value": 15093000,
+      "label": "15093000 - Virgin olive oil, not chemically modified"
+    },
+    {
+      "value": 15094000,
+      "label": "15094000 - Virgin olive oil other than extra virgin, but not chemically modified"
+    },
+    {
+      "value": 15099000,
+      "label": "15099000 - Other than virgin olive oil, not chemically modified"
+    },
+    {
+      "value": 15101000,
+      "label": "15101000 - Other oils, Crude olive pomace oil, obtained solely from olives, whether or not refined, but not chemically modified"
+    },
+    {
+      "value": 15109000,
+      "label": "15109000 - Oils, other than Crude olive pomace oil, obtained solely from olives, whether or not refined, but not chemically modified"
+    },
+    {
+      "value": 15111010,
+      "label": "15111010 - Palm oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15119011,
+      "label": "15119011 - Solid fractions of other palm oil than crude palm oil, whether or not refined, in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15119019,
+      "label": "15119019 - Solid fractions of other palm oil than crude palm oil, not in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15119091,
+      "label": "15119091 - Liquid fractions of other palm oil than crude palm oil, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15121110,
+      "label": "15121110 - Sunflower-seed or safflower oil or cotton-seed, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15121910,
+      "label": "15121910 - Sunflower-seed or safflower oil or cotton-seed, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15122110,
+      "label": "15122110 - Cotton-seed oil, crude, whether or not gossypol has been removed, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15122910,
+      "label": "15122910 - Cotton-seed oil, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15131110,
+      "label": "15131110 - Crude coconut oil for technical or industrial use"
+    },
+    {
+      "value": 15131911,
+      "label": "15131911 - Solid fractions of coconut (copra) oil, whether or not refined, in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15131919,
+      "label": "15131919 - Solid fractions of coconut (copra) oil, whether or not refined, not in immediate packings of a net content exceeding 1 kg"
+    },
+    {
+      "value": 15131930,
+      "label": "15131930 - Not solid fractions of coconut (copra) oil, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15132110,
+      "label": "15132110 - Palm kernel or babassu oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15132911,
+      "label": "15132911 - Solid fractions of palm kernel or babassu oil, not crude, whether or not refined, in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15132919,
+      "label": "15132919 - Solid fractions of palm kernel or babassu oil, whether or not refined, not crude, not in immediate packings of a net content exceeding 1 kg"
+    },
+    {
+      "value": 15132930,
+      "label": "15132930 - Liquid fractions of palm kernel or babassu oil, whether or not refined, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15141110,
+      "label": "15141110 - Low erucic acid rape or colza oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15141910,
+      "label": "15141910 - Low erucic acid rape or colza oil, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15149110,
+      "label": "15149110 - Mustard oil, whether or not refined, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15149910,
+      "label": "15149910 - Mustard oil, whether or not refined, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15151100,
+      "label": "15151100 - Linseed oil, crude"
+    },
+    {
+      "value": 15151910,
+      "label": "15151910 - Linseed oil, whether or not refined, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15152110,
+      "label": "15152110 - Maize (corn) oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15152910,
+      "label": "15152910 - Maize (corn) oil, not crude, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15153090,
+      "label": "15153090 - Castor oil, whether or not refined, for technical or industrial uses other than the production of amino-undecanoic acid for use in the manufacture of synthetic textile fibres or of artificial plastic materials"
+    },
+    {
+      "value": 15155011,
+      "label": "15155011 - Sesame oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15155091,
+      "label": "15155091 - Sesame oil, whether or not refined, not crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15156011,
+      "label": "15156011 - Microbial fats and oils and their fractions, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15156060,
+      "label": "15156060 - Microbial fats and oils and their fractions, not crude, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15159011,
+      "label": "15159011 - Tung oil; jojoba and oiticica oils; myrtle wax and Japan wax; their fractions"
+    },
+    {
+      "value": 15159021,
+      "label": "15159021 - Tobacco-seed oil, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15159031,
+      "label": "15159031 - Tobacco-seed oil and its fractions, not crude, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15159040,
+      "label": "15159040 - Other fixed vegetable fats and oils, crude, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15159060,
+      "label": "15159060 - Other fixed vegetable fats and oils and their fractions, not crude, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15161010,
+      "label": "15161010 - Animal fats and oils and their fractions in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15161090,
+      "label": "15161090 - Animal fats and oils and their fractions in immediate packings of a net content exceeding 1 kg"
+    },
+    {
+      "value": 15162010,
+      "label": "15162010 - Hydrogenated castor oil, so called \"opal-wax\""
+    },
+    {
+      "value": 15162091,
+      "label": "15162091 - Vegetable fats and oils and their fractions in immediate packings of a net content not exceeding 1 kg"
+    },
+    {
+      "value": 15162095,
+      "label": "15162095 - Colza, linseed, rapeseed, sunflower-seed, illipe, karite, makore, touloucouna or babassu oils, whether or not refined, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15163091,
+      "label": "15163091 - Microbial fats and oils and their fractions in immediate packings of a net content not exceeding 1kg"
+    },
+    {
+      "value": 15171010,
+      "label": "15171010 - Margarine, excluding liquid margarine, containing, by weight, more than 10% but not more than 15% of milkfats"
+    },
+    {
+      "value": 15171090,
+      "label": "15171090 - Margarine, excluding liquid margarine, containing, by weight, no more than 10% of milkfats"
+    },
+    {
+      "value": 15179010,
+      "label": "15179010 - Edible mixtures or preparations of animals or vegetable fats or oil or of fractions of different fats or oils, containing, by weight, more than 10% but not more than 15% of milkfats"
+    },
+    {
+      "value": 15179091,
+      "label": "15179091 - Fixed vegetable oils, fluid, mixed"
+    },
+    {
+      "value": 15179093,
+      "label": "15179093 - Edible mixtures or preparations of a kind used as mould-release preparations"
+    },
+    {
+      "value": 15179099,
+      "label": "15179099 - Other edible mixtures or preparations of a kind used as mould-release preparations"
+    },
+
+    { "value": 15180010, "label": "Linoxyn" },
+    {
+      "value": 15180031,
+      "label": "15180031 - Crude fixed vegetable oils, fluid, mixed, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15180039,
+      "label": "15180039 - Fixed vegetable oils, fluid, for technical or industrial uses other than the manufacture of foodstuffs for human consumption"
+    },
+    {
+      "value": 15180095,
+      "label": "15180095 - Inedible mixtures or preparations of animal or of animal, vegetable or microbial fats and oils and their fractions"
+    },
+    {
+      "value": 22030001,
+      "label": "22030001 - Beer made from malt in bottles holding 10 litres or less"
+    },
+    {
+      "value": 22030009,
+      "label": "22030009 - Beer made from malt in containers other than bottles holding 10 litres or less"
+    },
+    {
+      "value": 22030010,
+      "label": "22030010 - Beer made from malt in containers holding more than 10 litres"
+    },
+    {
+      "value": 22041011,
+      "label": "22041011 - Champagne with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22041013,
+      "label": "22041013 - Cava with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22041015,
+      "label": "22041015 - Prosecco with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22041091,
+      "label": "22041091 - Asti spumante with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22041093,
+      "label": "22041093 - Other sparkling wine with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22041094,
+      "label": "22041094 - Sparkling wine with a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22041096,
+      "label": "22041096 - Other varietal sparkling wines"
+    },
+    {
+      "value": 22041098,
+      "label": "22041098 - Other sparkling wine"
+    },
+    {
+      "value": 22042106,
+      "label": "22042106 - Wine in bottles with \"mushroom\" stoppers held in place by ties or fastenings; wine, otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar meas...; with a protected designation of origin (PDO)"
+    },
+    {
+      "value": 22042107,
+      "label": "22042107 - Wine in bottles with \"mushroom\" stoppers held in place by ties or fastenings; wine, otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar me...; with a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042108,
+      "label": "22042108 - Other varietal wines in bottles with \"mushroom\" stoppers held in place by ties or fastenings; other varietal wine otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar measured at a temper..."
+    },
+    {
+      "value": 22042109,
+      "label": "22042109 - Non-varietal wine in bottles with \"mushroom\" stoppers held in place by ties or fastenings; non-varietal wine otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar measured at a temperature..."
+    },
+    {
+      "value": 22042111,
+      "label": "22042111 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Alsace in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042112,
+      "label": "22042112 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bordeaux in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042113,
+      "label": "22042113 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bourgogne in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042117,
+      "label": "22042117 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Val de Loire in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042118,
+      "label": "22042118 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Mosel in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042119,
+      "label": "22042119 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Pfalz in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042122,
+      "label": "22042122 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Rheinhessen in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042123,
+      "label": "22042123 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Tokaj in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042124,
+      "label": "22042124 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Lazio in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042126,
+      "label": "22042126 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Toscana in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042127,
+      "label": "22042127 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Trentino, Alto Adige and Friuli in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042128,
+      "label": "22042128 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Veneto in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042131,
+      "label": "22042131 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Sicilia in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042132,
+      "label": "22042132 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Vinho Verde in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042134,
+      "label": "22042134 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Penedés in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042136,
+      "label": "22042136 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Rioja in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042137,
+      "label": "22042137 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Valencia in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042138,
+      "label": "22042138 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less, produced in the Community in a region other than Alsace, Bordeaux, Bourgogne, Val de Loire, ..."
+    },
+    {
+      "value": 22042142,
+      "label": "22042142 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bordeaux in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042143,
+      "label": "22042143 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bourgogne in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042144,
+      "label": "22042144 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Beaujolais in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042146,
+      "label": "22042146 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Vallée du Rhône in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042147,
+      "label": "22042147 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Languedoc-Roussillon in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042148,
+      "label": "22042148 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Val de Loire in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042161,
+      "label": "22042161 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Sicilia in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042162,
+      "label": "22042162 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Piemonte in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042166,
+      "label": "22042166 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Toscana in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042167,
+      "label": "22042167 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Trentino and Alto Adige in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042168,
+      "label": "22042168 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Veneto in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042169,
+      "label": "22042169 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Dão, Bairrada and Douro in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042171,
+      "label": "22042171 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Navarra in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042174,
+      "label": "22042174 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Penedés in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042176,
+      "label": "22042176 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Rioja in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042177,
+      "label": "22042177 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Valdepeñas in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042178,
+      "label": "22042178 - Wine,other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less, produced in the Community in a region other than Bordeaux, Bourgogne, Beaujolais..."
+    },
+    {
+      "value": 22042179,
+      "label": "22042179 - White wine, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042180,
+      "label": "22042180 - Wine, other than white, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042181,
+      "label": "22042181 - White varietal wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less, other than wine with a protected designation of origin (PDO) or a protected geographical indication ..."
+    },
+    {
+      "value": 22042182,
+      "label": "22042182 - Varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less, other than wine with a protected designation of origin (PDO) or a protected geographical..."
+    },
+    {
+      "value": 22042183,
+      "label": "22042183 - Non-varietal white wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042184,
+      "label": "22042184 - Non-varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042185,
+      "label": "22042185 - Madeira and Setubal muscatel wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042186,
+      "label": "22042186 - Sherry wine of an alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042187,
+      "label": "22042187 - Marsala wine of an alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042188,
+      "label": "22042188 - Samos and Muscat de Lemnos wine of an alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042189,
+      "label": "22042189 - Port wine of an alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042190,
+      "label": "22042190 - Wine of an actual alcoholic strength by volume exceeding 15% vol in containers holding 2 litres or less, produced in the Community, with a protected designation of origin (PDO) or a protected geographical indication (PGI) other than Madeira and Setubal ..."
+    },
+    {
+      "value": 22042191,
+      "label": "22042191 - Wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding 2 litres or less, produced in the Community, without a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042193,
+      "label": "22042193 - White wine with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042194,
+      "label": "22042194 - Wine, other than white, with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042195,
+      "label": "22042195 - Varietal white wine without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042196,
+      "label": "22042196 - Varietal wine, other than white, without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042197,
+      "label": "22042197 - Non-varietal white wine, not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042198,
+      "label": "22042198 - Non-varietal wine, other than white, not produced in the Community, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22042210,
+      "label": "22042210 - Wine in bottles with \"mushroom\" stoppers held in place by ties or fastenings; wine, otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar measured at a temperature of 20°C, in containers h..."
+    },
+    {
+      "value": 22042222,
+      "label": "22042222 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bordeaux in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042223,
+      "label": "22042223 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bourgogne (Burgundy) in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042224,
+      "label": "22042224 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Beaujolais in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042226,
+      "label": "22042226 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Vallée du Rhône in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042227,
+      "label": "22042227 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Languedoc-Roussillon in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042228,
+      "label": "22042228 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Val de Loire (Loire Valley) in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042232,
+      "label": "22042232 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Piemonte (Piedmont) in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042233,
+      "label": "22042233 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Tokaj in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042238,
+      "label": "22042238 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, produced in the Community in a region other than Bordeaux, Bou..."
+    },
+    {
+      "value": 22042278,
+      "label": "22042278 - Wine,other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, produced in the Community in a region other than B..."
+    },
+    {
+      "value": 22042279,
+      "label": "22042279 - White wine, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042280,
+      "label": "22042280 - Wine, other than white, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042281,
+      "label": "22042281 - White varietal wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, other than wine with a protected designation of origin (PDO) or a prot..."
+    },
+    {
+      "value": 22042282,
+      "label": "22042282 - Varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, other than wine with a protected designation of origin (PD..."
+    },
+    {
+      "value": 22042283,
+      "label": "22042283 - Non varietal white wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042284,
+      "label": "22042284 - Non varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042285,
+      "label": "22042285 - Madeira and Setubal muscatel wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042286,
+      "label": "22042286 - Sherry wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042288,
+      "label": "22042288 - Samos and Muscat de Lemnos wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042290,
+      "label": "22042290 - Wine of an alcoholic strength by volume exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, produced in the Community, with a protected designation of origin (PDO) or a protected geographical indication (PGI) other t..."
+    },
+    {
+      "value": 22042291,
+      "label": "22042291 - Wine of an alcoholic strength by volume exceeding 15% vol. in containers holding more than 2 litres but not more than 10 litres, produced in the Community, without a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042293,
+      "label": "22042293 - White wine with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042294,
+      "label": "22042294 - Wine, other than white, with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042295,
+      "label": "22042295 - Varietal white wine without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042296,
+      "label": "22042296 - Varietal wine, other than white, without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042297,
+      "label": "22042297 - Non-varietal white wine, not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042298,
+      "label": "22042298 - Non-varietal wine, other than white, not produced in the Community, in containers holding more than 2 litres but not more than 10 litres"
+    },
+    {
+      "value": 22042910,
+      "label": "22042910 - Wine in bottles with \"mushroom\" stoppers held in place by ties or fastenings; wine, otherwise put up, with an excess pressure due to carbon dioxide in solution of not less than 1 bar but less than 3 bar measured at a temperature of 20°C, in containers h..."
+    },
+    {
+      "value": 22042922,
+      "label": "22042922 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bordeaux in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042923,
+      "label": "22042923 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Bourgogne (Burgundy) in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042924,
+      "label": "22042924 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Beaujolais in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042926,
+      "label": "22042926 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Vallée du Rhône in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042927,
+      "label": "22042927 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Languedoc-Roussillon in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042928,
+      "label": "22042928 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Val de Loire (Loire Valley) in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042932,
+      "label": "22042932 - Wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. produced in Piemonte (Piedmont) in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042938,
+      "label": "22042938 - White wine with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres, produced in the Community in a region other than Bordeaux, Bourgogne (Burgundy), Beaujola..."
+    },
+    {
+      "value": 22042978,
+      "label": "22042978 - Wine, other than white, with a protected designation of origin (PDO) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres, produced in the Community in a region other than Bordeaux, Bourgogne (Burgun..."
+    },
+    {
+      "value": 22042979,
+      "label": "22042979 - White wine, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042980,
+      "label": "22042980 - Wine, other than white, produced in the Community, with a protected geographical indication (PGI) of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042981,
+      "label": "22042981 - White varietal wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres, other than wine with a protected designation of origin (PDO) or a protected geographical indicati..."
+    },
+    {
+      "value": 22042982,
+      "label": "22042982 - Varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres, other than wine with a protected designation of origin (PDO) or a protected geographi..."
+    },
+    {
+      "value": 22042983,
+      "label": "22042983 - Non varietal white wine, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042984,
+      "label": "22042984 - Non varietal wine, other than white, produced in the Community, of an actual alcoholic strength by volume not exceeding 15% vol. in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042985,
+      "label": "22042985 - Madeira and Setubal muscatel wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 10 litres with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042986,
+      "label": "22042986 - Sherry wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 10 litres with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042988,
+      "label": "22042988 - Samos and Muscat de Lemnos wine of an actual alcoholic strength by volume exceeding 15% vol. in containers holding more than 10 litres with a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042990,
+      "label": "22042990 - Wine of an alcoholic strength by volume exceeding 15% vol. in containers holding more than 10 litres, produced in the Community, with a protected designation of origin (PDO) or a protected geographical indication (PGI) other than Madeira and..."
+    },
+    {
+      "value": 22042991,
+      "label": "22042991 - Wine of an alcoholic strength by volume exceeding 15% vol. in containers holding more than 10 litres, produced in the Community, without a protected designation of origin (PDO) or a protected geographical indication (PGI)"
+    },
+    {
+      "value": 22042993,
+      "label": "22042993 - White wine with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042994,
+      "label": "22042994 - Wine, other than white, with a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042995,
+      "label": "22042995 - Varietal white wine without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042996,
+      "label": "22042996 - Varietal wine, other than white, without a protected designation of origin (PDO) or a protected geographical indication (PGI), not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042997,
+      "label": "22042997 - Non-varietal white wine, not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22042998,
+      "label": "22042998 - Non-varietal wine, other than white, not produced in the Community, in containers holding more than 10 litres"
+    },
+    {
+      "value": 22043010,
+      "label": "22043010 - Grape must in fermentation or with fermentation arrested otherwise than by the addition of alcohol"
+    },
+    {
+      "value": 22043096,
+      "label": "22043096 - Concentrated grape must of a density exceeding 1.33 g/cm3 at 20° C and of an actual strength exceeding 1% vol."
+    },
+    {
+      "value": 22043098,
+      "label": "22043098 - Not concentrated grape must of a density exceeding 1.33 g/cm3 at 20° C and of an actual strength exceeding 1% vol."
+    },
+    {
+      "value": 22051010,
+      "label": "22051010 - Vermouth and other wine of fresh grapes flavoured with plants or aromatic substances of an actual alcoholic strength of 18% vol. or less in containers holding 2 litres or less"
+    },
+    {
+      "value": 22051090,
+      "label": "22051090 - Vermouth and other wine of fresh grapes flavoured with plants or aromatic substances of an actual alcoholic strength exceeding 18% vol. in containers holding 2 litres or less"
+    },
+    {
+      "value": 22059010,
+      "label": "22059010 - Vermouth and other wine of fresh grapes flavoured with plants or aromatic substances of an actual alcoholic strength of 18% vol. or less in containers holding more than 2 litres"
+    },
+    {
+      "value": 22059090,
+      "label": "22059090 - Vermouth and other wine of fresh grapes flavoured with plants or aromatic substances of an actual alcoholic strength exceeding 18% vol. in containers holding more than 2 litres"
+    },
+    { "value": 22060010, "label": "Piquette" },
+    {
+      "value": 22060031,
+      "label": "22060031 - Sparkling cider and perry"
+    },
+    {
+      "value": 22060039,
+      "label": "22060039 - Other sparkling fermented beverages"
+    },
+    {
+      "value": 22060051,
+      "label": "22060051 - Still cider and perry in containers holding 2 litres or less"
+    },
+    {
+      "value": 22060059,
+      "label": "22060059 - Other still fermented beverages in containers holding 2 litres or less"
+    },
+    {
+      "value": 22060081,
+      "label": "22060081 - Still cider and perry in containers holding more than 2 litres"
+    },
+    {
+      "value": 22060089,
+      "label": "22060089 - Other still fermented beverages in containers holding more than 2 litres"
+    },
+    {
+      "value": 22071000,
+      "label": "22071000 - Undenatured ethyl alcohol of an alcoholic strength by volume of 80% vol. or higher"
+    },
+    {
+      "value": 22072000,
+      "label": "22072000 - Ethyl alcohol and other spirits, denatured, of any strength"
+    },
+    {
+      "value": 22082012,
+      "label": "22082012 - Cognac obtained by distilling grape wine in containers holding 2 litres or less"
+    },
+    {
+      "value": 22082014,
+      "label": "22082014 - Armagnac obtained by distilling grape wine in containers holding 2 litres or less"
+    },
+    {
+      "value": 22082016,
+      "label": "22082016 - Brandy de Jerez obtained by distilling grape wine in containers holding 2 litres or less"
+    },
+    {
+      "value": 22082018,
+      "label": "22082018 - Brandy or Weinbrand obtained by distilling grape wine in containers holding 2 litres or less other than Brandy de Jerez"
+    },
+    {
+      "value": 22082019,
+      "label": "22082019 - Spirits obtained by distilling grape wine in containers holding 2 litres or less other than Cognac, Armagnac and Brandy or Weinbrand"
+    },
+    {
+      "value": 22082026,
+      "label": "22082026 - Grappa obtained by distilling grape marc in containers holding 2 litres or less"
+    },
+    {
+      "value": 22082028,
+      "label": "22082028 - Spirits obtained by distilling grape marc in containers holding 2 litres or less other than Grappa"
+    },
+    {
+      "value": 22082062,
+      "label": "22082062 - Cognac obtained by distilling grape wine in containers holding more than 2 litres"
+    },
+    {
+      "value": 22082066,
+      "label": "22082066 - Brandy or Weinbrand obtained by distilling grape wine in containers holding more than 2 litres"
+    },
+    {
+      "value": 22082069,
+      "label": "22082069 - Spirits obtained by distilling grape wine in contains holding more than 2 litres other than Cognac or Brandy or Weinbrand"
+    },
+    {
+      "value": 22082086,
+      "label": "22082086 - Grappa obtained by distilling grape marc in contains holding more than 2 litres"
+    },
+    {
+      "value": 22082088,
+      "label": "22082088 - Spirits obtained by distilling grape marc in contains holding more than 2 litres other than Grappa"
+    },
+    {
+      "value": 22083011,
+      "label": "22083011 - Bourbon whiskey, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22083019,
+      "label": "22083019 - Bourbon whiskey, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22083030,
+      "label": "22083030 - Scotch whisky, single malt"
+    },
+    {
+      "value": 22083041,
+      "label": "22083041 - Scotch whisky, blended malt whisky, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22083049,
+      "label": "22083049 - Scotch whisky, blended malt whisky, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22083061,
+      "label": "22083061 - Scotch whisky, single grain and blended grain whisky, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22083069,
+      "label": "22083069 - Scotch whisky, single grain and blended grain whisky, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22083071,
+      "label": "22083071 - Other Scotch blended whisky, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22083079,
+      "label": "22083079 - Other Scotch blended whisky, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22083082,
+      "label": "22083082 - Whiskey, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22083088,
+      "label": "22083088 - Whiskey, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22084011,
+      "label": "22084011 - Rum with a content of volatile substances other than ethyl and methyl alcohol equal to or exceeding 225 grams per hectolitre of pure alcohol in containers holding 2 litres or less"
+    },
+    {
+      "value": 22084031,
+      "label": "22084031 - Tafia of a value exceeding €7.9 per litre of pure alcohol in containers holding 2 litres or less"
+    },
+    {
+      "value": 22084039,
+      "label": "22084039 - Other tafia in containers holding 2 litres or less"
+    },
+    {
+      "value": 22084051,
+      "label": "22084051 - Rum with a content of volatile substances other than ethyl and methyl alcohol equal to or exceeding 225 grams per hectolitre of pure alcohol in containers holding more than 2 litres"
+    },
+    {
+      "value": 22084091,
+      "label": "22084091 - Tafia of a value exceeding €2 per litre of pure alcohol in containers holding more than 2 litres"
+    },
+    {
+      "value": 22084099,
+      "label": "22084099 - Other tafia in containers holding more than 2 litres"
+    },
+    {
+      "value": 22085011,
+      "label": "22085011 - Gin, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22085019,
+      "label": "22085019 - Gin, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22085091,
+      "label": "22085091 - Geneva, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22085099,
+      "label": "22085099 - Geneva, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22086011,
+      "label": "22086011 - Vodka of an alcoholic strength by volume of 45.4% vol. or less, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22086019,
+      "label": "22086019 - Vodka of an alcoholic strength by volume of 45.4% vol. or less, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22086091,
+      "label": "22086091 - Vodka of an alcoholic strength by volume of more than 45.4% vol., in containers holding 2 litres or less"
+    },
+    {
+      "value": 22086099,
+      "label": "22086099 - Vodka of an alcoholic strength by volume of more than 45.4% vol., in containers more than 2 litres"
+    },
+    {
+      "value": 22087010,
+      "label": "22087010 - Liqueurs and cordials, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22087090,
+      "label": "22087090 - Liqueurs and cordials, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089011,
+      "label": "22089011 - Arrack, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089019,
+      "label": "22089019 - Arrack, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089033,
+      "label": "22089033 - Plum, pear or cherry spirit in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089038,
+      "label": "22089038 - Plum, pear or cherry spirit in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089041,
+      "label": "22089041 - Ouzo, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089045,
+      "label": "22089045 - Calvados, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089048,
+      "label": "22089048 - Spirit (excluding liqueurs) distilled from fruit, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089054,
+      "label": "22089054 - Tequila, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089056,
+      "label": "22089056 - Spirit (excluding liqueurs), in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089069,
+      "label": "22089069 - Spirituous beverages, in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089071,
+      "label": "22089071 - Spirit (excluding liqueurs) distilled from fruit, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089075,
+      "label": "22089075 - Tequila, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089077,
+      "label": "22089077 - Spirit (excluding liqueurs), in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089078,
+      "label": "22089078 - Spirituous beverages, in containers holding more than 2 litres"
+    },
+    {
+      "value": 22089091,
+      "label": "22089091 - Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol., in containers holding 2 litres or less"
+    },
+    {
+      "value": 22089099,
+      "label": "22089099 - Undenatured ethyl alcohol of an alcoholic strength by volume of less than 80% vol., in containers holding more than 2 litres"
+    },
+    {
+      "value": 24021000,
+      "label": "24021000 - Cigars, cheroots and cigarillos containing tobacco"
+    },
+    {
+      "value": 24022010,
+      "label": "24022010 - Cigarettes containing tobacco / containing cloves"
+    },
+    {
+      "value": 24022090,
+      "label": "24022090 - Cigarettes containing tobacco / other"
+    },
+    {
+      "value": 24029000,
+      "label": "24029000 - Cigars, cheroots, cigarillos and cigarettes not containing tobacco"
+    },
+    {
+      "value": 24031100,
+      "label": "24031100 - Water-pipe tobacco specified in subheading note 1 to chapter 24 of the CN"
+    },
+    {
+      "value": 24031910,
+      "label": "24031910 - Smoking tobacco in immediate packing of a net content not exceeding 500 g"
+    },
+    {
+      "value": 24031990,
+      "label": "24031990 - Smoking tobacco, other"
+    },
+    {
+      "value": 24039100,
+      "label": "24039100 - Homogenised\" or \"reconstituted\" tobacco"
+    },
+    {
+      "value": 24039990,
+      "label": "24039990 - Other manufactured tobacco and tobacco substitutes"
+    },
+    {
+      "value": 27071000,
+      "label": "27071000 - Benzol (benzene)"
+    },
+    {
+      "value": 27072000,
+      "label": "27072000 - Toluol (toluene)"
+    },
+    {
+      "value": 27073000,
+      "label": "27073000 - Xylol (xylenes)"
+    },
+    {
+      "value": 27075000,
+      "label": "27075000 - Other aromatic hydrocarbon mixtures of which 65 % or more by volume (including losses) distils at 250 °C by the ISO 3405 method (equivalent to the ASTM D 86 method)"
+    },
+    {
+      "value": 27101211,
+      "label": "27101211 - Lights oil for undergoing a specific process"
+    },
+    {
+      "value": 27101215,
+      "label": "27101215 - Lights oil for undergoing chemical transformations"
+    },
+    {
+      "value": 27101221,
+      "label": "27101221 - White spirit"
+    },
+    {
+      "value": 27101225,
+      "label": "27101225 - Light oil for other purposes"
+    },
+    {
+      "value": 27101231,
+      "label": "27101231 - Aviation spirit"
+    },
+    {
+      "value": 27101241,
+      "label": "27101241 - Light oil with a lead content not exceeding 0.013 g per litre with an octane number of less than 95"
+    },
+    {
+      "value": 27101245,
+      "label": "27101245 - Light oil with a lead content not exceeding 0.013 g per litre with an octane number of 95 or more but less than 98"
+    },
+    {
+      "value": 27101249,
+      "label": "27101249 - Light oil with a lead content not exceeding 0.013 g per litre with an octane number of less than 98 or more"
+    },
+    {
+      "value": 27101250,
+      "label": "27101250 - Light oil with a lead content exceeding 0.013 g per litre"
+    },
+    {
+      "value": 27101270,
+      "label": "27101270 - Spirit type jet fuel"
+    },
+    {
+      "value": 27101290,
+      "label": "27101290 - Other light oil"
+    },
+    {
+      "value": 27101911,
+      "label": "27101911 - Medium oil for undergoing a specific process"
+    },
+    {
+      "value": 27101915,
+      "label": "27101915 - Medium oil for undergoing chemical transformation"
+    },
+    {
+      "value": 27101921,
+      "label": "27101921 - Jet fuel kerosene"
+    },
+    {
+      "value": 27101925,
+      "label": "27101925 - Other kerosene"
+    },
+    {
+      "value": 27101929,
+      "label": "27101929 - Medium oils for other purposes"
+    },
+    {
+      "value": 27101931,
+      "label": "27101931 - Heavy gas oil for undergoing a specific process"
+    },
+    {
+      "value": 27101935,
+      "label": "27101935 - Heavy gas oil for undergoing chemical transformation"
+    },
+    {
+      "value": 27101943,
+      "label": "27101943 - Heavy gas oil with a sulphur content not exceeding 0.001% by weight, not containing biodiesel"
+    },
+    {
+      "value": 27101946,
+      "label": "27101946 - Heavy gas oil with a sulphur content exceeding 0.001% by weight but not exceeding 0.002%, not containing biodiesel"
+    },
+    {
+      "value": 27101947,
+      "label": "27101947 - Heavy gas oil with a sulphur content exceeding 0.002% by weight but not exceeding 0.1%, not containing biodiesel"
+    },
+    {
+      "value": 27101948,
+      "label": "27101948 - Heavy gas oil with a sulphur content exceeding 0.1% by weight, not containing biodiesel"
+    },
+    {
+      "value": 27101951,
+      "label": "27101951 - Heavy fuel oil for undergoing a specific process"
+    },
+    {
+      "value": 27101955,
+      "label": "27101955 - Heavy fuel oil for undergoing chemical transformation"
+    },
+    {
+      "value": 27101962,
+      "label": "27101962 - Heavy fuel oil with a sulphur content not exceeding 0.1% by weight, not containing biodiesel"
+    },
+    {
+      "value": 27101966,
+      "label": "27101966 - Heavy fuel oil with a sulphur content exceeding 0.1% by weight but not exceeding 0.5%, not containing biodiesel"
+    },
+    {
+      "value": 27101967,
+      "label": "27101967 - Heavy fuel oil with a sulphur content exceeding 0.5% by weight, not containing biodiesel"
+    },
+    {
+      "value": 27102011,
+      "label": "27102011 - Gas oil with a sulphur content not exceeding 0.001% by weight, containing biodiesel"
+    },
+    {
+      "value": 27102016,
+      "label": "27102016 - Gas oil with a sulphur content exceeding 0.001% by weight but not exceeding 0.1%, containing biodiesel"
+    },
+    {
+      "value": 27102019,
+      "label": "27102019 - Gas oil with a sulphur content exceeding 0.1% by weight, containing biodiesel"
+    },
+    {
+      "value": 27102032,
+      "label": "27102032 - Fuel oil with a sulphur content not exceeding 0.5% by weight, containing biodiesel"
+    },
+    {
+      "value": 27102038,
+      "label": "27102038 - Fuel oil with a sulphur content exceeding 0.5% by weight, containing biodiesel"
+    },
+    {
+      "value": 27102090,
+      "label": "27102090 - Oljor erhållna ur petroleum eller ur bituminösa mineral (andra än råolja) och produkter, inte nämnda eller inbegripna någon annanstans, innehållande som karaktärsgivande beståndsdel minst 70 viktprocent oljor erhållna ur petroleum eller ur bituminösa mi..."
+    },
+    {
+      "value": 27111211,
+      "label": "27111211 - Liquefied Propane of a purity not less than 99 % for use as a power or heating fuel"
+    },
+    {
+      "value": 27111219,
+      "label": "27111219 - Liquefied Propane of a purity not less than 99 % for other purposes"
+    },
+    {
+      "value": 27111291,
+      "label": "27111291 - Liquefied Propane of a purity less than 99 % for undergoing a specific process"
+    },
+    {
+      "value": 27111293,
+      "label": "27111293 - Liquefied Propane of a purity less than 99 % for undergoing a chemical transformation"
+    },
+    {
+      "value": 27111294,
+      "label": "27111294 - Liquefied Propane of a purity exceeding 90% but less than 99%"
+    },
+    {
+      "value": 27111297,
+      "label": "27111297 - Liquefied propane of a purity not exceeding 90%"
+    },
+    {
+      "value": 27111310,
+      "label": "27111310 - Liquefied Butanes for undergoing a specific process"
+    },
+    {
+      "value": 27111330,
+      "label": "27111330 - Liquefied Butanes for undergoing a chemical transformation"
+    },
+    {
+      "value": 27111391,
+      "label": "27111391 - Liquefied Butanes of a purity exceeding 90 % but of less than 95 %"
+    },
+    {
+      "value": 27111397,
+      "label": "27111397 - Butanes with a purity not exceeding 90% or at or above 95%, which are not intended for undergoing a specific process"
+    },
+    {
+      "value": 27111400,
+      "label": "27111400 - Ethylene, propylene, butylenes and butadiene liquefied"
+    },
+    {
+      "value": 27111900,
+      "label": "27111900 - Petroleum gases etc., liquefied"
+    },
+    {
+      "value": 29011000,
+      "label": "29011000 - Acyclic hydrocarbons saturated"
+    },
+    { "value": 29022000, "label": "29022000 - Benzene" },
+    { "value": 29023000, "label": "29023000 - Toluene" },
+    { "value": 29024100, "label": "29024100 - o-Xylene" },
+    { "value": 29024200, "label": "29024200 - m-Xylene" },
+    { "value": 29024300, "label": "29024300 - p-Xylene" },
+    {
+      "value": 29024400,
+      "label": "29024400 - Mixed xylene isomers"
+    },
+    {
+      "value": 29051100,
+      "label": "29051100 - Methanol (methyl alcohol)"
+    },
+    {
+      "value": 38111110,
+      "label": "38111110 - Anti-knock preparations based on tetraethyl-lead"
+    },
+    {
+      "value": 38111190,
+      "label": "38111190 - Anti-knock preparations based on lead compounds other than tetraethyl-lead"
+    },
+    {
+      "value": 38111900,
+      "label": "38111900 - Anti-knock preparations other than based on lead compounds"
+    },
+    {
+      "value": 38119000,
+      "label": "38119000 - Oxidation inhibitors, gum inhibitors, viscosity improvers, anti-corrosive preparations and other prepared additives, for mineral oils (including gasoline) or for other liquids used for the same purposes as mineral oils other than anti-knock preparation..."
+    },
+    {
+      "value": 38248900,
+      "label": "38248900 - Goods specified in subheading note 3 of chapter 38, containing short-chain chlorinated paraffins"
+    },
+    {
+      "value": 38249200,
+      "label": "38249200 - Polyglycol esters of methylphosphonic acid other than goods specified in subheading note 3 of chapter 38"
+    },
+    {
+      "value": 38249986,
+      "label": "38249986 - Mixtures consisting mainly of dimethyl methylphosphonate, oxirane and diphosphorus pentaoxide"
+    },
+    {
+      "value": 38249992,
+      "label": "38249992 - Chemical products or preparations, predominantly composed of organic compounds, not elsewhere specified or included in the form of a liquid at 20 °C"
+    },
+    {
+      "value": 38249993,
+      "label": "38249993 - Chemical products or preparations, predominantly composed of organic compounds, not elsewhere specified or included other than in the form of a liquid at 20 °C"
+    },
+    {
+      "value": 38249996,
+      "label": "38249996 - Chemical products and preparations of the chemical or allied industries (including those consisting of mixtures of natural products), not elsewhere specified or included"
+    },
+    {
+      "value": 38260010,
+      "label": "38260010 - Fatty-acid mono-alkyl esters, containing by volume 96,5 % or more of esters (FAMAE)"
+    },
+    {
+      "value": 38260090,
+      "label": "38260090 - Fatty-acid mono-alkyl esters and mixtures thereof, containing by volume less than 96,5 % of esters (FAMAE) and not containing or containing less than 70 % by weight of petroleum oils or oils obtained from bituminous minerals"
+    }
+  ]
+}

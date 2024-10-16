@@ -1,0 +1,463 @@
+{
+  "name": "stockTaking",
+  "localized_name": "Inventering",
+  "description": "En inventering av lokala kund saldon",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["end-customer-in-inventory"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "completedDate",
+  "calculatedFields": {
+    "totalValue": {
+      "type": "money",
+      "selfContainedQuery": "COALESCE((SELECT SUM(COALESCE(\"stockTakingRows\".\"latestPurchasePrice\",0)*\"stockTakingRows\".\"countedQuantity\") FROM \"stockTakingRows\" WHERE \"stockTakingRows\".\"stockTakingId\" = ${globals.tableName}.id), 0)",
+      "is_available_in_reference": true,
+      "localized_name": "Räknat lagervärde"
+    }
+  },
+  "children": {
+    "stockTakingRows": {
+      "localized_name": "Inventeringsrader",
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "stockTakingRows",
+      "belongs_to": ["article-in-inventory"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "location": {
+          "tab": "Detaljer",
+          "type": "pipeString",
+          "searchable": true,
+          "localized_name": "Plats",
+          "is_available_in_reference": true
+        },
+        "article-in-inventory": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article-in-inventory",
+          "original_relation": "article",
+          "localized_name": "Artikel",
+          "is_available_in_reference": true
+        },
+        "previousQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Föregående inventeringsmängd",
+          "required": true,
+          "is_available_in_reference": true
+        },
+        "purchasedQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Köpt mängd sedan föregående inventering",
+          "required": true,
+          "is_available_in_reference": true
+        },
+        "countedQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Inventerad mängd",
+          "is_available_in_reference": true
+        },
+        "latestPurchasePrice": {
+          "tab": "Detaljer",
+          "type": "money",
+          "localized_name": "Senaste inköpspris",
+          "is_available_in_reference": true
+        },
+        "currency": {
+          "tab": "Detaljer",
+          "type": "currency",
+          "localized_name": "Valuta",
+          "required": false,
+          "max_length": 255,
+          "fortnox_equivalent": "Currency",
+          "default": "'SEK'"
+        },
+        "total": {
+          "tab": "Detaljer",
+          "readonly": true,
+          "type": "money",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Lagervärde",
+          "required": false,
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "stockTakingNumber": {
+      "type": "integer",
+      "tab": "Detaljer",
+      "searchable": true,
+      "unique": true,
+      "required": false,
+      "readonly": true,
+      "description": "number",
+      "localized_name": "Avräkning",
+      "is_available_in_reference": true
+    },
+    "end-customer-in-inventory": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "end-customer-in-inventory",
+      "original_relation": "customerSubUnit",
+      "localized_name": "Bunden till kund",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "stockTakingState": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "values": [
+        {
+          "key": "created",
+          "label": "Skapad"
+        },
+        {
+          "key": "locationsAssigned",
+          "label": "Artiklar placerade"
+        },
+        {
+          "key": "countStarted",
+          "label": "Inventering påbörjad"
+        },
+        {
+          "key": "stocksTaken",
+          "label": "Inventarier räknade"
+        },
+        {
+          "key": "pricesSet",
+          "label": "Priser angivna"
+        },
+        {
+          "key": "completed",
+          "label": "Klar"
+        }
+      ],
+      "localized_name": "Status",
+      "default": "'created'",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "completedDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Datum för klarmarkering",
+      "readonly_in_ui": false,
+      "required": false,
+      "is_available_in_reference": true
+    }
+  },
+  "actions": {
+    "createStockTaking": {
+      "canCreate": true,
+      "availableForCustomer": true,
+      "name": "createStockTaking",
+      "localized_name": "Skapa inventering",
+      "requiredRole": [
+        "super",
+        "customerSubUnit",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager"
+      ],
+      "parameters": {}
+    },
+    "markAsComplete": {
+      "availableForCustomer": true,
+      "name": "markAsComplete",
+      "localized_name": "Klarmarkerar en inventering",
+      "requiredRole": ["super", "customerSubUnitPurchaserManager"],
+      "conditional": "Det går inte ändra en klarmarkerad inventering. Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        }
+      }
+    },
+    "markNonCountedAsCounted": {
+      "availableForCustomer": true,
+      "name": "markNonCountedAsCounted",
+      "localized_name": "Markera kvarstående som räknade med saldo 0",
+      "requiredRole": ["super", "customerSubUnitPurchaserManager"],
+      "conditional": "Det här kommer betyda att ej räknade rader inte kommer med på nästa inventering. Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        }
+      }
+    },
+    "takeStock": {
+      "name": "takeStock",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnit",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Inventera rad",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "changedStockTakingRows": {
+          "localized_name": "Inventeringsrader",
+          "tab": "Detaljer",
+          "type": "array",
+          "name": "changedStockTakingRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "location": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "Plats"
+            },
+            "article-in-inventory": {
+              "tab": "Detaljer",
+              "type": "relation",
+              "relation": "article-in-inventory",
+              "localized_name": "Artikel"
+            },
+            "previousQuantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Föregående inventeringsmängd",
+              "required": true
+            },
+            "purchasedQuantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Köpt mängd sedan föregående inventering",
+              "required": true
+            },
+            "countedQuantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Inventerad mängd"
+            },
+            "latestPurchasePrice": {
+              "tab": "Detaljer",
+              "type": "money",
+              "localized_name": "Senaste inköpspris"
+            }
+          }
+        }
+      }
+    },
+    "assignLocation": {
+      "name": "assignLocation",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnit",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Placera artiklar",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "includeParameters": ["stockTakingRows"]
+      }
+    },
+    "setMissingPurchasePrices": {
+      "name": "setMissingPurchasePrices",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnit",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Inventarier räknade",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "changedStockTakingRows": {
+          "localized_name": "Inventeringsrader",
+          "tab": "Detaljer",
+          "type": "array",
+          "name": "changedStockTakingRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "latestPurchasePrice": {
+              "tab": "Detaljer",
+              "type": "money",
+              "localized_name": "Senaste inköpspris"
+            }
+          }
+        }
+      }
+    },
+    "createInitialStockTaking": {
+      "name": "createInitialStockTaking",
+      "availableForCustomer": false,
+      "canCreate": true,
+      "requiredRole": ["super"],
+      "localized_name": "Skapa ursprungsinventering",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "completedDate": {
+          "linked_field": "completedDate",
+          "required": true
+        },
+        "importRows": {
+          "localized_name": "Inventeringsrader",
+          "tab": "Detaljer",
+          "type": "array",
+          "name": "importRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "name": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "namn"
+            },
+            "alcoholPercentage": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "alkohol"
+            },
+            "alcoholTaxClass": {
+              "tab": "Produktinformation",
+              "type": "enum",
+              "values": [
+                {
+                  "key": "Alcoholfree",
+                  "label": "Utan alkohol"
+                },
+                {
+                  "key": "Beer",
+                  "label": "Öl"
+                },
+                {
+                  "key": "Wine",
+                  "label": "Vin och andra jästa drycker än vin och öl"
+                },
+                {
+                  "key": "MidRange",
+                  "label": "Mellanklass"
+                },
+                {
+                  "key": "Spirits",
+                  "label": "Sprit"
+                }
+              ],
+              "localized_name": "Skatteklass",
+              "required_in_ui": true
+            },
+            "location": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "Plats"
+            },
+            "vintage": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "årgång"
+            },
+            "grape": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "druva"
+            },
+            "GTIN": {
+              "tab": "Detaljer",
+              "type": "string",
+              "searchable": true,
+              "localized_name": "GTIN"
+            },
+            "article": {
+              "tab": "Detaljer",
+              "type": "relation",
+              "relation": "article-in-inventory",
+              "localized_name": "Artikel",
+              "is_available_in_reference": true
+            },
+            "quantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Inventerad mängd",
+              "is_available_in_reference": true
+            },
+            "price": {
+              "tab": "Detaljer",
+              "type": "money",
+              "localized_name": "Senaste inköpspris",
+              "is_available_in_reference": true
+            }
+          }
+        },
+        "includeParameters": ["end-customer-in-inventory"]
+      }
+    }
+  },
+  "listeners": {},
+  "events": {
+    "STOCK_TAKING_COMPLETED": {
+      "localized_name": "Inventering klar",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "STOCK_TAKING_STOCK_TAKEN": {
+      "localized_name": "Inventerings rader uppdaterade",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "STOCK_TAKING_UPDATED": {
+      "localized_name": "Inventering uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "STOCK_TAKING_CREATED": {
+      "localized_name": "Inventering skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  }
+}

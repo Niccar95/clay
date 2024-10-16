@@ -1,0 +1,21 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "label": "Admin",
+      "value": "customerSubUnitAdmin"
+    },
+    {
+      "label": "Inköpare",
+      "value": "customerSubUnitPurchaser"
+    },
+    {
+      "label": "Ansvarig inköpare",
+      "value": "customerSubUnitPurchaserManager"
+    },
+    {
+      "label": "Ekonomiansvarig",
+      "value": "customerSubUnitEconomy"
+    }
+  ]
+}

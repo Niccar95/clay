@@ -1,0 +1,64 @@
+{
+  "name": "ofcInSupplierGateway",
+  "localized_name": "Lagerställe i leverantörsportalen",
+  "description": "Ett lagerställe är en plats som skickar order till kund, antingen är det flaivy copack, ditt egna lager eller en TPL som vi har integrerat med",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "is_available_in_reference": true,
+      "localized_name": "Identitet"
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "required": true,
+      "max_length": 255,
+      "min_length": 1,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "localized_name": "Namn"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "orderFlowType": {
+      "tab": "Detaljer",
+      "type": "string",
+      "include": "restricted_values/order_flow_types",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    }
+  },
+  "actions": {},
+  "listeners": {
+    "\"ORDER_FULLFILLMENT_CENTER_*\"": {
+      "name": "ORDER_FULLFILLMENT_CENTER_",
+      "reactions": ["upsertOfcInSupplierGateway"]
+    }
+  },
+  "events": {
+    "OFC_IN_SUPPLIER_GATEWAY_UPDATED": {
+      "localized_name": "Lagerställe uppdaterat",
+      "should_inform_service": false,
+      "should_inform_user": true
+    },
+    "OFC_IN_SUPPLIER_GATEWAY_CREATED": {
+      "localized_name": "Lagerställe skapat",
+      "should_inform_service": false,
+      "should_inform_user": true
+    }
+  }
+}

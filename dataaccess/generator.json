@@ -1,0 +1,14 @@
+{
+  "partials": ["partials/table-fields.js", "partials/random-field.js"],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "template",
+      "select": "$.model.types[*]"
+    },
+    {
+      "generate": "base",
+      "select": "$.model"
+    }
+  ]
+}

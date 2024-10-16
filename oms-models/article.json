@@ -1,0 +1,2634 @@
+{
+  "name": "article",
+  "localized_name": "Artikel",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields", "import_field"],
+  "belongs_to": ["supplier", "brand", "customerSubUnit"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {
+    "currentNewPeriodStarted": {
+      "tab": "Webbshop",
+      "type": "date",
+      "selfContainedQuery": "COALESCE((SELECT a.\"promoteAsNewStart\" FROM articles a WHERE a.id = ${globals.tableName}.id AND a.\"showInNews\" = TRUE AND a.\"promoteAsNewStart\" < ${globals.dateInPast(0, 'days')} and a.\"promoteAsNewEnd\" > ${globals.dateInPast(0, 'days')}), null)",
+      "localized_name": "Är detta en nyhet just nu?",
+      "only_available_in_list": true
+    },
+    "popularity": {
+      "tab": "Detaljer",
+      "type": "number",
+      "selfContainedQuery": "COALESCE((select ap.popularity from \"article.popularityMV\" ap WHERE ap.\"articleId\" = ${globals.tableName}.id),0)",
+      "localized_name": "Populäritet",
+      "only_available_in_list": true
+    },
+    "myCustomerPopularity": {
+      "tab": "Detaljer",
+      "type": "number",
+      "selfContainedQuery": "COALESCE((select MAX(cp.\"customerPopularity\") from \"article.customerPopularityMV\" cp WHERE cp.\"articleId\" = ${globals.tableName}.id AND (cp.\"customerSubUnitId\" = '${globals.myCustomerHelper.id}' OR cp.\"supplierCustomerId\" = '${globals.myCustomerHelper.id}') ),0)",
+      "localized_name": "Populäritet hos mig",
+      "roles_for_read": [
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ],
+      "only_available_in_list": true
+    },
+    "disposableQuantity": {
+      "tab": "Lager",
+      "type": "number",
+      "selfContainedQuery": "COALESCE( ( select ${globals.tableName}.\"quantityInStock\" -  COALESCE( ( select sum(\"orderRows\".\"deliveredQuantity\") from \"orderRows\" LEFT JOIN orders ON orders.id = \"orderRows\".\"orderId\" WHERE \"orderRows\".\"articleId\" = ${globals.tableName}.id AND orders.cancelled = false AND orders.\"orderOrigin\" <> 'systembolaget' AND orders.\"orderState\" in ('received', 'waitingForRestock', 'approved', 'inWarehouseProcess', 'waitingForAdvancePayment') ), 0 ) ), 0 )",
+      "localized_name": "Disponibelt antal (st)",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "isOrderable": {
+      "tab": "Lager",
+      "type": "boolean",
+      "import_field": {
+        "fileName": "./clay/oms-models/article.calculatedfields.isOrderable",
+        "fieldName": "selfContainedQuery"
+      },
+      "localized_name": "Lagerställe",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false,
+      "roles_for_read": [
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "blockedQuantity": {
+      "tab": "Lager",
+      "type": "number",
+      "selfContainedQuery": "COALESCE((select SUM(\"articleBatches\".\"blockedQuantity\") FROM \"articleBatches\" WHERE \"articleId\"=${globals.tableName}.id ), 0)",
+      "localized_name": "Blockat antal (st)",
+      "is_available_in_reference": true
+    },
+    "hasBatchWithExpiredDate": {
+      "tab": "Lager",
+      "type": "boolean",
+      "selfContainedQuery": "COALESCE((select SUM(\"articleBatches\".\"quantityInStock\") > 0  FROM \"articleBatches\" WHERE \"articleBatches\".\"expiryDate\" < date('now') AND \"articleId\"=${globals.tableName}.id), false)",
+      "is_available_in_reference": true,
+      "localized_name": "Finns utgångna artiklar på lager"
+    },
+    "hasBatchWithShortDate": {
+      "tab": "Lager",
+      "type": "boolean",
+      "localized_name": "Har artikel med kort datum",
+      "description": "Varan har mindre än 3 månader bäst före",
+      "selfContainedQuery": "COALESCE((select SUM(\"articleBatches\".\"quantityInStock\") > 0  FROM \"articleBatches\" WHERE \"articleBatches\".\"expiryDate\" < ${globals.dateInFuture(3, 'months')} AND \"articleId\"=${globals.tableName}.id), false)",
+      "is_available_in_reference": true
+    },
+    "responsibleForDelivery": {
+      "tab": "Lager",
+      "type": "string",
+      "selfContainedQuery": "CASE WHEN COALESCE((select SUM(\"articleBatches\".\"quantityInStock\") > 0  FROM \"articleBatches\" WHERE \"articleBatches\".\"orderFullfillmentCenterId\" = '90d702a1-eb2e-4fcd-b300-240a7808084c' AND \"articleId\"=${globals.tableName}.id), false) THEN 'Samlad leverans' ELSE 'Direkt från leverantör' END",
+      "localized_name": "Ansvarig för leverans",
+      "is_available_in_reference": true
+    }
+  },
+  "children": {
+    "articleBatches": {
+      "tab": "Lager",
+      "name": "articleBatches",
+      "type": "array",
+      "localized_name": "Partier i lager",
+      "description": "Vinden lagersaldo",
+      "belongs_to": ["orderFullfillmentCenter"],
+      "linkedActions": {
+        "blockBatch": {
+          "icon": "trash"
+        }
+      },
+      "fields": {
+        "id": {
+          "type": "string",
+          "max_length": 255,
+          "min_length": 1,
+          "primary": true,
+          "description": "id",
+          "localized_name": "id",
+          "required": true,
+          "is_available_in_reference": true
+        },
+        "batchNumber": {
+          "type": "string",
+          "max_length": 255,
+          "vinden_equivalent": "batch_id",
+          "description": "Batchnummer",
+          "localized_name": "Batchnummer",
+          "is_available_in_reference": true
+        },
+        "expiryDate": {
+          "type": "date",
+          "vinden_equivalent": "expiry_date",
+          "localized_name": "Utgår",
+          "is_available_in_reference": true
+        },
+        "quantityInStock": {
+          "type": "number",
+          "default": 0,
+          "description": "Lagersaldo belopp",
+          "vinden_equivalent": "available_quantity",
+          "localized_name": "Lagersaldo (st)",
+          "is_available_in_reference": true
+        },
+        "blockedQuantity": {
+          "type": "number",
+          "default": 0,
+          "vinden_equivalent": "blocked_quantity",
+          "description": "Blockerat saldo",
+          "localized_name": "Blockerat saldo",
+          "is_available_in_reference": true
+        },
+        "orderFullfillmentCenter": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "description": "Ett lagerställe är en plats som skickar order till kund, antingen är det flaivy copack, ditt egna lager eller en TPL som vi har integrerat med",
+          "localized_name": "Lagerställe",
+          "is_available_in_reference": true,
+          "use_minimum_reference": true,
+          "required_in_ui": true
+        },
+        "isAlwaysOrderable": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "default": false,
+          "localized_name": "Alltid beställningsbar",
+          "description": "Artikeln kan alltid beställas oavsett lagersaldo",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "blockReason": {
+          "tab": "Detaljer",
+          "type": "text",
+          "localized_name": "Anledning till blockering",
+          "description": "Anledning till blockering",
+          "required": false,
+          "is_available_in_reference": true,
+          "display_if": "entity.blockedQuantity > 0"
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "articleNumber": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "ArticleNumber",
+      "vinden_equivalent": "reference_id",
+      "type": "string",
+      "localized_name": "Artikelnummer",
+      "required_in_ui": "!sessionUser.organization.shouldFlaivyGenerateArticleNumbers",
+      "searchable": true,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "supplierArticleNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Tillverkarens artikelnummer",
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "productCategory": {
+      "tab": "Detaljer",
+      "type": "pipeString",
+      "description": "Specialbenahdlas i transform",
+      "localized_name": "Kategori / Typ / Stil",
+      "fuzzy_searchable": true,
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "display_if": "!entity.utilityArticle"
+    },
+    "varuTypDimensionCode": {
+      "tab": "Detaljer",
+      "description": "THIS IS SUPER SPECIFIC FOR PRIVAB, TO BE REMOVED ASAP. DON'T USE THIS FIELD. DON'T DO THIS AT HOME KIDS",
+      "include": "restricted_values/varutyp_dimension_codes",
+      "required_in_ui": true,
+      "localized_name": "Dimensionskod för varutyp",
+      "display_if": "sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77'"
+    },
+    "supplier": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplier",
+      "localized_name": "Leverantör",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "owningCustomerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnit",
+      "localized_name": "Ägd av kund",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "brand": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "brand",
+      "localized_name": "Varumärke",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "fuzzy_searchable": true,
+      "fortnox_equivalent": "Description",
+      "type": "string",
+      "localized_name": "Artikelnamn (syns i bokföringssystem vid integration)",
+      "explanation": "Det namn som finns i ERP-systemet (Fortnox, visma, m.fl.)",
+      "required_in_ui": true,
+      "max_length": 200,
+      "min_length": 1,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "shortName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "E-handelsnamn (framgår på E-handel & externa inköpssystem)",
+      "explanation": "Det namn som ska visas för kund",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "fuzzy_searchable": true,
+      "max_length": 255,
+      "min_length": 1
+    },
+    "image": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild",
+      "description": "image from houdini",
+      "is_available_in_minimum_reference": true,
+      "is_available_in_reference": true,
+      "helpLinkText": "Storlekar på artikelbilder",
+      "helpLinkIcon": "faCircleQuestion",
+      "helpLink": "https://docs.google.com/document/d/1nGCWjK2Gbdhgbij7qUDOTh12fG9szWn8OfiqxC0D7iU/edit#heading=h.ii1e2mwzblhr"
+    },
+    "images": {
+      "tab": "Detaljer",
+      "type": "imageArray",
+      "localized_name": "Bilder",
+      "is_available_in_minimum_reference": true,
+      "default": "[]",
+      "is_available_in_reference": true
+    },
+    "VAT": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "moms (%)",
+      "description": "moms",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "max_length": 255,
+      "fortnox_equivalent": "VAT"
+    },
+    "salesType": {
+      "tab": "Detaljer",
+      "description": "This describes how our e-commerce platform will handle the order flow of the article. Do we own the article, is it completly integrationed with another ERP system or do we sell this on commission and as such ship from our order fullfillment centers.",
+      "localized_name": "Typ av försäljning",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "type": "enum",
+      "values": [
+        {
+          "key": "DropShipping",
+          "label": "Drop Shipping"
+        },
+        {
+          "key": "Commission",
+          "label": "Kommission"
+        },
+        {
+          "key": "OwnedByDrycks",
+          "label": "Ägs av Flaivy"
+        },
+        {
+          "key": "StandAlone",
+          "label": "Fristående Flaivy"
+        }
+      ]
+    },
+    "orderUnit": {
+      "tab": "Detaljer",
+      "type": "string",
+      "comment": "warning: this automatically sets to the first option",
+      "localized_name": "Försäljningsenhet",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": "package",
+          "label": "förpackning"
+        },
+        {
+          "value": "single",
+          "label": "styck"
+        },
+        {
+          "value": "weight",
+          "label": "vikt"
+        }
+      ]
+    },
+    "supplierOrderUnit": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Unit",
+      "type": "string",
+      "localized_name": "Försäljningsenhet i leverantörens system",
+      "is_available_in_reference": true,
+      "description": "Leverantörens enhet"
+    },
+    "minWeightIncrement": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Minsta enhet vid viktförsäljning (kg)",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.orderUnit === 'weight'"
+    },
+    "priceComparisonUnit": {
+      "tab": "Detaljer",
+      "type": "string",
+      "comment": "warning: this automatically sets to the first option",
+      "localized_name": "Prisjämförelsenhet",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": "unit",
+          "label": "styck - kr/st"
+        },
+        {
+          "value": "kg",
+          "label": "kg - kr/kg"
+        },
+        {
+          "value": "liter",
+          "label": "liter - kr/l"
+        }
+      ],
+      "display_if": "entity.orderUnit !== 'weight'"
+    },
+    "colliSize": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 1,
+      "min_length": 0,
+      "localized_name": "Antal styck i förpackning",
+      "required_in_ui": "entity.orderUnit === 'package'",
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "description": "Important value: needed to create correct orders",
+      "display_if": "entity.orderUnit !== 'weight'"
+    },
+    "baseUnitSize": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 1,
+      "min_length": 0,
+      "localized_name": "Antal styck i förpackning på konsumentnivå (kfp)",
+      "is_available_in_reference": true,
+      "required_in_ui": false,
+      "display_if": "!entity.orderUnit !== 'weight'",
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "caseUnitSize": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 1,
+      "min_length": 0,
+      "localized_name": "Antal KFP i DFP",
+      "is_available_in_reference": true,
+      "required_in_ui": false,
+      "display_if": "!entity.orderUnit !== 'weight'",
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "caseUnitsPerPalletLayer": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 1,
+      "min_length": 0,
+      "localized_name": "Antal kolli per lav",
+      "required": false,
+      "is_available_in_reference": false,
+      "required_in_ui": false,
+      "display_if": "!entity.orderUnit !== 'weight'",
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "caseUnitsPerPallet": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 1,
+      "min_length": 0,
+      "localized_name": "Antal kolli per pall",
+      "required": false,
+      "is_available_in_reference": false,
+      "required_in_ui": false,
+      "display_if": "!entity.orderUnit !== 'weight'",
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "volume": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "step": 0.005,
+      "max_length": 1000,
+      "description": "derived from fortnox, also used in webshop",
+      "localized_name": "Volym per styck (liter)",
+      "required": false,
+      "required_in_ui": true,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'volume') && entity.orderUnit !== 'weight'",
+      "is_available_in_reference": true
+    },
+    "weight": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "localized_name": "Bruttovikt per styck (g)",
+      "min_length": 0,
+      "required": false,
+      "required_in_ui": "entity.shippingOptions === 'flaivy' || entity.salesType === 'OwnedByDrycks' || entity.salesType === 'Commission'",
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'weight') && entity.orderUnit !== 'weight'",
+      "is_available_in_reference": true
+    },
+    "netWeight": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "localized_name": "Nettovikt per styck (g)",
+      "required": false,
+      "required_in_ui": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'weight') && entity.orderUnit !== 'weight'",
+      "is_available_in_reference": false
+    },
+    "caseWeight": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "localized_name": "Bruttovikt på dfp nivå (g)",
+      "min_length": 0,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'weight') && entity.orderUnit !== 'weight'",
+      "is_available_in_reference": true
+    },
+    "caseNetWeight": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "localized_name": "Nettovikt på dfp nivå (g)",
+      "required_in_ui": "sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77'",
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'weight') && entity.orderUnit !== 'weight'",
+      "is_available_in_reference": true
+    },
+    "purchasePrice": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "PurchasePrice",
+      "type": "money",
+      "step": 0.01,
+      "description": "from fortnox. Inkluding PANT and TAX.",
+      "localized_name": "Inköpspris",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "entity.salesType === 'OwnedByDrycks'"
+    },
+    "salesPrice": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "SalesPrice",
+      "type": "money",
+      "readonly": false,
+      "description": "from fortnox - endast läsbart, måste skrivas till prislista inte till salesprice",
+      "localized_name": "Försäljningspris per styck/kg (exkl. eventuell pant)",
+      "step": 0.01,
+      "is_available_in_reference": true
+    },
+    "retailPrice": {
+      "tab": "Detaljer",
+      "type": "money",
+      "readonly": false,
+      "description": "pris som artikeln får i Stockfiller",
+      "localized_name": "Försäljningspris per styck på Stockfiller (exkl. eventuell pant)",
+      "step": 0.01,
+      "is_available_in_reference": false
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "default": "'SEK'"
+    },
+    "supplierPurchasePrice": {
+      "tab": "Detaljer",
+      "type": "money",
+      "explanation": "T.ex. inköpspris eller produktionspris. Används bl.a. för försäkring och lagerrapporter.",
+      "step": 0.01,
+      "localized_name": "Lagervärde per styck",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"],
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "alcoholPercentage": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "description": "derived from fortnox",
+      "localized_name": "Alkoholprocent",
+      "max_length": 100,
+      "step": 0.01,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'alcoholPercentage')"
+    },
+    "alcoholTaxPaid": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "description": "alcohol tax paid (kräver inte EMCS) (Fortnox 'S')",
+      "localized_name": "Alkoholskatt betalad (kräver inte EMCS)",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'alcoholTaxPaid')"
+    },
+    "alcoholTaxClass": {
+      "tab": "Produktinformation",
+      "type": "enum",
+      "values": [
+        {
+          "key": "Alcoholfree",
+          "label": "Utan alkohol"
+        },
+        {
+          "key": "Beer",
+          "label": "Öl"
+        },
+        {
+          "key": "Wine",
+          "label": "Vin och andra jästa drycker än vin och öl"
+        },
+        {
+          "key": "MidRange",
+          "label": "Mellanklass"
+        },
+        {
+          "key": "Spirits",
+          "label": "Sprit"
+        }
+      ],
+      "description": "derived from fortnox (T)",
+      "localized_name": "Skatteklass",
+      "filterOn": "flaivyReact.formFunctions.article.createIsAcceptableAlcoholTaxFilter(entity)",
+      "display_if": "flaivyReact.formFunctions.article.showAlcoholTaxField(entity)",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "alcoholTax": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "localized_name": "Alkoholskatt per st",
+      "is_available_in_reference": true,
+      "display_if": "entity.alcoholPercentage > 0",
+      "readonly": true
+    },
+    "requiresAlcoholPermit": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "localized_name": "Kräver alkoholtillstånd",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "shelfLife": {
+      "tab": "Produktinformation",
+      "type": "enum",
+      "values": [
+        {
+          "key": "short",
+          "label": "Kort hållbarhet (upp till 4 månader)"
+        },
+        {
+          "key": "medium",
+          "label": "Mellan hållbarhet (från 4 till 11 månader)"
+        },
+        {
+          "key": "long",
+          "label": "Lång hållbarhet (11 månader eller mer)"
+        },
+        {
+          "key": "special",
+          "label": "Special (Annat har avtalats)"
+        }
+      ],
+      "localized_name": "Hållbarhet från produktion till och med bäst-före",
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'shelfLife')",
+      "is_available_in_reference": false
+    },
+    "container": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "label": "Burk",
+          "value": "Can"
+        },
+        {
+          "label": "Flaska",
+          "value": "Bottle"
+        },
+        {
+          "label": "Fat",
+          "value": "Keg"
+        },
+        {
+          "label": "Tetra",
+          "value": "Tetra"
+        },
+        {
+          "label": "Pappburk",
+          "value": "Paper"
+        },
+        {
+          "label": "Bag-in-box/Ståpåse",
+          "value": "BIB"
+        },
+        {
+          "label": "Påse",
+          "value": "Bag"
+        },
+        {
+          "label": "Pet",
+          "value": "Pet"
+        },
+        {
+          "label": "Ask",
+          "value": "Box"
+        },
+        {
+          "label": "Kruka",
+          "value": "Pot"
+        },
+        {
+          "label": "Kartong",
+          "value": "Carton"
+        },
+        {
+          "label": "Dunk",
+          "value": "Plastic can"
+        },
+        {
+          "label": "Konserv",
+          "value": "TinCan"
+        },
+        {
+          "label": "Annat",
+          "value": "Other"
+        }
+      ],
+      "description": "drycksadmin har pet, flaska, burk",
+      "localized_name": "Förpackningstyp",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'container')",
+      "max_length": 20
+    },
+    "recycleType": {
+      "tab": "Produktinformation",
+      "type": "enum",
+      "values": [
+        {
+          "key": "none",
+          "label": "Ingen pant"
+        },
+        {
+          "key": "PET1",
+          "label": "PET upp till en liter"
+        },
+        {
+          "key": "PET2",
+          "label": "PET över en liter"
+        },
+        {
+          "key": "aluminiumCan",
+          "label": "Aluminiumburk"
+        },
+        {
+          "key": "glassBottle33cl",
+          "label": "33cl glasflaska"
+        },
+        {
+          "key": "glassBottle50cl",
+          "label": "50cl glasflaska"
+        },
+        {
+          "key": "other",
+          "label": "Annat"
+        }
+      ],
+      "localized_name": "Panttyp",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'recycleType')"
+    },
+    "recycleTypeContainer": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "none",
+          "label": "Ingen pant"
+        },
+        {
+          "value": "recyclableQuarterTray",
+          "label": "1/4 BRÄTTE PANT - 5699-76"
+        },
+        {
+          "value": "trayLarge",
+          "label": "BRÄTTE STOR - 5699-77"
+        }
+      ],
+      "localized_name": "Panttyp brätte",
+      "use_if": "sessionUser.organization.usesSupplierCustomer",
+      "is_available_in_reference": true,
+      "display_if": "sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' && entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'recycleTypeContainer')"
+    },
+    "recycleContainerMultiplier": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "display_if": "entity.recycleTypeContainer && entity.recycleTypeContainer !== 'none'",
+      "localized_name": "Multipel för brätte",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "recycleTypePallet": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "none",
+          "label": "Ingen pant"
+        },
+        {
+          "value": "recyclableGreySrsPlasticPallet",
+          "label": "PANT PLASTPALL GRÅ (SRS) - 5699-1084"
+        },
+        {
+          "value": "recyclableWoodenHalfPallet",
+          "label": "PANT HALVPALL TRÄ - 5699-90"
+        },
+        {
+          "value": "recyclableEuroWoodPallet",
+          "label": "PANT EUROPALL TRÄ - 5699-94"
+        },
+        {
+          "value": "recyclableBPallet",
+          "label": "PANT B-PALL - 5699-93"
+        },
+        {
+          "value": "recyclableAPallet",
+          "label": "PANT A-PALL 6 5699-92"
+        },
+        {
+          "value": "recylablePlasticPallet",
+          "label": "PLASTPALL PANT - 5699-1038"
+        },
+        {
+          "value": "reyclingFeePlasticPallet",
+          "label": "PANTAVG PLASTPALL - 3183-182"
+        },
+        {
+          "value": "recyclablePlasticHalfPallet",
+          "label": "PANTPALL PLAST 1/2 - 5699-57"
+        },
+        {
+          "value": "greySrsPlasticPallet",
+          "label": "PLASTPALL GRÅ (SRS) - 5699-100"
+        },
+        {
+          "value": "srsBox",
+          "label": "SRS LÅDA - 5699-140"
+        },
+        {
+          "value": "srsBox2",
+          "label": "SRS-LÅDA - 5699-1043"
+        }
+      ],
+      "localized_name": "Panttyp pall",
+      "is_available_in_reference": true,
+      "display_if": "sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' && entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'recycleTypePallet')"
+    },
+
+    "recycleAmount": {
+      "tab": "Produktinformation",
+      "type": "number",
+      "display_if": "entity.recycleType === 'other'",
+      "localized_name": "Pantkostnad (exkl. moms)",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "salesStart": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Säljperiod startar",
+      "display_if": "entity.salesPrice",
+      "minDate": true,
+      "is_available_in_reference": false,
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "salesEnd": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Säljperiod slutar",
+      "display_if": "entity.salesPrice",
+      "minDate": true,
+      "is_available_in_reference": false,
+      "use_if": "sessionUser.organization.usesSupplierCustomer"
+    },
+    "markedAsOutOfStock": {
+      "tab": "Webbshop",
+      "type": "boolean",
+      "description": "Artikeln är markerad som slut på lager",
+      "localized_name": "Markerad som slut",
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "isCampaign": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Kampanj",
+      "description": "is_campaign from houdini results in a KOLLA PRISET banner",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "campaignPrice": {
+      "tab": "Detaljer",
+      "type": "money",
+      "description": "För att kunna sätta priser på webshop",
+      "localized_name": "Kampanjpris",
+      "required": false,
+      "is_available_in_reference": true,
+      "step": 0.01
+    },
+    "active": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Active",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "isNotForPublishing": {
+      "tab": "Publiceringar",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Skall aldrig publiceras",
+      "description": "Om en artikel aldrig skall publiceras alls bör vi veta om det så vi inte behöver undra",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "isPublishedOnOurStore": {
+      "tab": "Publiceringar",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Publicerad på Flaivy.com",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "isPublishedOnWhitelabel": {
+      "tab": "Publiceringar",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Publicerad på egen marknadsplats",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "isPublishedOnPro": {
+      "tab": "Publiceringar",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Publicerad på Qvanti (Inköpssystem)",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "isPublishedOnStockfiller": {
+      "tab": "Publiceringar",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Publicerad på Stockfiller",
+      "description": "status på om artikeln skall laddas upp till Stockfiller",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "description": {
+      "tab": "Produktinformation",
+      "type": "html",
+      "localized_name": "Beskrivning",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "ingredientsDeclaration": {
+      "tab": "Produktinformation",
+      "type": "html",
+      "localized_name": "Innehållsförteckning",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'ingredientsDeclaration')"
+    },
+    "nutritionDeclaration": {
+      "tab": "Produktinformation",
+      "type": "html",
+      "localized_name": "Näringsinnehåll",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'nutritionDeclaration')"
+    },
+    "nutritionInfo": {
+      "tab": "Produktinformation",
+      "type": "object",
+      "localized_name": "Näringsinfo",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "MSRCriteria": {
+      "tab": "Produktinformation",
+      "type": "object",
+      "localized_name": "MSRKriteria",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "showInNews": {
+      "tab": "Webbshop",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Nyhetsmarkerad",
+      "description": "show_in_news from houdini",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "promoteAsNewStart": {
+      "tab": "Webbshop",
+      "type": "date",
+      "localized_name": "Nyhetsperiod startar",
+      "description": "promote_as_new_start from houdini",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "promoteAsNewEnd": {
+      "tab": "Webbshop",
+      "type": "date",
+      "localized_name": "Nyhetsperiod slutar",
+      "description": "promote_as_new_end from houdini",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "isEco": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Ekologisk",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "isVegan": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Veganskt",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isVegan')"
+    },
+    "isGelatinFree": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Gelatinfritt",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isGelatinFree')"
+    },
+    "isSugarFree": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Sockerfritt (Utan tillsatt socker)",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isSugarFree')"
+    },
+    "isLactoseFree": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Laktosfritt",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isLactoseFree')"
+    },
+    "isPalmOilFree": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Fritt från palmolja",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isPalmOilFree')"
+    },
+    "isFrozen": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Frysvara",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isFrozen')"
+    },
+    "isRefrigerated": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Kylvara",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isRefrigerated')"
+    },
+    "isFoam": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Skumgodis",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isFoam')"
+    },
+    "isCoated": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Dragerad",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isCoated')"
+    },
+    "isFudge": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Fudge",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isFudge')"
+    },
+    "isGelatinous": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Gele",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isGelatinous')"
+    },
+    "isLiquorice": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Lakrits",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isLiquorice')"
+    },
+    "isHardCandy": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Karamell",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isHardCandy')"
+    },
+    "isExpo": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Expo vara",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory"
+    },
+    "isWrapped": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Inslagen vara",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'isWrapped')"
+    },
+    "storageTemperature": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "frozen",
+          "label": "Fryst"
+        },
+        {
+          "value": "refrigerated",
+          "label": "Kyld"
+        }
+      ],
+      "localized_name": "Förvaringstemperatur",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "origin": {
+      "tab": "Produktinformation",
+      "type": "pipeString",
+      "localized_name": "Ursprung",
+      "description": "origin of product. Houdini property. Handled specially in transform",
+      "is_available_in_reference": true,
+      "max_length": 255,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'origin')"
+    },
+    "isAvailableForPreorder": {
+      "tab": "Webbshop",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Förbokningsartikel",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "isBlockedForPurchaseOrders": {
+      "tab": "Webbshop",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Spärrad för inköp/inleverans",
+      "description": "Artikeln får ej köpas in",
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "goesWith": {
+      "tab": "Produktinformation",
+      "type": "text",
+      "localized_name": "Passar med",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'goesWith')"
+    },
+    "appearance": {
+      "tab": "Produktinformation",
+      "type": "text",
+      "localized_name": "Utseende",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'appearance')"
+    },
+    "scent": {
+      "tab": "Produktinformation",
+      "type": "text",
+      "localized_name": "Doft",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'scent')"
+    },
+    "taste": {
+      "tab": "Produktinformation",
+      "type": "text",
+      "localized_name": "Smak",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": false,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'taste')"
+    },
+    "grapes": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Druva",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": true,
+      "max_length": 255,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'grapes')"
+    },
+    "vintage": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Årgång",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": true,
+      "max_length": 255,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'vintage')"
+    },
+    "seal": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "CROWN CORK CAP",
+          "label": "Champangekork"
+        },
+        {
+          "value": "GLASS CAP",
+          "label": "Kapsyl"
+        },
+        {
+          "value": "NATURAL CORK",
+          "label": "Naturkork"
+        },
+        {
+          "value": "SCREW CAP",
+          "label": "Skruvkork"
+        },
+        {
+          "value": "SYNTHETIC CORK",
+          "label": "Syntetkork"
+        },
+        {
+          "value": "UNCLASSIFIED",
+          "label": "Oklassificerad"
+        },
+        {
+          "value": "UNIDENTIFIED",
+          "label": "Okänd"
+        }
+      ],
+      "localized_name": "Förslutning",
+      "description": "",
+      "required": false,
+      "is_available_in_reference": false,
+      "max_length": 255,
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'seal')"
+    },
+    "isAlwaysOrderable": {
+      "tab": "Webbshop",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Alltid beställningsbar (oavsett lagersaldo)",
+      "description": "Artikeln kan alltid beställas oavsett lagersaldo",
+      "required": false,
+      "explanation": "Stänger av saldokontroll vid ordermottagning",
+      "is_available_in_reference": true,
+      "display_if": "!entity.markedAsOutOfStock || !(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "quantityInStock": {
+      "tab": "Lager",
+      "fortnox_equivalent": "QuantityInStock",
+      "type": "number",
+      "localized_name": "Antal i lager (st)",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": 0,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "stockWarning": {
+      "tab": "Lager",
+      "fortnox_equivalent": "StockWarning",
+      "type": "number",
+      "localized_name": "Lagervarning",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "GTIN": {
+      "rename_to": "baseLevelGtin",
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "localized_name": "GTIN Artikelnivå (KFP)",
+      "fortnox_equivalent": "EAN",
+      "required": false,
+      "searchable": true,
+      "show_import_button": true,
+      "is_available_in_reference": true,
+      "helpLinkText": "GTIN förklaring",
+      "helpLinkIcon": "faCircleQuestion",
+      "helpLink": "https://docs.google.com/document/d/e/2PACX-1vQ958OneHdcwGTspVCSCgdjST5hYot8oqjs0yq974NNZ64BNgvCYSv3PMkqbP9aym-Y3K7uN8YzyG3V/pub#h.n2af0rk790wb",
+      "explanation": "Med en giltig GTIN-14 kan du hämta information från Dabas och Validoo, se hjälp ikonen för mer information"
+    },
+    "boxGTIN": {
+      "rename_to": "caseLevelGtin",
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "localized_name": "GTIN Förpackningsnivå (DFP)",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "palletGTIN": {
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "localized_name": "GTIN på pall",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "recycleGTIN": {
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "localized_name": "Pant GTIN Artikelnivå (KFP)",
+      "explanation": "Hämtas från validoo",
+      "display_if": "false",
+      "readonly": true
+    },
+    "purchaseInformation": {
+      "tab": "Lager",
+      "type": "text",
+      "localized_name": "Information för inköp",
+      "fortnox_equivalent": "Note",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "utilityArticle": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "Utility article. Will not be seen in lists nor reports (Fortnox 'Z')",
+      "localized_name": "Specialartikel",
+      "roles_for_read": ["super"],
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "systembolagetArticleNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Artikelnummer på Systembolaget",
+      "required": false,
+      "searchable": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "unique_when": {
+        "active": true,
+        "systembolagetArticleNumber": { "ne": "" }
+      },
+      "roles_for_read": ["super", "supplier"],
+      "display_if": "entity.productCategory && !flaivyReact.formFunctions.article.isFieldImmutable(entity, 'systembolagetArticleNumber')"
+    },
+    "systembolagetSalesPrice": {
+      "tab": "Detaljer",
+      "type": "money",
+      "readonly": false,
+      "description": "from fortnox - endast läsbart, måste skrivas till prislista inte till systembolagetSalesPrice",
+      "localized_name": "Försäljningspris per st mot systembolaget",
+      "step": 0.01,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "keywords": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Sökord",
+      "fuzzy_searchable": true,
+      "required": false,
+      "display_if": "false",
+      "is_available_in_reference": false
+    },
+    "exactaDisposableQuantityInStock": {
+      "tab": "Lager",
+      "type": "number",
+      "localized_name": "Disponibelt lagersaldo för Systembolaget (Exacta) (st)",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "exactaQuantityInStock": {
+      "tab": "Lager",
+      "type": "number",
+      "localized_name": "Lagersaldo för Systembolaget (Exacta) (st)",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"],
+      "display_if": "false"
+    },
+    "purchaseAccount": {
+      "tab": "Bokföring",
+      "roles_for_read": ["super"],
+      "fortnox_equivalent": "PurchaseAccount",
+      "type": "number",
+      "localized_name": "Purchase Account",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "salesAccount": {
+      "tab": "Bokföring",
+      "roles_for_read": ["super"],
+      "fortnox_equivalent": "SalesAccount",
+      "type": "number",
+      "localized_name": "Sales Account",
+      "required": false,
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": 3005,
+          "label": "3005"
+        },
+        {
+          "value": 3004,
+          "label": "3004"
+        },
+        {
+          "value": 3011,
+          "label": "3011"
+        },
+        {
+          "value": 3010,
+          "label": "3010"
+        },
+        {
+          "value": 3017,
+          "label": "3017"
+        },
+        {
+          "value": 3014,
+          "label": "3014"
+        },
+        {
+          "value": 3000,
+          "label": "3000"
+        }
+      ]
+    },
+    "knNumber": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "KN-Nummer",
+      "explanation": "Listan matchar listan hos Skatteverket",
+      "max_length": 8,
+      "include": "oms-models/kn_numbers",
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "display_if": "entity.salesType !== 'DropShipping' && entity.shippingOptions !== 'dropshipping' && domainModel.article.requiresEMCS(entity)"
+    },
+    "exciseProductCode": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Produktkod i EMCS",
+      "is_available_in_reference": true
+    },
+    "colliPerPallet": {
+      "tab": "Lager",
+      "type": "number",
+      "localized_name": "Antal kartonger / pall",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "externalReferenceUrl": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Länk till extern källa",
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "hasLongerDeliveryTime": {
+      "tab": "Webbshop",
+      "localized_name": "Längre leveranstid - visa som beställningsvara för kund",
+      "type": "boolean",
+      "is_available_in_reference": true,
+      "display_if": "!(sessionUser.organization.id === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77' || entity.owningSupplierOrganizationId === 'd2e43f16-561e-4cf1-a959-fd3fe30f0d77')"
+    },
+    "hasDailyPrice": {
+      "tab": "Produktinformation",
+      "type": "boolean",
+      "default": false,
+      "localized_name": "Dagspris",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "HSCode": {
+      "tab": "Produktinformation",
+      "type": "string",
+      "localized_name": "Tullstatistiskt HS-nummer",
+      "max_length": 10,
+      "required": false,
+      "is_available_in_reference": false
+    },
+    "labels": {
+      "tab": "Detaljer",
+      "type": "labels",
+      "referenceType": "label",
+      "referenceDomain": "oms",
+      "localized_name": "Etiketter",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": "[]"
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "ARTICLE_UPDATED": {
+      "localized_name": "Artikel uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_CREATED": {
+      "localized_name": "Artikel skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_ACTIVATED": {
+      "localized_name": "Artikel aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_DEACTIVATED": {
+      "localized_name": "Artikel inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_CAMPAIGN_STARTED": {
+      "localized_name": "Priskampanj startad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_CAMPAIGN_ENDED": {
+      "localized_name": "Priskampanj avslutad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_PUBLISHED_ON_WHITELABEL": {
+      "localized_name": "Artikel publicerad på whitelabel",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_PUBLISHED_ON_OUR_STORE": {
+      "localized_name": "Artikel publicerad på Flaivy.com",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_PUBLISHED_ON_PRO": {
+      "localized_name": "Artikel publicerad på Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_PUBLISHED_ON_STOCKFILLER": {
+      "localized_name": "Artikel publicerad hos Stockfiller",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_UNPUBLISHED_ON_WHITELABEL": {
+      "localized_name": "Artikel avpublicerad på whitelabel",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_UNPUBLISHED_ON_OUR_STORE": {
+      "localized_name": "Artikel avpublicerad på Flaivy.com",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_UNPUBLISHED_ON_PRO": {
+      "localized_name": "Artikel avpublicerad på Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_UNPUBLISHED_ON_STOCKFILLER": {
+      "localized_name": "Artikel avpublicerad hos Stockfiller",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_STOCKCHANGE": {
+      "localized_name": "Artikelsaldoändring",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 712
+    },
+    "ARTICLE_BATCH_BLOCKED": {
+      "localized_name": "Parti på artikel spärrat",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 712
+    },
+    "ARTICLE_BATCH_UNBLOCKED": {
+      "localized_name": "Parti på artikel upplåst",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 712
+    },
+    "ARTICLE_QUANTITY_IN_EXACTA_STOCK_CHANGED": {
+      "localized_name": "Artikelsaldoändring Systembolaget",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 712
+    },
+    "ARTICLE_CUSTOMER_SUB_UNIT_SPECIFIC_ARTICLE_CREATED": {
+      "localized_name": "Kundspecifik artikel skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_CUSTOMER_SUB_UNIT_SPECIFIC_ARTICLE_UPDATED": {
+      "localized_name": "Kundspecifik artikel uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ARTICLE_METADATA_CHANGED": {
+      "localized_name": "Artikelns metadata ändrad",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  },
+  "listeners": {
+    "SUPPLIER_UPDATED": {
+      "name": "SUPPLIER_UPDATED",
+      "reactions": ["ensureArticleInvariants"]
+    },
+    "BRAND_UPDATED": {
+      "name": "BRAND_UPDATED",
+      "reactions": ["ensureArticleInvariants"]
+    }
+  },
+  "actions": {
+    "setOwningSupplierOrganization": {
+      "name": "setOwningSupplierOrganization",
+      "requiredRole": ["super"],
+      "localized_name": "Ändra ägare av artikel",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "owningSupplierOrganization": {
+          "type": "relation",
+          "relation": "organizationInOmsService",
+          "tab": "Detaljer",
+          "name": "Ägande organisation",
+          "required": true
+        }
+      }
+    },
+    "handlePublications": {
+      "name": "handlePublications",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Hantera publicering",
+      "availableIf": "entity.active",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "isPublishedOnOurStore": {
+          "linked_field": "isPublishedOnOurStore"
+        },
+        "isPublishedOnWhitelabel": {
+          "linked_field": "isPublishedOnWhitelabel"
+        },
+        "isPublishedOnPro": {
+          "linked_field": "isPublishedOnPro"
+        },
+        "salesPrice": {
+          "linked_field": "salesPrice",
+          "required_in_ui": true,
+          "min_length": 0,
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro"
+        },
+        "image": {
+          "linked_field": "image",
+          "required_in_ui": true,
+          "display_if": "_.isEmpty(entity.images) && (entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel)"
+        },
+        "showInNews": {
+          "linked_field": "showInNews",
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro"
+        },
+        "promoteAsNewStart": {
+          "linked_field": "promoteAsNewStart",
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro"
+        },
+        "promoteAsNewEnd": {
+          "linked_field": "promoteAsNewEnd",
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro"
+        },
+        "isPublishedOnStockfiller": {
+          "linked_field": "isPublishedOnStockfiller",
+          "display_if": "!domainModel.article.calculateRequiresAlcoholPermit(entity.productCategory, entity.alcoholPercentage)"
+        },
+        "GTIN": {
+          "linked_field": "GTIN",
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro || entity.isPublishedOnStockfiller"
+        },
+        "boxGTIN": {
+          "linked_field": "boxGTIN",
+          "display_if": "entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro || entity.isPublishedOnStockfiller"
+        },
+        "retailPrice": {
+          "linked_field": "retailPrice",
+          "required_in_ui": true,
+          "display_if": "entity.isPublishedOnStockfiller"
+        },
+        "productCategory": {
+          "linked_field": "productCategory",
+          "required_in_ui": true,
+          "display_if": "entity.isPublishedOnStockfiller"
+        },
+        "shouldBeFree": {
+          "tab": "Slutligen",
+          "ui_only": true,
+          "type": "confirm",
+          "description": "",
+          "localized_name": "Artikeln skall vara gratis",
+          "display_if": "(entity.isPublishedOnOurStore || entity.isPublishedOnWhitelabel || entity.isPublishedOnPro) && !entity.salesPrice"
+        },
+        "isAvailableForPreorder": {
+          "linked_field": "isAvailableForPreorder"
+        },
+        "isPricePerColli": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Är priset för förpackning",
+          "display_if": "false"
+        }
+      }
+    },
+    "publishOnExacta": {
+      "name": "publishOnExacta",
+      "requiredRole": ["super"],
+      "localized_name": "Förbered för systembolaget",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "systembolagetArticleNumber": {
+          "linked_field": "systembolagetArticleNumber",
+          "required_in_ui": true
+        },
+        "weight": {
+          "linked_field": "weight",
+          "required_in_ui": true
+        },
+        "volume": {
+          "linked_field": "volume",
+          "required_in_ui": true
+        },
+        "alcoholPercentage": {
+          "linked_field": "alcoholPercentage",
+          "required_in_ui": true
+        },
+        "colliSize": {
+          "linked_field": "colliSize"
+        },
+        "supplierPurchasePrice": {
+          "linked_field": "supplierPurchasePrice",
+          "required_in_ui": true
+        },
+        "systembolagetSalesPrice": {
+          "linked_field": "systembolagetSalesPrice",
+          "required_in_ui": true
+        },
+        "GTIN": {
+          "linked_field": "GTIN",
+          "required": true
+        },
+        "boxGTIN": {
+          "linked_field": "boxGTIN"
+        },
+        "origin": {
+          "linked_field": "origin",
+          "required_in_ui": true
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.active && (entity.salesType === 'StandAlone' || entity.salesType === 'DropShipping' || sessionUser.roles === 'super' )",
+      "color": "danger",
+      "localized_name": "Inaktivera artikel",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.active === false && (entity.salesType === 'StandAlone' || entity.salesType === 'DropShipping' || sessionUser.roles === 'super' )",
+      "color": "primary",
+      "localized_name": "Aktivera artikel",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "markAsOutOfStock": {
+      "name": "markAsOutOfStock",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.active === true && !entity.markedAsOutOfStock",
+      "color": "warning",
+      "localized_name": "Markera som tillfälligt slut",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "markAsInStock": {
+      "name": "markAsInStock",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.active === true && entity.markedAsOutOfStock === true",
+      "color": "primary",
+      "localized_name": "Markera som tillgänglig för försäljning",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "startCampaign": {
+      "name": "startCampaign",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.isCampaign === false && (entity.salesType !== 'OwnedByDrycks' || sessionUser.roles === 'super' )",
+      "localized_name": "Starta priskampanj",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "campaignPrice": {
+          "linked_field": "campaignPrice",
+          "required": true
+        }
+      }
+    },
+    "endCampaign": {
+      "name": "endCampaign",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.isCampaign && (entity.salesType !== 'OwnedByDrycks' || sessionUser.roles === 'super' )",
+      "localized_name": "Avsluta priskampanj",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "setSupplierArticleNumber": {
+      "name": "setSupplierArticleNumber",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Sätt leverantörsartikelnummer",
+      "submitButtonText": "Ange ditt artikelnummer",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "name": {
+          "linked_field": "name",
+          "readonly": true,
+          "localized_name": "Namn"
+        },
+        "supplierArticleNumber": {
+          "linked_field": "supplierArticleNumber"
+        }
+      }
+    },
+    "testGuardedActionCall": {
+      "localized_name": "testGuardedActionCall",
+      "requiredRole": ["super"],
+      "name": "testGuardedActionCall",
+      "canCreate": true,
+      "id": {
+        "linked_field": "id"
+      }
+    },
+    "setVindenStockQuantity": {
+      "localized_name": "setVindenStockQuantity",
+      "requiredRole": ["super"],
+      "name": "setVindenStockQuantity",
+      "parameters": {
+        "orderFullfillmentCenter": {
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "required": true,
+          "localized_name": "Lagerställe",
+          "tab": "Detaljer"
+        },
+        "articleBatches": {
+          "linked_field": "articleBatches"
+        }
+      }
+    },
+    "setBatchQuantity": {
+      "localized_name": "SetBatchQuantity",
+      "requiredRole": ["super"],
+      "name": "setBatchQuantity",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "orderFullfillmentCenter": {
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "localized_name": "Lagerställe",
+          "tab": "Detaljer"
+        },
+        "quantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "default": 1,
+          "description": "Lagersaldo belopp",
+          "localized_name": "Lagersaldo i vald enhet",
+          "required": true
+        },
+        "orderUnit": {
+          "linked_field": "orderUnit"
+        },
+        "batchNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Batchnummer"
+        },
+        "expiryDate": {
+          "tab": "Detaljer",
+          "type": "date",
+          "readonly": true,
+          "localized_name": "Utgår"
+        }
+      }
+    },
+    "updateStockQuantities": {
+      "localized_name": "SetStockQuantities",
+      "requiredRole": ["super"],
+      "name": "updateStockQuantities",
+      "parameters": {
+        "orderFullfillmentCenter": {
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "localized_name": "Lagerställe",
+          "required_in_ui": true,
+          "tab": "Detaljer"
+        },
+        "articleBatches": {
+          "linked_field": "articleBatches"
+        }
+      }
+    },
+    "updateExactaStockQuantities": {
+      "localized_name": "updateExactaStockQuantities",
+      "requiredRole": ["super"],
+      "name": "updateExactaStockQuantities",
+      "parameters": {
+        "exactaQuantityInStock": {
+          "linked_field": "exactaQuantityInStock"
+        },
+        "exactaDisposableQuantityInStock": {
+          "linked_field": "exactaDisposableQuantityInStock"
+        }
+      }
+    },
+    "ensureInvariants": {
+      "name": "ensureInvariants",
+      "requiredRole": ["super"],
+      "localized_name": "Räkna om totaler",
+      "description": "Stöd action för att kontrollera orderraders total",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "blockBatch": {
+      "name": "blockBatch",
+      "requiredRole": ["super", "supplier"],
+      "color": "danger",
+      "localized_name": "Blockera parti",
+      "conditional": "Är du säker?",
+      "availableForCustomer": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "childId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "children Id"
+        },
+        "orderFullfillmentCenter": {
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "localized_name": "Lagerställe",
+          "tab": "Detaljer"
+        },
+        "batchNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "readonly": true,
+          "description": "Batchnummer",
+          "localized_name": "Batchnummer"
+        },
+        "expiryDate": {
+          "tab": "Detaljer",
+          "type": "date",
+          "readonly": true,
+          "localized_name": "Utgår"
+        },
+        "quantityInStock": {
+          "tab": "Detaljer",
+          "type": "number",
+          "readonly": true,
+          "localized_name": "Lagersaldo (st)"
+        },
+        "blockReason": {
+          "tab": "Detaljer",
+          "type": "text",
+          "localized_name": "Anledning till blockning",
+          "description": "",
+          "required": false
+        }
+      }
+    },
+    "unblockBatch": {
+      "name": "unblockBatch",
+      "requiredRole": ["super", "supplier"],
+      "color": "primary",
+      "localized_name": "Avblockera parti",
+      "conditional": "Är du säker?",
+      "availableForCustomer": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "childId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "children Id"
+        },
+        "orderFullfillmentCenter": {
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "localized_name": "Lagerställe",
+          "tab": "Detaljer"
+        },
+        "batchNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "readonly": true,
+          "description": "Batchnummer",
+          "localized_name": "Batchnummer"
+        }
+      }
+    },
+    "blockAllBatches": {
+      "name": "blockAllBatches",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Blockera alla partier",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "unblockAllBatches": {
+      "name": "unblockAllBatches",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Avblockera alla partier",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "updateFromExternalSource": {
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "name": "updateFromExternalSource",
+      "description": "skapar eller uppdaterar lite specialregler för vad som skrivs över givet att vissa värden redan är satta",
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["keywords"]
+      }
+    },
+    "writeArticle": {
+      "name": "writeArticle",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Spara artikel",
+      "description": "upsert med begränsade fält",
+      "canCreate": true,
+      "parameters": {
+        "owningSupplierOrganization": {
+          "required_in_ui": true,
+          "tab": "Detaljer",
+          "comment": "this is a temporary fix until it is possible to set owningSupplierOrganizationId on all entities. Avräkningar etc",
+          "name": "owningSupplierOrganizationIdFromForm",
+          "localized_name": "Ägande organisation (kan inte ändras)",
+          "type": "relation",
+          "relation": "organizationInOmsService",
+          "display_if": "sessionUser.roles === 'super' && !entity.owningSupplierOrganizationId"
+        },
+        "supplier": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplier",
+          "localized_name": "Leverantör",
+          "required_in_ui": true,
+          "max_length": 255,
+          "is_available_in_reference": true
+        },
+        "isAlwaysOrderable": {
+          "linked_field": "isAlwaysOrderable"
+        },
+        "shippingOptions": {
+          "tab": "Detaljer",
+          "type": "string",
+          "display_if": "!sessionUser.organization.usesSupplierCustomer",
+          "restrictedValues": [
+            {
+              "label": "Jag står själv för transport",
+              "value": "dropshipping"
+            },
+            {
+              "label": "Artikeln skickas från Flaivys lager",
+              "value": "flaivy"
+            }
+          ],
+          "localized_name": "Leveransalternativ",
+          "description": "alternativ för transport",
+          "required_in_ui": true
+        },
+        "articleNumber": {
+          "linked_field": "articleNumber",
+          "display_if": "!sessionUser.organization.shouldFlaivyGenerateArticleNumbers"
+        },
+        "supplierArticleNumber": {
+          "linked_field": "supplierArticleNumber"
+        },
+        "hasLongerDeliveryTime": {
+          "linked_field": "hasLongerDeliveryTime"
+        },
+        "hasDailyPrice": {
+          "linked_field": "hasDailyPrice",
+          "display_if": "entity.salesType === 'StandAlone'"
+        },
+        "systembolagetSalesPrice": {
+          "linked_field": "systembolagetSalesPrice",
+          "display_if": "sessionUser.organization.hasCopackAgreement"
+        },
+        "images": {
+          "linked_field": "images",
+          "display_if": "false"
+        },
+
+        "includeParameters": [
+          "GTIN",
+          "boxGTIN",
+          "palletGTIN",
+          "recycleGTIN",
+          "id",
+          "name",
+          "shortName",
+          "salesStart",
+          "salesEnd",
+          "productCategory",
+          "varuTypDimensionCode",
+          "origin",
+          "vintage",
+          "brand",
+          "orderUnit",
+          "minWeightIncrement",
+          "colliSize",
+          "baseUnitSize",
+          "caseUnitSize",
+          "caseUnitsPerPalletLayer",
+          "caseUnitsPerPallet",
+          "priceComparisonUnit",
+          "volume",
+          "weight",
+          "netWeight",
+          "caseWeight",
+          "caseNetWeight",
+          "isBlockedForPurchaseOrders",
+          "salesPrice",
+          "purchasePrice",
+          "alcoholPercentage",
+          "alcoholTaxClass",
+          "shelfLife",
+          "image",
+          "container",
+          "recycleType",
+          "recycleTypeContainer",
+          "recycleContainerMultiplier",
+          "recycleTypePallet",
+          "recycleAmount",
+          "description",
+          "ingredientsDeclaration",
+          "nutritionDeclaration",
+          "isEco",
+          "isVegan",
+          "isGelatinFree",
+          "isSugarFree",
+          "isLactoseFree",
+          "isPalmOilFree",
+          "isFrozen",
+          "isRefrigerated",
+          "isFoam",
+          "isCoated",
+          "isFudge",
+          "isGelatinous",
+          "isLiquorice",
+          "isHardCandy",
+          "goesWith",
+          "appearance",
+          "scent",
+          "taste",
+          "grapes",
+          "seal",
+          "supplierPurchasePrice",
+          "knNumber",
+          "owningSupplierOrganizationId",
+          "HSCode"
+        ],
+        "salesType": {
+          "linked_field": "salesType",
+          "display_if": "false"
+        },
+
+        "orderUnit": {
+          "linked_field": "orderUnit",
+          "display_if": "(!entity.quantityInStock || entity.salesType === 'StandAlone')"
+        },
+
+        "labels": {
+          "linked_field": "labels",
+          "use_if": "['flaivyplus', 'enterprise'].includes(sessionUser.organization.subscriptionLevel)"
+        }
+      }
+    },
+    "importArticle": {
+      "name": "importArticle",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Importera artikel",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": [
+          "supplierArticleNumber",
+          "varuTypDimensionCode",
+          "supplier",
+          "owningCustomerSubUnit",
+          "name",
+          "image",
+          "images",
+          "salesType",
+          "supplierOrderUnit",
+          "colliSize",
+          "baseUnitSize",
+          "caseUnitSize",
+          "caseUnitsPerPalletLayer",
+          "caseUnitsPerPallet",
+          "salesPrice",
+          "retailPrice",
+          "currency",
+          "alcoholTaxClass",
+          "recycleAmount",
+          "utilityArticle",
+          "purchaseAccount",
+          "salesAccount",
+          "labels",
+          "articleBatches"
+        ],
+        "currency": {
+          "linked_field": "currency",
+          "tab": "Produktinformation",
+          "required_in_ui": false
+        },
+        "image": {
+          "linked_field": "image",
+          "tab": "Grunduppgifter"
+        },
+        "salesType": {
+          "linked_field": "salesType",
+          "tab": "Bokföring",
+          "required_in_ui": false
+        },
+        "colliSize": {
+          "linked_field": "colliSize",
+          "tab": "Grunduppgifter"
+        },
+        "baseUnitSize": {
+          "linked_field": "baseUnitSize",
+          "tab": "Produktinformation"
+        },
+        "caseUnitSize": {
+          "linked_field": "caseUnitSize",
+          "tab": "Produktinformation"
+        },
+        "caseUnitsPerPalletLayer": {
+          "linked_field": "caseUnitsPerPalletLayer",
+          "tab": "Produktinformation"
+        },
+        "caseUnitsPerPallet": {
+          "linked_field": "caseUnitsPerPallet",
+          "tab": "Produktinformation"
+        },
+        "salesPrice": {
+          "linked_field": "salesPrice",
+          "tab": "Grunduppgifter"
+        },
+        "retailPrice": {
+          "linked_field": "retailPrice",
+          "tab": "Grunduppgifter"
+        },
+        "labels": {
+          "linked_field": "labels",
+          "tab": "Grunduppgifter"
+        },
+        "supplier": {
+          "linked_field": "supplier",
+          "explanation": "Ange leverantörsnummer för att koppla leverantör till artikel"
+        },
+        "brand": {
+          "linked_field": "brand",
+          "explanation": "Ange varumärkets namn för att koppla varumärke till artikel"
+        }
+      }
+    },
+    "addFlaivyImages": {
+      "name": "addFlaivyImages",
+      "requiredRole": ["super"],
+      "localized_name": "Lägg till bilder",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "images": {
+          "tab": "Detaljer",
+          "type": "imageArray",
+          "required": true
+        }
+      }
+    },
+    "ensureOwningSupplierOrganizationId": {
+      "name": "ensureOwningSupplierOrganizationId",
+      "requiredRole": ["super"],
+      "localized_name": "Sätt ägande leverantörsorganisation",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "writeCustomerSubUnitSpecificArticle": {
+      "name": "writeCustomerSubUnitSpecificArticle",
+      "requiredRole": ["super", "customerSubUnitPurchaserManager"],
+      "localized_name": "Skapa kundspecifik artikel",
+      "canCreate": true,
+      "availableForCustomer": true,
+      "parameters": {
+        "owningCustomerSubUnit": {
+          "linked_field": "owningCustomerSubUnit"
+        },
+        "includeParameters": [
+          "id",
+          "shortName",
+          "supplier",
+          "productCategory",
+          "brand",
+          "vintage",
+          "alcoholPercentage"
+        ],
+        "supplier": {
+          "linked_field": "supplier",
+          "required_in_ui": false
+        },
+        "origin": {
+          "linked_field": "origin",
+          "tab": "Detaljer"
+        },
+        "salesPrice": {
+          "tab": "Detaljer",
+          "linked_field": "salesPrice",
+          "localized_name": "Inköpspris"
+        }
+      }
+    },
+    "fortnoxArticle": {
+      "name": "fortnoxArticle",
+      "requiredRole": ["super"],
+      "localized_name": "Skapa artikel från Fortnox",
+      "description": "upsert med check på quantity in stock",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["articleBatches", "keywords"],
+        "quantityInStock": {
+          "linked_field": "quantityInStock",
+          "required": true
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "required": true
+        }
+      }
+    },
+    "editArticleBatches": {
+      "name": "editArticleBatches",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Redigera partier",
+      "description": "Uppdatera artikelpartier",
+      "availableIf": "entity.active && (entity.salesType === 'StandAlone' || entity.salesType === 'DropShipping')",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "articleBatches": {
+          "linked_field": "articleBatches",
+          "required": true
+        }
+      }
+    },
+    "updateStockQuantitiesManually": {
+      "name": "updateStockQuantitiesManually",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Uppdatera lagersaldon manuellt",
+      "description": "",
+      "availableIf": "entity.active && entity.salesType === 'StandAlone'",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "articleNumber": {
+          "linked_field": "articleNumber",
+          "required_in_ui": true
+        },
+        "quantityInStock": {
+          "linked_field": "quantityInStock",
+          "required": true
+        }
+      }
+    },
+    "ensureDropshipArticleNumber": {
+      "name": "ensureDropshipArticleNumber",
+      "requiredRole": ["super"],
+      "localized_name": "Flytta om artikelnummer och organization",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "privabImportArticle": {
+      "name": "privabImportArticle",
+      "requiredRole": ["super"],
+      "localized_name": "Importera artiklar",
+      "canCreate": true,
+      "description": "An action to import privab articles from their excel file. Note that field names have spaces and slashes removed from them. The description of each field refers to the flaivy field where applicable",
+      "parameters": {
+        "articleNumber": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "articleNumber",
+          "required": true
+        },
+        "Basenhet": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "orderUnit equivalent. Is always package but some articles are ST and refer to VAT. Ignore those",
+          "required": true
+        },
+        "EUtullstatistiknr": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "HS-Code"
+        },
+        "Beskrivning": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "name",
+          "required": true
+        },
+        "Bruttovikt": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "caseWeight in kg"
+        },
+        "Nettovikt": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "caseNetWeight in kg"
+        },
+        "Volym": {
+          "type": "string",
+          "tab": "Detaljer"
+        },
+        "GTIN": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "boxGTIN"
+        },
+        "Artikelkategorikod": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "Dimension code"
+        },
+        "Antalidetaljistförpackning": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "Collisize and case unit size"
+        },
+        "Antalpåpalllavtrp": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "String separated by / e.g. 144/0/0 with case units per pallet, tray and whatever trp refers to (ignoring that one)"
+        },
+        "Pantmultipel2": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "recycleContainerMultiplier"
+        },
+        "Pantartikel": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "recycle article 2 or 3 - will base this on the map avaiable in brightcom mapper file"
+        },
+        "Pantartikel2": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "recycle article 2 - will base this on the map avaiable in brightcom mapper file"
+        },
+        "Pantartikel3": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "recycle article 3 - will base this on the map avaiable in brightcom mapper file"
+        },
+        "Spärradförinköp": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "isBlockedForPurchaseOrders"
+        },
+        "Säsongskod": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "Label for Christmas, easter, spring summer"
+        },
+        "KGartikel": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "priceComparisonUnit. If true then kg else unit"
+        },
+        "Dollarstore": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has dollarstore label"
+        },
+        "Filmstaden": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has Filmstaden label"
+        },
+        "Gottmix": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has Gottmix label"
+        },
+        "Myway": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has Myway label"
+        },
+        "Sortimentsboken": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has Sortimentsboken label"
+        },
+        "SwedishService": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "If true has Swedish Service label"
+        },
+        "Leverantörsnr": {
+          "type": "string",
+          "tab": "Detaljer",
+          "description": "suppliernumber"
+        }
+      }
+    }
+  }
+}

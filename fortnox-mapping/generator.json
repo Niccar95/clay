@@ -1,0 +1,16 @@
+{
+  "partials": [],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "maps/",
+      "target": "services/fortnox-internal/services/generated",
+      "select": "$.model"
+    },
+    {
+      "generate": "maps/",
+      "target": "services/fortnox-external/services/generated",
+      "select": "$.model"
+    }
+  ]
+}

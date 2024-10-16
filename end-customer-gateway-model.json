@@ -1,0 +1,36 @@
+{
+  "name": "end-customer-gateway",
+  "nonServiceOutputPath": "end-customer-gateway",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "end-customer-gateway/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "end-customer-gateway"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "end-customer-gateway-models/shop_user.json" },
+      { "include": "end-customer-gateway-models/invite.json" },
+      {
+        "include": "end-customer-gateway-models/end_customer_organization.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "name": "customerSubUnitInPCSService",
+  "localized_name": "Avdelning i inköpstjänsten, motsvarar Qvanti användarkonto",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "name",
+  "defaultFuzzyLogicSearchField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Identitet i Qvanti",
+      "unique_when": {
+        "active": true,
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "name": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Avdelning/Qvanti användarkonto"
+    },
+    "customerNumber": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Centralt kundnummer"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "OrganisationNumber",
+      "type": "string",
+      "localized_name": "Organisationsnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "display_if": "entity.deliveryCountry === 'SE'",
+      "is_available_in_reference": true
+    },
+    "chain": {
+      "tab": "Detaljer",
+      "type": "pipeString",
+      "localized_name": "Kedja",
+      "required": false,
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "customerType": {
+      "tab": "Detaljer",
+      "include": "restricted_values/customer_types",
+      "description": "kundtyp",
+      "localized_name": "Kundtyp",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Valuta",
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Email",
+      "type": "email",
+      "localized_name": "Kundens e-post (används för orderbekräftelse)",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"]
+    },
+    "approvedCustomer": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "State to see if this customer is legit or not",
+      "localized_name": "Godkänd kund",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "storeNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "max_length": 255,
+      "localized_name": "Butiksnummer",
+      "is_available_in_reference": true
+    },
+    "GLN": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "GLN",
+      "type": "GLN",
+      "max_length": 255,
+      "localized_name": "GLN-nummer för fakturering",
+      "is_available_in_reference": true
+    },
+    "invoiceDeliveryType": {
+      "tab": "Fakturering",
+      "type": "string",
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "description": "derived from fortnox",
+      "localized_name": "Fakturaleveranssätt",
+      "required_in_ui": true
+    },
+    "emailInvoice": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "EmailInvoice",
+      "type": "email",
+      "localized_name": "E-post för faktura",
+      "required": false,
+      "max_length": 255,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.invoiceDeliveryType === 'EMAIL'",
+      "roles_for_read": ["super"]
+    },
+    "invoiceAddress": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "Address1",
+      "type": "string",
+      "localized_name": "Adress",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceAddress2": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "Address2",
+      "type": "string",
+      "localized_name": "Adress 2",
+      "required_in_ui": false,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceZipCode": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "ZipCode",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "required_in_ui": true,
+      "max_length": 10,
+      "is_available_in_reference": true
+    },
+    "invoiceCity": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "City",
+      "type": "string",
+      "localized_name": "Stad",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "max_length": 255
+    },
+    "deliveryCountry": {
+      "tab": "Detaljer",
+      "include": "restricted_values/country_codes",
+      "fortnox_equivalent": "DeliveryCountryCode",
+      "localized_name": "Land",
+      "required": false,
+      "required_in_ui": true,
+      "default": "'SE'",
+      "is_available_in_reference": true
+    },
+    "deliveryZipCode": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryZipCode",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "max_length": 10
+    },
+    "deliveryCounty": {
+      "tab": "Leverans",
+      "include": "restricted_values/delivery_countries",
+      "localized_name": "Län",
+      "required": false,
+      "readonly": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "deliveryPhone": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryPhone1",
+      "type": "string",
+      "localized_name": "Leveranstelefon",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"]
+    },
+    "deliveryDays": {
+      "tab": "Leveransadress",
+      "type": "openingHours",
+      "localized_name": "Leveransdagar",
+      "required": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "deliveryGLN": {
+      "tab": "Leveransadress",
+      "type": "GLN",
+      "max_length": 255,
+      "localized_name": "GLN-nummer för leverans",
+      "is_available_in_reference": true
+    },
+    "hasAlcoholPermit": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Har bekräftat alkoholtillstånd",
+      "is_available_in_reference": true
+    },
+    "needSpecialHandling": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Behöver specialhantering kring order",
+      "is_available_in_reference": true
+    },
+    "exciseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Punktskattenummer (13 tecken)",
+      "is_available_in_reference": true
+    },
+    "taxWarehouseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Skatteupplagsnummer (13 tecken)",
+      "is_available_in_reference": true
+    }
+  },
+  "actions": {},
+  "listeners": {
+    "\"CUSTOMER_SUB_UNIT_*\"": {
+      "name": "CUSTOMER_SUB_UNIT_",
+      "reactions": ["upsertCustomerSubUnitInPcsService"]
+    }
+  },
+  "events": {
+    "CUSTOMER_SUB_UNIT_IN_PCS_SERVICE_CREATED": {
+      "localized_name": "customer-sub-unit in PCS service created",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+    "CUSTOMER_SUB_UNIT_IN_PCS_SERVICE_UPDATED": {
+      "localized_name": "customer-sub-unit in PCS service updated",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  }
+}

@@ -1,0 +1,10 @@
+(SELECT ARRAY (
+    SELECT
+      articles.image
+    FROM
+      "purchaseListItems"
+    JOIN articles ON articles.id = "purchaseListItems"."articleId"
+    WHERE
+      "purchaseListItems"."purchaseListId" = ${globals.tableName}.id
+      LIMIT 3
+  ))

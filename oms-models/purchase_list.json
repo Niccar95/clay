@@ -1,0 +1,309 @@
+{
+  "name": "purchaseList",
+  "localized_name": "Favoritlista",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields", "import_field"],
+  "belongs_to": ["customerSubUnit"],
+  "defaultSort": "department,name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {
+    "thumbnailImages": {
+      "type": "imageArray",
+      "import_field": {
+        "fileName": "./clay/oms-models/purchaseList.calculatedfields.thumbnailImages",
+        "fieldName": "selfContainedQuery"
+      },
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    }
+  },
+  "children": {
+    "purchaseListItems": {
+      "tab": "Detaljer",
+      "name": "purchaseListItems",
+      "type": "array",
+      "add_button_text": "rad",
+      "localized_name": "Artiklar i den här favoritlistan",
+      "description": "Rabattavtal",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["article"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "article": {
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "required": false,
+          "is_available_in_reference": true,
+          "exclude_calculated_fields": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn på favoritlista",
+      "is_available_in_reference": true,
+      "required": true
+    },
+    "department": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Avdelning",
+      "is_available_in_reference": true
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnit",
+      "description": "För vilken kund gäller favoritlistan",
+      "localized_name": "Kund",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplierCustomerInOmsService",
+      "localized_name": "Mina kunder",
+      "forignKeyOverride": true,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    },
+    "shopConfigId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Shop id",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "PURCHASE_LIST_UPDATED": {
+      "localized_name": "Favoritlista uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_LIST_CREATED": {
+      "localized_name": "Favoritlista skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_LIST_ACTIVATED": {
+      "localized_name": "Favoritlista aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_LIST_DEACTIVATED": {
+      "localized_name": "Favoritlista inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "writePurchaseList": {
+      "availableForCustomer": true,
+      "name": "writePurchaseList",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Uppdatera favoritlista",
+
+      "description": "upsert med behörighets check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*"
+      }
+    },
+    "addArticleToPurchaseList": {
+      "availableForCustomer": true,
+      "name": "addArticleToPurchaseList",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Lägg till i favoritlista",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "description": "",
+          "required": true
+        }
+      }
+    },
+    "removeArticleFromPurchaseList": {
+      "availableForCustomer": true,
+      "name": "removeArticleFromPurchaseList",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Ta bort från favoritlista",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "description": "",
+          "required": true
+        }
+      }
+    },
+    "addToMyFavorites": {
+      "availableForCustomer": true,
+      "name": "addToMyFavorites",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ],
+      "localized_name": "Lägg till i mina favoriter",
+      "description": "",
+      "canCreate": true,
+      "parameters": {
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "description": "",
+          "required": true
+        },
+        "name": {
+          "linked_field": "name",
+          "required": false
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId"
+        }
+      }
+    },
+    "removeFromMyFavorites": {
+      "availableForCustomer": true,
+      "name": "removeFromMyFavorites",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ],
+      "localized_name": "Ta bort från mina favoriter",
+      "description": "",
+      "canCreate": true,
+      "parameters": {
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "description": ""
+        }
+      }
+    },
+    "copy": {
+      "name": "copy",
+      "requiredRole": ["super"],
+      "availableIf": "entity.active",
+      "localized_name": "Kopiera favoritlista",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "customerSubUnit",
+          "localized_name": "Kund",
+          "required": true
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "availableIf": "entity.active",
+      "color": "danger",
+      "localized_name": "Inaktivera Favoritlista",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "availableIf": "entity.active === false",
+      "color": "primary",
+      "localized_name": "Aktivera Favoritlista",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

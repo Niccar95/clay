@@ -1,0 +1,130 @@
+{
+  "name": "orderBrokerageAgreement",
+  "localized_name": "Orderförmedlingsavtal",
+  "description": "Orderförmedlingsavtal",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Namn",
+      "required": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "startDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Startdatum",
+      "required_in_ui": true
+    },
+    "articleFilter": {
+      "type": "querySpecification",
+      "specificationForType": "article",
+      "localized_name": "Artikelfilter",
+      "tab": "Detaljer"
+    },
+    "commission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Marginal. (tidigare dropshipmarginal (%) )",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100
+    },
+    "prognosisOrderCount": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Prognos antal order per 12 månader",
+      "required_in_ui": false
+    },
+    "prognosisRevenue": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Prognos omsättning per 12 månader",
+      "required_in_ui": false
+    },
+    "settlementPeriod": {
+      "tab": "Detaljer",
+      "include": "restricted_values/settlement_periods",
+      "localized_name": "Avräkningsperiod",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "customerNumberInFortnox": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundnummer i Flaivys Fortnox",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "allow_multiple": true,
+      "localized_name": "E-post för avtalsfrågor",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "emailOrder": {
+      "tab": "Detaljer",
+      "type": "email",
+      "allow_multiple": true,
+      "localized_name": "E-post för orderläggning",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiv",
+      "default": true,
+      "is_available_in_reference": true
+    },
+    "sendSettlementAutomatically": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Skicka avräkningar automatiskt",
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "listeners": {
+    "SUPPLIER_UPDATED": {
+      "name": "SUPPLIER_UPDATED",
+      "reactions": ["ensureOrderBrokerageAgreement"]
+    }
+  },
+  "events": {
+    "ORDER_BROKERAGE_AGREEMENT_CREATED": {
+      "localized_name": "orderförmedlingsavtal skapat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_BROKERAGE_AGREEMENT_UPDATED": {
+      "localized_name": "orderförmedlingsavtal uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {}
+}

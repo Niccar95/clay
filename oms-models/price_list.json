@@ -1,0 +1,438 @@
+{
+  "name": "priceList",
+  "localized_name": "Prislista",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["supplier"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "children": {
+    "discountAgreements": {
+      "tab": "Specifika kunder för den här prislistan",
+      "name": "discountAgreements",
+      "type": "array",
+      "add_button_text": "kundrad",
+      "localized_name": "Specifika kunder för den här prislistan",
+      "description": "Rabattavtal",
+      "display_if": "( !entity.chain || entity.chain === '<NULL>') && ( !entity.customerType || entity.customerType === '<NULL>')",
+      "explanation": "Om din prislista inte gäller en kundtyp utan en specifik kund lägger du kund/kunder nedan",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["customerSubUnit", "supplierCustomerInOmsService"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "customerSubUnit": {
+          "type": "relation",
+          "relation": "customerSubUnit",
+          "localized_name": "Kund",
+          "required": false,
+          "is_available_in_reference": true,
+          "use_minimum_reference": true,
+          "use_if": "!sessionUser.organization.usesSupplierCustomer"
+        },
+        "supplierCustomer": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplierCustomerInOmsService",
+          "original_relation": "supplierCustomer",
+          "localized_name": "Leverantörskund",
+          "forignKeyOverride": true,
+          "is_available_in_reference": true,
+          "use_minimum_reference": true,
+          "use_if": "sessionUser.organization.usesSupplierCustomer"
+        },
+        "isApprovedByCustomerSubUnit": {
+          "type": "boolean",
+          "localized_name": "Godkänd av kund",
+          "required": false,
+          "is_available_in_reference": true,
+          "roles_for_read": ["super"]
+        }
+      }
+    },
+    "priceListEntries": {
+      "tab": "Listade artiklar",
+      "name": "priceListEntries",
+      "type": "array",
+      "localized_name": "Artiklar och priser",
+      "add_button_text": "rabattrad",
+      "description": "Priser",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["article"],
+      "doNotGenerateRowNumbers": true,
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "article": {
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "required": false,
+          "is_available_in_reference": true,
+          "exclude_calculated_fields": true,
+          "use_minimum_reference": true
+        },
+        "price": {
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Försäljningspris per styck/kg (exkl. eventuell pant)",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "discount": {
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Procentrabatt",
+          "required": false,
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn på prislista",
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "required": false,
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "default": "'SEK'",
+      "required_in_ui": true
+    },
+    "supplier": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplier",
+      "description": "För vilken leverantör gäller prislistan",
+      "localized_name": "Leverantör",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "exclude_calculated_fields": true,
+      "display_if": "!_.get(sessionUser, 'organization.usesSupplierCustomer', false)"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "chain": {
+      "tab": "Detaljer",
+      "type": "pipeString",
+      "localized_name": "Kedja",
+      "explanation": "Genom att sätta kedja matchas prislistan automatiskt mot alla kunder i den kedjan. Vill du göra en prislista för enstaka kunder ska du inte sätta kedja.",
+      "display_if": "!entity.customerType || entity.customerType === '<NULL>'",
+      "required": false,
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "isApprovedByChain": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Godkänd av kedja",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"]
+    },
+    "customerType": {
+      "tab": "Detaljer",
+      "explanation": "Genom att sätta kundtyp matchas prislistan automatiskt mot alla kunder av den typen. Vill du göra en prislista för enstaka kunder ska du inte sätta kundtyp.",
+      "display_if": "!entity.chain || entity.chain === '<NULL>'",
+      "include": "restricted_values/customer_types",
+      "description": "kundtyp",
+      "localized_name": "Kundtyp",
+      "is_available_in_reference": true
+    },
+    "discountOnAllArticles": {
+      "tab": "Detaljer",
+      "type": "number",
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "localized_name": "Procentrabatt på alla artiklar",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": 0
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "PRICE_LIST_UPDATED": {
+      "localized_name": "Prislista uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PRICE_LIST_CREATED": {
+      "localized_name": "Prislista skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PRICE_LIST_ACTIVATED": {
+      "localized_name": "Prislista aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PRICE_LIST_DEACTIVATED": {
+      "localized_name": "Prislista inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "addArticle": {
+      "name": "addArticle",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Lägg till artikel till prislista",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "name": "article",
+          "localized_name": "Artikel",
+          "required": true
+        },
+        "priceList": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "priceList",
+          "name": "priceList",
+          "localized_name": "Prislista",
+          "required": true
+        },
+        "price": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Avtalat pris/styck",
+          "required": false
+        },
+        "discount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Procentrabatt",
+          "required": false
+        }
+      }
+    },
+    "addCustomerSubUnit": {
+      "name": "addCustomerSubUnit",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Lägg till kund till prislista",
+      "parameters": {
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "customerSubUnit",
+          "name": "customerSubUnit",
+          "localized_name": "Kund",
+          "required": true
+        },
+        "priceList": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "priceList",
+          "name": "priceList",
+          "localized_name": "Prislista",
+          "required": true
+        }
+      }
+    },
+    "addSupplierCustomer": {
+      "name": "addSupplierCustomer",
+      "requiredRole": ["super"],
+      "localized_name": "Lägg till kund till prislista",
+      "description": "TODO: we need to support lookups on required fields",
+      "parameters": {
+        "supplierCustomer": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplierCustomerInOmsService",
+          "original_relation": "supplierCustomer",
+          "localized_name": "Leverantörskund",
+          "required": false
+        }
+      }
+    },
+    "writePriceList": {
+      "name": "writePriceList",
+      "requiredRole": ["super", "supplier"],
+
+      "localized_name": "Uppdatera prislista",
+      "description": "upsert med behörighets check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["isApprovedByChain", "discountAgreements"],
+        "discountAgreements": {
+          "type": "array",
+          "tab": "Detaljer",
+          "add_button_text": "kundrad",
+          "localized_name": "Specifika kunder för den här prislistan",
+          "description": "Rabattavtal",
+          "display_if": "( !entity.chain || entity.chain === '<NULL>') && ( !entity.customerType || entity.customerType === '<NULL>')",
+          "explanation": "Om din prislista inte gäller en kundtyp utan en specifik kund lägger du kund/kunder nedan",
+          "name": "discountAgreements",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "customerSubUnit": {
+              "type": "relation",
+              "relation": "customerSubUnit",
+              "localized_name": "Kund",
+              "required": false,
+              "use_if": "!sessionUser.organization.usesSupplierCustomer"
+            },
+            "supplierCustomer": {
+              "type": "reference",
+              "referenceType": "supplierCustomer",
+              "referenceDomain": "crm",
+              "localized_name": "Leverantörskund",
+              "required": false,
+              "use_if": "sessionUser.organization.usesSupplierCustomer"
+            }
+          }
+        }
+      }
+    },
+    "writePriceListFast": {
+      "name": "writePriceListFast",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Uppdatera prislista",
+      "description": "upsert med behörighets check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": [
+          "isApprovedByChain",
+          "priceListEntries",
+          "owningSupplierOrganizationId"
+        ],
+        "articleFieldToLookup": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "artikel fält att slå på",
+          "required": true
+        },
+        "owningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "userAccessString",
+          "localized_name": "owningSupplierOrganizationId",
+          "required": true
+        },
+        "partialUpdate": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "partialUpdate"
+        },
+        "isPricePerColli": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "pricePerColli"
+        },
+        "priceListEntries": {
+          "type": "array",
+          "tab": "Detaljer",
+          "add_button_text": "prisrad",
+          "localized_name": "Priser för artiklar",
+          "description": "priser",
+          "name": "priceListEntries",
+          "required": true,
+          "props": {
+            "articleIdentifier": {
+              "type": "string",
+              "localized_name": "artikel",
+              "required": true
+            },
+            "price": {
+              "type": "number",
+              "step": 0.01,
+              "localized_name": "Försäljningspris per styck/kg (exkl. eventuell pant)",
+              "required": false,
+              "is_available_in_reference": true
+            },
+            "discount": {
+              "type": "number",
+              "step": 0.01,
+              "localized_name": "Procentrabatt",
+              "required": false,
+              "is_available_in_reference": true
+            }
+          }
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super"],
+      "availableIf": "entity.active",
+      "color": "danger",
+      "localized_name": "Inaktivera prislista",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super"],
+      "availableIf": "entity.active === false",
+      "color": "primary",
+      "localized_name": "Aktivera prislista",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

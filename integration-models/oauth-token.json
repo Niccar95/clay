@@ -1,0 +1,87 @@
+{
+  "name": "oauthToken",
+  "localized_name": "Oauth-token",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["integration"],
+  "calculatedFields": {
+    "accessExpired": {
+      "type": "boolean",
+      "selfContainedQuery": "SELECT oat.\"accessExpires\" < now() + INTERVAL '10 minutes' FROM \"oauthTokens\" oat WHERE oat.id = ${globals.tableName}.id",
+      "is_available_in_reference": true,
+      "localized_name": "Access token behöver refresh"
+    },
+    "refreshExpired": {
+      "type": "boolean",
+      "selfContainedQuery": "SELECT oat.\"refreshExpires\" < now() + INTERVAL '10 days' FROM \"oauthTokens\" oat WHERE oat.id = ${globals.tableName}.id",
+      "is_available_in_reference": true,
+      "localized_name": "Refresh token behöver refresh"
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "accessToken": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Accesstoken",
+      "is_available_in_reference": true
+    },
+    "refreshToken": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Refreshtoken",
+      "is_available_in_reference": true
+    },
+    "accessExpires": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "localized_name": "Accesstoken expires",
+      "is_available_in_reference": true
+    },
+    "refreshExpires": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "localized_name": "Refreshtoken expires",
+      "is_available_in_reference": true
+    },
+    "integration": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "integration",
+      "localized_name": "integration",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "usedByService": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Vilken tjänst använder denna",
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": "fortnox-external",
+          "label": "fortnox-external"
+        }
+      ]
+    }
+  },
+  "actions": {},
+  "events": {
+    "OAUTH_TOKEN_CREATED": {
+      "localized_name": "Oauth-token skapats",
+      "should_inform_service": false
+    },
+    "OAUTH_TOKEN_UPDATED": {
+      "localized_name": "Oauth-token uppdaterad",
+      "should_inform_service": false
+    }
+  }
+}

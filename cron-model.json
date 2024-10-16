@@ -1,0 +1,29 @@
+{
+  "name": "cron",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/cron/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/cron"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [{ "include": "cron-models/job.json" }]
+  }
+}

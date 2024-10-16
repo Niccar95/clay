@@ -1,0 +1,114 @@
+{
+  "name": "validooSubscription",
+  "localized_name": "validoo prenumeration",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSimilaritySortField": "GTIN",
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "GTIN": {
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "searchable": true,
+      "localized_name": "GTIN",
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "unique": true
+    },
+    "GLN": {
+      "tab": "Detaljer",
+      "type": "GLN",
+      "searchable": true,
+      "localized_name": "GLN",
+      "is_available_in_reference": true,
+      "required_in_ui": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "listeners": {
+    "ARTICLE_UPDATED": {
+      "name": "ARTICLE_UPDATED",
+      "reactions": ["createSubscriptionWhenGtinIsUpdated"]
+    },
+    "ARTICLE_CREATED": {
+      "name": "ARTICLE_CREATED",
+      "reactions": ["createSubscriptionWhenArticleIsCreated"]
+    }
+  },
+  "events": {
+    "VALIDOO_SUBSCRIPTION_CREATED": {
+      "localized_name": "validoo prenumeration skapat",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+
+    "VALIDOO_SUBSCRIPTION_UPDATED": {
+      "localized_name": "validoo prenumeration uppdaterat",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  },
+  "actions": {
+    "createGTINSubscription": {
+      "canCreate": true,
+      "name": "createGTINSubscription",
+      "localized_name": "Skapa prenumeration på GTIN",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "GTIN": {
+          "linked_field": "GTIN"
+        },
+        "owningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        }
+      }
+    },
+    "createGLNSubscription": {
+      "canCreate": true,
+      "name": "createGLNSubscription",
+      "localized_name": "Skapa prenumeration på leverantörssortiment",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "GLN": {
+          "linked_field": "GLN"
+        },
+        "owningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  }
+}

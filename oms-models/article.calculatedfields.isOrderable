@@ -1,0 +1,16 @@
+SELECT (
+  (${globals.tableName}."markedAsOutOfStock" = FALSE AND (
+      ${globals.tableName}."isAlwaysOrderable" OR
+      ${globals.tableName}."isAvailableForPreorder" OR
+      EXISTS (
+          SELECT 1
+          FROM "articleBatches"
+          WHERE "articleBatches"."articleId" = ${globals.tableName}."id"
+          AND "articleBatches"."orderFullfillmentCenterId" = '${globals.myCustomerHelper.orderFullfillmentCenterId || 'NOT_SET'}'
+          AND (
+              "articleBatches"."quantityInStock" > 0 OR "articleBatches"."isAlwaysOrderable" = TRUE
+          )
+      )
+    )
+  )
+) OR '${globals.myCustomerHelper.orderFullfillmentCenterId || 'NOT_SET'}' = 'NOT_SET'

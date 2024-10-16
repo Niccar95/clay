@@ -1,0 +1,33 @@
+{
+  "name": "validoo",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/validoo/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/validoo"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "validoo-models/validoo_article.json" },
+      { "include": "validoo-models/validoo_subscription.json" },
+      { "include": "validoo-models/validoo_credential.json" }
+    ]
+  }
+}

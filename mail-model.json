@@ -1,0 +1,32 @@
+{
+  "name": "mail",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/mail/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/mail"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "mail-models/email.json" },
+      { "include": "mail-models/email-template-config.json" }
+    ]
+  }
+}

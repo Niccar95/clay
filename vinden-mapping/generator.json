@@ -1,0 +1,11 @@
+{
+  "partials": [],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "maps/",
+      "target": "services/vinden/services/generated",
+      "select": "$.model"
+    }
+  ]
+}

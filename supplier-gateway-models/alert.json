@@ -1,0 +1,183 @@
+{
+  "name": "alert",
+  "localized_name": "Notiser",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["organization"],
+  "defaultSimilaritySortField": "title",
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "title": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Rubrik",
+      "is_available_in_reference": true,
+      "required_in_ui": true
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "html",
+      "localized_name": "Beskrivning",
+      "is_available_in_reference": true,
+      "required_in_ui": true
+    },
+    "link": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Länk",
+      "is_available_in_reference": true
+    },
+    "color": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "values": [
+        {
+          "key": "danger",
+          "label": "Farligt"
+        },
+        {
+          "key": "warning",
+          "label": "Varning"
+        },
+        {
+          "key": "success",
+          "label": "Framgång"
+        },
+        {
+          "key": "info",
+          "label": "Info"
+        },
+        {
+          "key": "primary",
+          "label": "Primär"
+        },
+        {
+          "key": "secondary",
+          "label": "Sekundär"
+        }
+      ],
+      "localized_name": "Färg",
+      "is_available_in_reference": true
+    },
+    "isClosed": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Klar?",
+      "is_available_in_reference": true
+    },
+    "alertContext": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Context",
+      "description": "Används för att säkerställa att det inte finns flera notifieringar igång samtidigt",
+      "is_available_in_reference": true,
+      "required_in_ui": true
+    },
+    "organization": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "organization",
+      "description": "Vilka notisen skall visas för",
+      "localized_name": "Mottagande organization",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": false
+    }
+  },
+  "events": {
+    "ALERT_CLOSED": {
+      "localized_name": "Notis stängd",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "retention": 60
+    },
+    "ALERT_UPDATED": {
+      "localized_name": "Notis uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "retention": 60
+    },
+    "ALERT_CREATED": {
+      "localized_name": "Skapat notis",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "retention": 60
+    }
+  },
+  "listeners": {
+    "ALERT_CREATED": {
+      "name": "ALERT_CREATED",
+      "reactions": ["sendEmailForAlerts"]
+    }
+  },
+  "actions": {
+    "raiseAlert": {
+      "name": "raiseAlert",
+      "localized_name": "Skapa notis",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["isClosed"]
+      }
+    },
+    "raiseAlertBasedOnSupplier": {
+      "name": "raiseAlertBasedOnSupplier",
+      "localized_name": "Skapa notis",
+      "submitButtonText": "Skicka",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "title": {
+          "linked_field": "title"
+        },
+        "description": {
+          "linked_field": "description"
+        },
+        "link": {
+          "linked_field": "link"
+        },
+        "color": {
+          "linked_field": "color"
+        },
+        "alertContext": {
+          "linked_field": "alertContext"
+        },
+        "supplierNumber": {
+          "tab": "Detaljer",
+          "name": "supplierNumber",
+          "localized_name": "Leverantörsnummer",
+          "type": "string"
+        },
+        "organizationId": {
+          "tab": "Detaljer",
+          "name": "organizationId",
+          "localized_name": "Organisationens id",
+          "type": "string"
+        }
+      }
+    },
+    "closeAlert": {
+      "name": "closeAlert",
+      "localized_name": "Stäng notis",
+      "submitButtonText": "Stäng notis",
+      "requiredRole": ["supplier", "super"],
+      "availableForCustomer": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

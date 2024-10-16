@@ -1,0 +1,18 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "value": "standard",
+      "label": "standard"
+    },
+    {
+      "value": "external",
+      "label": "external"
+    }
+  ],
+  "max_length": 255,
+  "default": "'standard'",
+  "roles_for_read": ["super", "supplier"],
+  "localized_name": "Typ av varukorg",
+  "is_available_in_reference": true
+}

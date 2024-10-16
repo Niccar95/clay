@@ -1,0 +1,119 @@
+{
+  "name": "oms",
+  "generators": [
+    {
+      "generator": "clay-generator-model-documentation",
+      "output": "docs"
+    },
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/oms/dataaccess"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/oms"
+    },
+    {
+      "generator": "fortnox-mapping/generator.json"
+    },
+    {
+      "generator": "vinden-mapping/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/default_actions.mixin.js" },
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/import_field.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "oms-models/customer-sub-unit.json" },
+      { "include": "oms-models/brand.json" },
+      { "include": "oms-models/supplier.json" },
+      { "include": "oms-models/article.json" },
+      { "include": "oms-models/order.json" },
+      { "include": "oms-models/supplier_sales_report.json" },
+      { "include": "oms-models/purchase_order.json" },
+      { "include": "oms-models/invoice.json" },
+      { "include": "oms-models/price_list.json" },
+      { "include": "oms-models/purchase_list.json" },
+      { "include": "oms-models/complaint.json" },
+      { "include": "oms-models/order_fullfillment_center.json" },
+      {
+        "include": "oms-models/supplier-customer-in-OMS-service.json"
+      },
+      {
+        "include": "oms-models/organization-in-OMS-service.json"
+      },
+      {
+        "include": "oms-models/label.json"
+      }
+    ],
+    "projections": [
+      { "include": "oms-models/priced_article.json" },
+      { "include": "oms-models/stock_article.json" }
+    ],
+    "actors": [
+      {
+        "name": "leverantör",
+        "description": "En leverantör är en som importerar eller producerar gods till försäljning..."
+      },
+      {
+        "name": "beställare",
+        "description": "\nEn beställare är t.ex. en restaurang eller ett företag som beställer dricka via flaivy.com.\n> tydligen kan en leverantör också vara en beställare i vissa fall"
+      },
+      {
+        "name": "admin",
+        "description": "\nAvser en anställd hos indipendent spirits som lägger upp administrativ information om kunder."
+      },
+      {
+        "name": "distributör",
+        "description": "Just nu är det distributör som har hant om transport.\n\nDet kan i framtiden vara andra logistiklösningar, gemensamt är att aktören hämtar och lämnar kollin.\nVi betalar per pallstorlekar, så effektiv paketering av en pall ger marginaler i slutändan."
+      },
+      {
+        "name": "styrelse",
+        "description": "I dagsläget finns det intressenter som loggar in i drycks-admin.se för att kontrollera orderingångar och försäljning via de dashboards som finns i systemet."
+      },
+      {
+        "name": "fortnox",
+        "description": "Har idag det mesta datat, men på sikt skall det endast vara bokföring.\n\nFortnox går på knäna på allt förutom bokföringen.\n\n> Leverantörer använder till stor del fortnox eller visma för sin egen bokföring.\n> Vi kan i teorin tillhandahålla konterade ordar åt dem som de kan i sin tur importera i sina\n\nData som hanteras i fortnox i dagsläget:\n* Kundregister\n* Lager\n* Bokföring\n* Artiklar\n"
+      }
+    ],
+    "stories": [
+      {
+        "name": "Ny konsument signad av admin",
+        "steps": [
+          {
+            "actor": "admin",
+            "action": "skapar ett",
+            "entity": "customerSubUnit",
+            "target_entity": "fortnox",
+            "event": "create_customerSubUnit"
+          },
+          {
+            "actor": "admin",
+            "action": "sätter en ansvarig",
+            "entity": "account",
+            "event": "set_account"
+          },
+          {
+            "actor": "admin",
+            "action": "lägger till en",
+            "entity": "activity",
+            "target_entity": "customerSubUnit",
+            "event": "add_activity"
+          }
+        ]
+      }
+    ]
+  }
+}

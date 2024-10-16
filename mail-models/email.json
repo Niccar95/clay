@@ -1,0 +1,145 @@
+{
+  "name": "email",
+  "localized_name": "Skickad E-post",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "to",
+  "belongs_to": [],
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "to": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Till",
+      "is_available_in_reference": true
+    },
+    "from": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Från",
+      "is_available_in_reference": true
+    },
+    "transactionName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Transaktionsnamn",
+      "is_available_in_reference": true
+    },
+    "subject": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Ämne",
+      "is_available_in_reference": true,
+      "max_length": 998
+    },
+    "lastSendDate": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "localized_name": "Senast skickat datum",
+      "is_available_in_reference": true
+    },
+    "htmlBody": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Text",
+      "is_available_in_reference": false
+    },
+    "markupBody": {
+      "tab": "Detaljer",
+      "type": "markdown",
+      "localized_name": "Text",
+      "is_available_in_reference": false
+    },
+    "attachments": {
+      "tab": "Detaljer",
+      "type": "attachments",
+      "localized_name": "Filer",
+      "is_available_in_reference": false
+    },
+    "templateSettings": {
+      "tab": "Inställningar",
+      "type": "object",
+      "localized_name": "Mall",
+      "is_available_in_reference": false,
+      "display_if": "false"
+    }
+  },
+  "events": {
+    "EMAIL_CREATED": {
+      "localized_name": "E-post skickad",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    },
+    "EMAIL_UPDATED": {
+      "localized_name": "E-post uppdaterad",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    },
+    "EMAIL_RESENT": {
+      "localized_name": "Skickad igen",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    }
+  },
+  "actions": {
+    "sendEmail": {
+      "canCreate": true,
+      "name": "sendEmail",
+      "description": "This will just queue the email to sendEmailWithSES that does the heavy lifiting",
+      "localized_name": "Skicka epost",
+      "requiredRole": ["super"],
+      "parameters": {
+        "includeParameters": "*",
+        "owningSupplierOrganizationId": {
+          "type": "userAccessString",
+          "tab": "detaljer"
+        }
+      }
+    },
+    "sendEmailWithSES": {
+      "canCreate": true,
+      "name": "sendEmailWithSES",
+      "localized_name": "Skicka epost",
+      "requiredRole": ["super"],
+      "parameters": {
+        "includeParameters": "*",
+        "templateConfig": {
+          "type": "object",
+          "tab": "detaljer"
+        },
+        "owningSupplierOrganizationId": {
+          "type": "userAccessString",
+          "tab": "detaljer"
+        }
+      }
+    },
+    "resendEmail": {
+      "name": "resendEmail",
+      "localized_name": "Skicka igen",
+      "requiredRole": ["super"],
+      "parameters": {
+        "includeParameters": ["templateSettings"],
+        "id": {
+          "linked_field": "id"
+        },
+        "to": {
+          "tab": "Detaljer",
+          "type": "email",
+          "localized_name": "Till"
+        }
+      }
+    }
+  }
+}

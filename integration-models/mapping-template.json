@@ -1,0 +1,148 @@
+{
+  "name": "mappingTemplate",
+  "localized_name": "Importmall",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "calculatedFields": {},
+  "defaultSimilaritySortField": "name",
+  "children": {
+    "mappingFields": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Mappningsfält",
+      "name": "mappingFields",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "fieldName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Flaivys fältnamn",
+          "is_available_in_reference": true,
+          "required": true
+        },
+        "externalFieldNameLocalized": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Er benämning",
+          "is_available_in_reference": true,
+          "required_in_ui": true
+        },
+        "defaultValue": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Standardvärde",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn",
+      "is_available_in_reference": true,
+      "required_in_ui": true
+    },
+    "version": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Version",
+      "default": "1"
+    },
+    "entity": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "article",
+          "label": "Artikel"
+        },
+        {
+          "value": "supplierCustomer",
+          "label": "Leverantörens kund"
+        },
+        {
+          "value": "invite",
+          "label": "Inbjudan"
+        },
+        {
+          "value": "brand",
+          "label": "Varumärke"
+        }
+      ],
+      "localized_name": "Entitet",
+      "is_available_in_reference": true
+    },
+    "belongingAction": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "v1.article.importArticle",
+          "label": "Importera artiklar"
+        },
+        {
+          "value": "v1.supplierCustomer.importCustomer",
+          "label": "Importera kunder"
+        },
+        {
+          "value": "v1.invite.sendSupplierCustomerInvite",
+          "label": "Skicka inbjudan till webbshop"
+        },
+        { "value": "v1.brand.writeBrand", "label": "Importera varumärken" }
+      ],
+      "localized_name": "Action",
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "MAPPING_TEMPLATE_CREATED": {
+      "localized_name": "Mall skapats",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "MAPPING_TEMPLATE_UPDATED": {
+      "localized_name": "Mall uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {},
+  "actions": {
+    "writeMappingTemplate": {
+      "name": "writeMappingTemplate",
+      "localized_name": "Spara mall",
+      "requiredRole": ["super", "supplier"],
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": ["*"],
+        "excludeParameters": ["version"]
+      }
+    }
+  }
+}

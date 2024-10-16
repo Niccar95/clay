@@ -1,0 +1,45 @@
+{
+  "type": "enum",
+  "values": [
+    {
+      "key": "supplier",
+      "label": "Manuell order"
+    },
+    {
+      "key": "export",
+      "label": "EMCS-order"
+    },
+    {
+      "key": "customer",
+      "label": "Flaivy.com"
+    },
+    {
+      "key": "systembolaget",
+      "label": "Systembolaget"
+    },
+    {
+      "key": "internal",
+      "label": "Intern order"
+    },
+    {
+      "key": "whitelabel",
+      "label": "E-handel"
+    },
+    {
+      "key": "purchasing",
+      "label": "Qvanti"
+    },
+    {
+      "key": "stockfiller",
+      "label": "Stockfiller"
+    },
+    {
+      "key": "dropshipping",
+      "label": "Mail-flöde"
+    },
+    {
+      "key": "returnToSupplier",
+      "label": "Utleverans"
+    }
+  ]
+}

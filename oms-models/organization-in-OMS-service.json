@@ -1,0 +1,87 @@
+{
+  "name": "organizationInOmsService",
+  "localized_name": "Organisation specifik för OMS",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSimilaritySortField": "name",
+
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "unique": true,
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Organisationsnamn",
+      "is_available_in_reference": true
+    },
+    "usesSupplierCustomer": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "This is more or less the signal to show that this organization has a complete standalone version of flaivy",
+      "localized_name": "Använder leverantörskunder",
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "shouldFlaivyGenerateOrderNumbers": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Flaivy genererar ordernummer",
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "shouldFlaivyGenerateArticleNumbers": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Flaivy genererar artikelnummer",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "defaultOrderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "orderFullfillmentCenter",
+      "original_relation": "orderFullfillmentCenter",
+      "index_name": "organizationOrderFullfillmentCenter",
+      "localized_name": "Leveranslager",
+      "is_available_in_reference": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Leverantörens identitet i Qvanti",
+      "is_available_in_reference": true,
+      "unique_when": {
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true
+    }
+  },
+  "listeners": {
+    "\"ORGANIZATION_*\"": {
+      "name": "ORGANIZATION_",
+      "reactions": ["upsertOrganizationInOmsService"]
+    }
+  },
+  "events": {
+    "ORGANIZATION_IN_OMS_SERVICE_UPDATED": {
+      "should_inform_service": false,
+      "should_inform_user": true
+    },
+    "ORGANIZATION_IN_OMS_SERVICE_CREATED": {
+      "should_inform_service": false,
+      "should_inform_user": true
+    }
+  },
+  "actions": {}
+}

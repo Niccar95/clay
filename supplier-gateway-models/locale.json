@@ -1,0 +1,48 @@
+{
+    "name": "locale",
+    "localized_name": "Språk",
+    "description": "",
+    "alias": [],
+    "mixin": ["default_actions", "linked_fields"],
+    "belongs_to": ["organization"],
+    "defaultSimilaritySortField": "title",
+    "fields": {
+      "id": {
+        "type": "string",
+        "primary": true,
+        "description": "primary key",
+        "localized_name": "Identitet",
+        "is_available_in_reference": true
+      },
+      "organization": {
+        "tab": "Detaljer",
+        "type": "relation",
+        "relation": "organization",
+        "description": "Vilka notisen skall visas för",
+        "localized_name": "Mottagande organization",
+        "required_in_ui": true,
+        "max_length": 255,
+        "is_available_in_reference": false
+      }
+    },
+    "events": {
+
+      "LOCALE_UPDATED": {
+        "localized_name": "Språk uppdaterat",
+        "should_inform_service": true,
+        "should_inform_user": true,
+        "retention": 60
+      },
+      "LOCALE_CREATED": {
+        "localized_name": "Skapat notis",
+        "should_inform_service": true,
+        "should_inform_user": true,
+        "retention": 60
+      }
+    },
+   
+    "actions": {
+     
+    }
+  }
+  

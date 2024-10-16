@@ -1,0 +1,174 @@
+{
+  "name": "outgoingMessage",
+  "localized_name": "Utgående meddelande",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "fileName",
+  "belongs_to": ["integration"],
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "integration": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "integration",
+      "localized_name": "Integration",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "fileName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Filnamn",
+      "is_available_in_reference": true
+    },
+    "status": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Status",
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": "error",
+          "label": "Misslyckades"
+        },
+        {
+          "value": "resolved",
+          "label": "Åtgärdat"
+        },
+        {
+          "value": "success",
+          "label": "OK"
+        }
+      ]
+    },
+    "outgoing": {
+      "tab": "Kanal",
+      "type": "object",
+      "localized_name": "Kanal",
+      "is_available_in_reference": true
+    },
+    "errorMessage": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Felmeddelande",
+      "is_available_in_reference": true
+    },
+    "event": {
+      "tab": "Event",
+      "type": "object",
+      "disableValidations": true,
+      "localized_name": "Innehåll",
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "OUTGOING_MESSAGE_CREATED": {
+      "localized_name": "Meddelande skapat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    },
+    "OUTGOING_MESSAGE_UPDATED": {
+      "localized_name": "Meddelande uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    },
+    "OUTGOING_MESSAGE_RESENT": {
+      "localized_name": "Meddelande skickat igen",
+      "should_inform_service": true,
+      "should_inform_user": false
+    }
+  },
+  "actions": {
+    "writeFtpFile": {
+      "name": "writeFtpFile",
+      "localized_name": "Skriv FTP fil",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "integration": {
+          "linked_field": "integration"
+        },
+        "fileName": {
+          "linked_field": "fileName"
+        },
+        "body": {
+          "tab": "Detaljer",
+          "type": "string"
+        }
+      }
+    },
+    "retry": {
+      "name": "retry",
+      "localized_name": "Försök igen",
+      "description": "Triggar en till körning av integrationen (action: writeOutgoingIntegrationMessage) med kanal och event från tidigare körning. Befintligt kanalvärde med mappning kommer hämtas från integration. Om sparat kanalvärde är ibockat används det kanalvärde som fanns då felet uppstod",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "event": {
+          "linked_field": "event",
+          "display_if": "false"
+        },
+        "integration": {
+          "linked_field": "integration",
+          "display_if": "false"
+        },
+        "useChannelSnapshot": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Använd sparat kanalvärde"
+        },
+        "outgoing": {
+          "linked_field": "outgoing",
+          "display_if": "false"
+        },
+        "fileName": {
+          "linked_field": "fileName"
+        }
+      }
+    },
+    "writeOutgoingIntegrationMessage": {
+      "name": "writeOutgoingIntegrationMessage",
+      "localized_name": "Skriv utgående meddelande",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "integration": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "integration",
+          "localized_name": "Integration",
+          "required": true
+        },
+        "event": {
+          "tab": "Detaljer",
+          "type": "object",
+          "localized_name": "Händelse",
+          "required": true
+        },
+        "outgoing": {
+          "tab": "Detaljer",
+          "type": "object",
+          "localized_name": "Utgående kanal",
+          "required": true
+        },
+        "fileName": {
+          "linked_field": "fileName"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "name": "supplierCustomerInOmsService",
+  "localized_name": "konsument specifik för oms-tjänsten",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet"
+    },
+    "customerNumber": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "tab": "Detaljer",
+      "namespace": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundnummer"
+    },
+    "orderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "orderFullfillmentCenter",
+      "localized_name": "Leveranslager",
+      "is_available_in_reference": true
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "required_in_ui": true,
+      "default": "'SEK'"
+    },
+    "name": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Företagsnamn på faktura"
+    },
+    "customerType": {
+      "tab": "Detaljer",
+      "include": "restricted_values/customer_types",
+      "description": "kundtyp",
+      "localized_name": "Kundtyp",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "chain": {
+      "tab": "Detaljer",
+      "type": "pipeString",
+      "localized_name": "Kedja",
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "Kundens e-post (används för orderbekräftelse)",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "approvedCustomer": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "State to see if this customer is legit or not",
+      "localized_name": "Godkänd kund",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "blocked": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Kund har köpstopp",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "deliveryZipCode": {
+      "tab": "Leveransadress",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "max_length": 10,
+      "is_available_in_reference": true
+    },
+    "minOrderValue": {
+      "tab": "Leveransvillkor",
+      "type": "number",
+      "localized_name": "Minsta ordervärde för kund",
+      "is_available_in_reference": true
+    },
+    "isPossibleToPlaceOrderBelowOrderMinimum": {
+      "tab": "Leveransvillkor",
+      "type": "boolean",
+      "localized_name": "Det är möjligt för kund att lägga order under kollikrav eller minsta ordervärde mot en ev.avgift.",
+      "is_available_in_reference": true
+    },
+    "minCollisOnOrder": {
+      "tab": "Leveransvillkor",
+      "type": "number",
+      "localized_name": "Minsta antal kollin för kund på order",
+      "is_available_in_reference": true
+    },
+    "kegCountsAsNCollis": {
+      "tab": "Leveransvillkor",
+      "type": "number",
+      "localized_name": "Hur många kollin varje fat räknas som på en order för kund",
+      "is_available_in_reference": true
+    },
+    "deliveryBreakpointText": {
+      "tab": "Leveransvillkor",
+      "type": "text",
+      "localized_name": "Brytpunktsförklaring (brytpunktstid kan endast styras på heltimme)",
+      "is_available_in_reference": true
+    },
+    "deliveryBreakpoint": {
+      "tab": "Leveransvillkor",
+      "type": "integer",
+      "min_length": "0",
+      "max_length": "24",
+      "step": 1,
+      "localized_name": "Brytpunktstid för leverans (endast hela timmar stöds)",
+      "is_available_in_reference": true
+    },
+    "deliveryHeadsup": {
+      "tab": "Leveransvillkor",
+      "type": "integer",
+      "min_length": "0",
+      "step": 1,
+      "localized_name": "Leveranstid i dagar om lagd innan brytpunkt",
+      "is_available_in_reference": true
+    },
+    "deliveryDays": {
+      "tab": "Leveransvillkor",
+      "type": "openingHours",
+      "localized_name": "Leveransdagar",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "owningSupplierOrganizationId": {
+      "is_available_in_minimum_reference": true,
+      "is_available_in_reference": true,
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "index_name": "owningSupplierOrganizationSupplierCustomerIdx",
+      "readonly": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad"
+    },
+    "requiresGroupInvoice": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "True if this customer should recieve grouped invoices",
+      "localized_name": "Samlingsfaktura",
+      "default": true,
+      "explanation": "Kunden får en samlingsfaktura för alla sina inköp under en period, om nej kommer order till kunden att faktureras automatiskt vid leverans",
+      "is_available_in_reference": true
+    },
+    "contractualCustomer": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "This determines if they will get prices outside a pricelist or not",
+      "localized_name": "Avtalkund",
+      "default": false,
+      "explanation": "Om kunden är en avtalskund kommer de bara få köpa artiklar de har avtal på via prislistor",
+      "is_available_in_reference": true
+    },
+    "labels": {
+      "tab": "Finance",
+      "type": "labels",
+      "referenceType": "label",
+      "referenceDomain": "oms",
+      "localized_name": "Etiketter",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": "[]"
+    },
+    "exciseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Punktskattenummer (13 tecken)",
+      "is_available_in_reference": true
+    },
+    "taxWarehouseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Skatteupplagsnummer (13 tecken)",
+      "is_available_in_reference": true
+    },
+    "deliveryName": {
+      "tab": "Leveransadress",
+      "type": "string",
+      "localized_name": "Företagsnamn  (t.ex. \"Restaurang Morten\" el. \"ICA Nära\")",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryAddress": {
+      "tab": "Leveransadress",
+      "type": "string",
+      "localized_name": "Adress",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryAddress2": {
+      "tab": "Leveransadress",
+      "type": "string",
+      "localized_name": "Adress 2",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryCity": {
+      "tab": "Leveransadress",
+      "type": "string",
+      "localized_name": "Stad",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryCountry": {
+      "tab": "Detaljer",
+      "include": "restricted_values/country_codes",
+      "localized_name": "Land",
+      "is_available_in_reference": true
+    },
+    "invoiceAddress": {
+      "tab": "Fakturering",
+      "type": "string",
+      "localized_name": "Adress",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceAddress2": {
+      "tab": "Fakturering",
+      "type": "string",
+      "localized_name": "Adress 2",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceCity": {
+      "tab": "Fakturering",
+      "type": "string",
+      "localized_name": "Stad",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceZipCode": {
+      "tab": "Fakturering",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "max_length": 10,
+      "is_available_in_reference": true
+    },
+    "invoiceCountry": {
+      "tab": "Fakturering",
+      "include": "restricted_values/country_codes",
+      "localized_name": "Fakturaadress land",
+      "is_available_in_reference": true
+    },
+    "termsOfPayment": {
+      "tab": "Detaljer",
+      "include": "restricted_values/terms_of_payments",
+      "description": "Must have a value if not readonly else fortnox bails",
+      "localized_name": "Betalningsvillkor",
+      "max_length": 2,
+      "is_available_in_reference": true
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Organisationsnummer",
+      "max_length": 255,
+      "is_available_in_reference": true
+    }
+  },
+  "actions": {},
+  "listeners": {
+    "\"SUPPLIER_CUSTOMER_*\"": {
+      "name": "SUPPLIER_CUSTOMER_",
+      "reactions": ["upsertSupplierCustomerInOmsService"]
+    }
+  },
+  "events": {
+    "SUPPLIER_CUSTOMER_IN_OMS_SERVICE_CREATED": {
+      "localized_name": "oms supplier-customer created",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+    "SUPPLIER_CUSTOMER_IN_OMS_SERVICE_UPDATED": {
+      "localized_name": "oms supplier-customer updated",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  }
+}

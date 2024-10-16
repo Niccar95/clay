@@ -1,0 +1,946 @@
+{
+  "name": "customerSubUnit",
+  "localized_name": "konsument",
+  "description": "restaurang, cafe, hotell, kontor, daglivaruhandel, gym",
+  "alias": ["mottagare", "beställare", "slutkund", "köpare"],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["supplier"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {
+    "nrOfContacts": {
+      "selfContainedQuery": "COALESCE((SELECT COUNT(\"customerSubUnitContacts\".\"id\") FROM \"customerSubUnitContacts\" WHERE \"customerSubUnitContacts\".\"customerSubUnitId\" = ${globals.tableName}.id and (\"customerSubUnitContacts\".\"owner\" = '${globals.sessionUserOrganizationId}' OR ${globals.isSuper})), 0)",
+      "type": "number",
+      "localized_name": "Antal kontakter",
+      "only_available_in_list": true,
+      "roles_for_read": ["supplier", "super"]
+    }
+  },
+  "children": {
+    "customerSubUnitContacts": {
+      "localized_name": "Kontakter",
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "customerSubUnitContacts",
+      "linkedActions": {
+        "removeContact": {
+          "icon": "trash"
+        },
+        "writeContact": {
+          "icon": "edit"
+        }
+      },
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Kundreferens",
+          "required": true,
+          "max_length": 50,
+          "is_available_in_reference": true
+        },
+        "email": {
+          "tab": "Detaljer",
+          "type": "email",
+          "localized_name": "E-post",
+          "required": false,
+          "max_length": 255,
+          "is_available_in_reference": true
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Telefon",
+          "required": false,
+          "max_length": 255,
+          "is_available_in_reference": true
+        },
+        "owner": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Ägande organisation",
+          "max_length": 255
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+
+    "customerNumber": {
+      "tab": "Detaljer",
+      "namespace": "Detaljer",
+      "fortnox_equivalent": "CustomerNumber",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Flaivys kundnummer",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "unique": true
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "required_in_ui": true,
+      "default": "'SEK'",
+      "is_available_in_reference": true
+    },
+    "supplier": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplier",
+      "localized_name": "Bunden till leverantör",
+      "readonly_in_ui": false,
+      "required": false
+    },
+    "deliveryCountry": {
+      "tab": "Detaljer",
+      "include": "restricted_values/country_codes",
+      "fortnox_equivalent": "DeliveryCountryCode",
+      "localized_name": "Land",
+      "required": false,
+      "required_in_ui": true,
+      "default": "'SE'",
+      "is_available_in_reference": true
+    },
+    "chain": {
+      "tab": "Detaljer",
+      "type": "pipeString",
+      "localized_name": "Kedja",
+      "required": false,
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "customerType": {
+      "tab": "Detaljer",
+      "include": "restricted_values/customer_types",
+      "description": "kundtyp",
+      "localized_name": "Kundtyp",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "name": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "fortnox_equivalent": "Name",
+      "type": "string",
+      "localized_name": "Företagsnamn på faktura",
+      "required": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "fortnox_equivalent": "OrganisationNumber",
+      "type": "string",
+      "localized_name": "Organisationsnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "display_if": "entity.deliveryCountry === 'SE'",
+      "is_available_in_reference": true
+    },
+    "yourReference": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "YourReference",
+      "type": "string",
+      "localized_name": "Kundreferens",
+      "required_in_ui": true,
+      "max_length": 50,
+      "roles_for_read": ["super"]
+    },
+    "email": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Email",
+      "type": "email",
+      "localized_name": "Kundens e-post (används för orderbekräftelse)",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"]
+    },
+    "phone": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Phone1",
+      "type": "string",
+      "localized_name": "Telefon",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": ["super"]
+    },
+    "termsOfPayment": {
+      "tab": "Detaljer",
+      "include": "restricted_values/terms_of_payments",
+      "description": "Must have a value if not readonly else fortnox bails",
+      "localized_name": "Betalningsvillkor",
+      "required": false,
+      "max_length": 2,
+      "fortnox_equivalent": "TermsOfPayment"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Active",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "max_length": 255,
+      "default": true
+    },
+    "storeNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "max_length": 255,
+      "localized_name": "Butiksnummer",
+      "is_available_in_reference": true
+    },
+    "GLN": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "GLN",
+      "type": "GLN",
+      "max_length": 255,
+      "localized_name": "GLN-nummer för fakturering",
+      "is_available_in_reference": true
+    },
+    "invoiceDeliveryType": {
+      "tab": "Fakturering",
+      "type": "enum",
+      "values": [
+        {
+          "key": "PRINT",
+          "label": "Utskrift"
+        },
+        {
+          "key": "EMAIL",
+          "label": "E-post"
+        },
+        {
+          "key": "ELECTRONICINVOICE",
+          "label": "E-faktura"
+        }
+      ],
+      "default": "'EMAIL'",
+      "is_available_in_reference": true,
+      "description": "derived from fortnox",
+      "localized_name": "Fakturaleveranssätt",
+      "required_in_ui": true
+    },
+    "emailInvoice": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "EmailInvoice",
+      "type": "email",
+      "localized_name": "E-post för faktura",
+      "required": false,
+      "max_length": 255,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "display_if": "entity.invoiceDeliveryType === 'EMAIL'",
+      "roles_for_read": ["super"]
+    },
+    "invoiceAddress": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "Address1",
+      "type": "string",
+      "localized_name": "Adress",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceAddress2": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "Address2",
+      "type": "string",
+      "localized_name": "Adress 2",
+      "required_in_ui": false,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceZipCode": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "ZipCode",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "required_in_ui": true,
+      "max_length": 10,
+      "is_available_in_reference": true
+    },
+    "invoiceCity": {
+      "tab": "Fakturering",
+      "fortnox_equivalent": "City",
+      "type": "string",
+      "localized_name": "Stad",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "max_length": 255
+    },
+    "approvedCustomer": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "State to see if this customer is legit or not",
+      "localized_name": "Godkänd kund",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "blocked": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Kund har köpstopp",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "blockedReason": {
+      "tab": "Fakturering",
+      "type": "string",
+      "description": "",
+      "localized_name": "Anledning till köpstopp",
+      "max_length": 255
+    },
+    "requiresGroupInvoice": {
+      "tab": "Fakturering",
+      "type": "boolean",
+      "description": "True if this customer should recieve grouped invoices",
+      "localized_name": "Samlingsfaktura",
+      "is_available_in_reference": true
+    },
+    "invoiceCountry": {
+      "tab": "Fakturering",
+      "include": "restricted_values/country_codes",
+      "fortnox_equivalent": "CountryCode",
+      "localized_name": "Fakturaadress land",
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "deliveryName": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryName",
+      "type": "string",
+      "localized_name": "Företagsnamn  (t.ex. \"Restaurang Morten\" el. \"ICA Nära\")",
+      "required_in_ui": true,
+      "max_length": 255,
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "deliveryAddress": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryAddress1",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Adress",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryAddress2": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryAddress2",
+      "type": "string",
+      "localized_name": "Adress 2",
+      "required_in_ui": false,
+      "max_length": 255
+    },
+    "deliveryZipCode": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryZipCode",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "max_length": 10
+    },
+    "deliveryCounty": {
+      "tab": "Leverans",
+      "include": "restricted_values/delivery_countries",
+      "localized_name": "Län",
+      "required": false,
+      "readonly": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "deliveryCity": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryCity",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Stad",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryPhone": {
+      "tab": "Leveransadress",
+      "fortnox_equivalent": "DeliveryPhone1",
+      "type": "string",
+      "localized_name": "Leveranstelefon",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"]
+    },
+    "deliveryDays": {
+      "tab": "Leveransadress",
+      "type": "openingHours",
+      "localized_name": "Leveransdagar",
+      "required": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "deliveryGLN": {
+      "tab": "Leveransadress",
+      "type": "GLN",
+      "max_length": 255,
+      "localized_name": "GLN-nummer för leverans",
+      "is_available_in_reference": true
+    },
+    "hasAlcoholPermit": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Har bekräftat alkoholtillstånd",
+      "is_available_in_reference": true
+    },
+    "needSpecialHandling": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Behöver specialhantering kring order",
+      "is_available_in_reference": true
+    },
+    "exciseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Punktskattenummer (13 tecken)",
+      "is_available_in_reference": true
+    },
+    "taxWarehouseNumber": {
+      "tab": "Detaljer",
+      "type": "taxNumber",
+      "localized_name": "Skatteupplagsnummer (13 tecken)",
+      "is_available_in_reference": true
+    },
+    "restaurantNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Restaurangnummer (8 tecken)",
+      "max_length": 8,
+      "display_if": "entity.customerType === 'horeca'"
+    },
+    "delphiCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kod i Delphiregistret"
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Identitet i Qvanti",
+      "unique_when": {
+        "active": true,
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "actions": {
+    "writeCustomerSubUnit": {
+      "name": "writeCustomerSubUnit",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skapa kund",
+      "submitButtonText": "Spara",
+      "canCreate": true,
+      "availableForCustomer": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "includeParameters": [
+          "name",
+          "deliveryCountry",
+          "organisationNumber",
+          "customerType",
+          "chain",
+          "yourReference",
+          "phone",
+          "email",
+          "invoiceDeliveryType",
+          "emailInvoice",
+          "GLN",
+          "invoiceAddress",
+          "invoiceAddress2",
+          "invoiceZipCode",
+          "invoiceCity",
+          "invoiceCountry",
+          "deliveryName",
+          "deliveryAddress",
+          "deliveryZipCode",
+          "deliveryCity",
+          "deliveryCountry",
+          "storeNumber",
+          "restaurantNumber"
+        ]
+      }
+    },
+    "changeDeliveryDetails": {
+      "name": "changeDeliveryDetails",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "availableForCustomer": true,
+      "localized_name": "Uppdatera leveransuppgifter",
+      "description": "uppdatera med begränsade fält",
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "deliveryName",
+          "deliveryAddress",
+          "deliveryZipCode",
+          "deliveryCity",
+          "deliveryCountry",
+          "deliveryDays"
+        ]
+      }
+    },
+    "changeInvoiceDetails": {
+      "name": "changeInvoiceDetails",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "availableForCustomer": true,
+      "localized_name": "Uppdatera fakturauppgifter",
+      "description": "uppdatera med begränsade fält",
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "invoiceDeliveryType",
+          "emailInvoice",
+          "GLN",
+          "invoiceAddress",
+          "invoiceAddress2",
+          "invoiceZipCode",
+          "invoiceCity",
+          "invoiceCountry"
+        ]
+      }
+    },
+    "approveCustomerSubUnit": {
+      "name": "approveCustomerSubUnit",
+      "localized_name": "Godkänn kund",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "hasAlcoholPermit": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Har alkoholtillstånd"
+        },
+        "addressOk": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Kontrollerat addresser",
+          "required": true
+        },
+        "okCreditScore": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Har kreditvärdighet?",
+          "required": true
+        }
+      }
+    },
+    "blockCustomerSubUnit": {
+      "name": "blockCustomerSubUnit",
+      "localized_name": "Blocka kund från köp",
+      "requiredRole": ["super"],
+      "color": "danger",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "blockedReason": {
+          "linked_field": "blockedReason"
+        }
+      }
+    },
+    "unblockCustomerSubUnit": {
+      "name": "unblockCustomerSubUnit",
+      "localized_name": "Tillåt kund att köpa",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "setCustomerType": {
+      "name": "setCustomerType",
+      "localized_name": "Sätt kundtyp",
+      "requiredRole": ["super", "supplier"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "customerType": {
+          "linked_field": "customerType"
+        },
+        "supplier": {
+          "linked_field": "supplier",
+          "display_if": "entity.customerType === 'supplier'"
+        }
+      }
+    },
+    "requestNewInvoiceInformation": {
+      "name": "requestNewInvoiceInformation",
+      "localized_name": "Förfrågan att ändra faktureringsuppgifter",
+      "describe": "Skickar en förfrågan om att ändra faktureringsuppgifterna för denna kund. Ändringen kommer synas först när den är godkänd.",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "availableForCustomer": true,
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "invoiceDeliveryType",
+          "emailInvoice",
+          "invoiceAddress",
+          "invoiceAddress2",
+          "invoiceZipCode",
+          "invoiceCity",
+          "invoiceCountry"
+        ]
+      }
+    },
+    "writeContact": {
+      "name": "writeContact",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "availableForCustomer": true,
+      "localized_name": "Lägg till / ändra",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "localized_name": "id",
+          "required": true
+        },
+        "childId": {
+          "type": "string",
+          "tab": "Detaljer",
+          "localized_name": "kontaktid"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Kundreferens",
+          "required": true,
+          "max_length": 50
+        },
+        "email": {
+          "tab": "Detaljer",
+          "type": "email",
+          "localized_name": "E-post",
+          "max_length": 255
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Telefon",
+          "max_length": 255
+        },
+        "owner": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Ägare",
+          "max_length": 255,
+
+          "display_if": "false"
+        }
+      }
+    },
+    "writeContactAndInvite": {
+      "name": "writeContactAndInvite",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Lägg till / ändra",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "localized_name": "id",
+          "required": true
+        },
+        "childId": {
+          "type": "string",
+          "tab": "Detaljer",
+          "localized_name": "kontaktid"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Kundreferens",
+          "required": true,
+          "max_length": 50
+        },
+        "email": {
+          "tab": "Detaljer",
+          "type": "email",
+          "localized_name": "E-post",
+          "max_length": 255
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Telefon",
+          "max_length": 255
+        },
+        "owner": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Ägare",
+          "max_length": 255,
+
+          "display_if": "false"
+        }
+      }
+    },
+    "removeContact": {
+      "name": "removeContact",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ta bort kontakt",
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "color": "danger",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "localized_name": "id",
+          "required": true
+        },
+        "childId": {
+          "type": "string",
+          "tab": "Detaljer",
+          "localized_name": "kontaktid"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Kundreferens",
+          "required": true,
+          "readonly": true,
+          "max_length": 50,
+
+          "ui_only": true
+        }
+      }
+    },
+    "setExternalCustomerNumber": {
+      "name": "setExternalCustomerNumber",
+      "snowflakeAccessControlPattern": true,
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ange ert kundnummer",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "localized_name": "id",
+          "required": true
+        },
+        "organizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Organisationsid",
+          "required": true
+        },
+        "externalCustomerNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Ert kundnummer",
+          "required": true
+        }
+      }
+    },
+    "markAsDuplicateOf": {
+      "name": "markAsDuplicateOf",
+      "requiredRole": ["super"],
+      "color": "danger",
+      "localized_name": "Markera som dubblett av",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "masterCustomerSubUnit": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "customerSubUnit",
+          "localized_name": "Flytta allt till denna kund",
+          "required": true,
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "ensureInvariants": {
+      "name": "ensureInvariants",
+      "requiredRole": ["super"],
+      "localized_name": "säkerställ invarianter",
+      "description": "Stöd action för att kontrollera och fixa eventuella problem som kan uppstå i kunden.",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "connectToQvanti": {
+      "name": "connectToQvanti",
+      "requiredRole": ["super"],
+      "localized_name": "Koppla till Qvanti",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "qvantiId": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Identitet i Qvanti",
+          "required": true,
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "disconnectFromQvanti": {
+      "name": "disconnectFromQvanti",
+      "requiredRole": ["super"],
+      "localized_name": "Koppla bort från Qvanti",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "customerIsTagged": {
+      "name": "customerIsTagged",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Är kund taggad",
+      "parameters": {
+        "customerSubUnitId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "KundId",
+          "required": true
+        },
+        "supplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Organisationsid",
+          "required": true
+        },
+        "date": {
+          "tab": "Detaljer",
+          "type": "date",
+          "localized_name": "",
+          "required": true
+        },
+        "excludeOrderId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Order att exkludera",
+          "required": true
+        }
+      }
+    }
+  },
+  "listeners": {
+    "CUSTOMER_SUB_UNIT_UPDATED": {
+      "name": "CUSTOMER_SUB_UNIT_UPDATED",
+      "reactions": ["updateActiveOrders"]
+    }
+  },
+  "events": {
+    "CUSTOMER_SUB_UNIT_UPDATED": {
+      "localized_name": "Kund uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_DELIVERY_DETAILS_CHANGED": {
+      "localized_name": "Kundens leveransuppgifter uppdaterade",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_INVOICE_DETAILS_CHANGED": {
+      "localized_name": "Kundens fakturauppgifter uppdaterade",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_CONTACTS_UPDATED": {
+      "localized_name": "Kundkontakter uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_CREATED": {
+      "localized_name": "Kund skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_APPROVED": {
+      "localized_name": "Kund godkänd",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_BLOCKED": {
+      "localized_name": "Kund blockerad från köp",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_MERGED": {
+      "localized_name": "Kund ihopslagen",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_MARKED_AS_DUPLICATE": {
+      "localized_name": "Kund markerad som dubblett",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_UNBLOCKED": {
+      "localized_name": "Kund har fått tillbaka rätten att beställa",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_INVOICE_INFO_CHANGE_REQUESTED": {
+      "localized_name": "Begärts ändring av kunds faktureringsuppgifter",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_SET_EXTERNAL_CUSTOMER_NUMBER": {
+      "localized_name": "Externt kundnummer knutet till kunden",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_CONNECTED_TO_QVANTI": {
+      "localized_name": "Kund kopplad till Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CUSTOMER_SUB_UNIT_DISCONNECTED_FROM_QVANTI": {
+      "localized_name": "Kund bortkopplad från Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  }
+}

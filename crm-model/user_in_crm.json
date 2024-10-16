@@ -1,0 +1,43 @@
+{
+  "name": "userInCrm",
+  "localized_name": "Användare i crm",
+  "description": "",
+  "mixin": ["default_actions", "linked_fields"],
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "ePost",
+      "searchable": true,
+      "required": true,
+      "unique": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "USER_IN_CRM_UPDATED": {
+      "localized_name": "Användaren uppdaterades",
+      "should_inform_service": false,
+      "should_inform_user": true
+    },
+    "USER_IN_CRM_CREATED": {
+      "localized_name": "Användaren skapades",
+      "should_inform_service": false,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {
+    "\"USER_*\"": {
+      "name": "USER_",
+      "reactions": ["upsertUserInCrm"]
+    }
+  },
+  "actions": {}
+}

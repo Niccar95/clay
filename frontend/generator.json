@@ -1,0 +1,225 @@
+{
+  "partials": [
+    "partials/form-fields.js",
+    "partials/form-input.js",
+    "partials/filter-input.js",
+    "partials/detail-fields.js"
+  ],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "components/action-forms/",
+      "target": "admin/components/action-forms/{{kebabCase clay_parent.clay_parent.name}}/",
+      "select": "$.model.types.*.actions.*"
+    },
+    {
+      "generate": "components/index/",
+      "target": "admin/components/action-forms/{{kebabCase name}}/",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "pages/index.jsx",
+      "target": "admin/pages/app/{{kebabCase (pluralize name)}}",
+      "touch": true,
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "pages/[id]/index.jsx",
+      "target": "admin/pages/app/{{kebabCase (pluralize name)}}/[id]/",
+      "touch": true,
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "pages/[id]/edit.jsx",
+      "target": "admin/pages/app/{{kebabCase (pluralize name)}}/[id]/",
+      "touch": true,
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/selects/",
+      "target": "admin/components/inputs/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/views/",
+      "target": "admin/components/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/lists/",
+      "target": "admin/components/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/{{pascalCase name}}Card.jsx",
+      "target": "admin/components/{{kebabCase name}}",
+      "touch": true,
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/inputs/{{pascalCase clay_parent.clay_parent.clay_parent.clay_parent.name}}{{pascalCase clay_parent.clay_key}}{{pascalCase name}}Input.jsx",
+      "target": "admin/components/inputs/generated",
+      "select": "$.model.types[*].actions[*].parameters[?(@.type==\"array\")]"
+    },
+    {
+      "generate": "reducers",
+      "target": "admin/shared/reducers/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "actions",
+      "target": "admin/shared/actions/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "actions",
+      "target": "shop/shared/actions/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/action-forms/",
+      "target": "purchasing/components/action-forms/{{kebabCase clay_parent.clay_parent.name}}/",
+      "select": "$.model.types[*].actions[?(@.availableForCustomer)]"
+    },
+    {
+      "generate": "components/shop-index/",
+      "target": "purchasing/components/action-forms/{{kebabCase name}}/",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/selects/",
+      "target": "purchasing/components/inputs/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/views/",
+      "target": "purchasing/components/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/lists/",
+      "target": "purchasing/components/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/{{pascalCase name}}Card.jsx",
+      "target": "purchasing/components/{{kebabCase name}}",
+      "touch": true,
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/inputs/{{pascalCase clay_parent.clay_parent.clay_parent.clay_parent.name}}{{pascalCase clay_parent.clay_key}}{{pascalCase name}}Input.jsx",
+      "target": "purchasing/components/inputs/generated",
+      "select": "$.model.types[*].actions[?(@.availableForCustomer)].parameters[?(@.type==\"array\")]"
+    },
+    {
+      "generate": "reducers",
+      "target": "purchasing/shared/reducers/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "actions",
+      "target": "purchasing/shared/actions/generated",
+      "select": "$.model.types.*"
+    },
+    {
+      "copy": "components/charts/ListReport.jsx",
+      "target": "purchasing/components/charts"
+    },
+    {
+      "copy": "components/charts/ListReport.jsx",
+      "target": "admin/components/charts"
+    },
+    {
+      "copy": "components/ExcelCreationButtons.jsx",
+      "target": "admin/components"
+    },
+    {
+      "copy": "components/ExcelCreationButtons.jsx",
+      "target": "purchasing/components"
+    },
+    {
+      "generate": "components/action-forms/",
+      "target": "shop/components/action-forms/{{kebabCase clay_parent.clay_parent.name}}/",
+      "select": "$.model.types[*].actions[?(@.availableForCustomer)]"
+    },
+    {
+      "generate": "components/shop-index/",
+      "target": "shop/components/action-forms/{{kebabCase name}}/",
+      "select": "$.model.types.*"
+    },
+    {
+      "generate": "components/inputs/{{pascalCase clay_parent.clay_parent.clay_parent.clay_parent.name}}{{pascalCase clay_parent.clay_key}}{{pascalCase name}}Input.jsx",
+      "target": "shop/components/inputs/generated",
+      "select": "$.model.types[*].actions[?(@.availableForCustomer)].parameters[?(@.type==\"array\")]"
+    },
+
+    {
+      "generate": "components/lists/",
+      "target": "admin/components/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "components/{{pascalCase name}}Card.jsx",
+      "target": "admin/components/{{kebabCase name}}",
+      "touch": true,
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "reducers",
+      "target": "admin/shared/reducers/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "actions",
+      "target": "admin/shared/actions/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "actions",
+      "target": "shop/shared/actions/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "components/lists/",
+      "target": "purchasing/components/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "components/{{pascalCase name}}Card.jsx",
+      "target": "purchasing/components/{{kebabCase name}}",
+      "touch": true,
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "reducers",
+      "target": "purchasing/shared/reducers/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "actions",
+      "target": "purchasing/shared/actions/generated",
+      "select": "$.model.projections.*"
+    },
+    {
+      "generate": "datalayer/",
+      "target": "admin/datalayer",
+      "select": "$.model"
+    },
+    {
+      "generate": "datalayer/",
+      "target": "purchasing/datalayer",
+      "select": "$.model"
+    },
+    {
+      "generate": "datalayer/",
+      "target": "shop/datalayer",
+      "select": "$.model"
+    },
+    {
+      "generate": "parameters/{{clay_parent.name}}.actionParameters.ts",
+      "target": "admin/pages/app/import/validation",
+      "select": "$.model"
+    }
+  ]
+}

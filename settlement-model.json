@@ -1,0 +1,38 @@
+{
+  "name": "settlement",
+  "generators": [
+    {
+      "generator": "clay-generator-model-documentation",
+      "output": "docs"
+    },
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/settlement/dataaccess"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/settlement"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/default_actions.mixin.js" },
+    { "include": "mixins/linked_fields.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "settlement-models/copackAgreement.json" },
+      { "include": "settlement-models/orderBrokerageAgreement.json" },
+      { "include": "settlement-models/entitySettlement.json" },
+      { "include": "settlement-models/settlement.json" }
+    ]
+  }
+}

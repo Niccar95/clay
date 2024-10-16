@@ -1,0 +1,873 @@
+{
+  "name": "shopUser",
+  "localized_name": "Användare",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "email",
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet"
+    },
+    "firstName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Förnamn",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "lastName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Efternamn",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "phone": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Telefon",
+      "max_length": 255,
+      "required": false
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "Epost",
+      "is_available_in_reference": true,
+      "required": true,
+      "unique_with": ["shopConfigId"]
+    },
+    "password": {
+      "tab": "Detaljer",
+      "type": "password",
+      "localized_name": "Lösenord",
+      "roles_for_read": ["system"],
+      "min_length": 6,
+      "required": false
+    },
+    "customerSubUnitId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Centralt Kund-Id",
+      "roles_for_read": ["super"]
+    },
+    "supplierCustomerId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Leverantörs Kund-Id"
+    },
+    "shopConfigId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Shop id"
+    },
+    "forgotPasswordToken": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Glömt Lösen Token",
+      "roles_for_read": ["system"]
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    },
+    "emailVerificationToken": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Epost verifikations token",
+      "roles_for_read": ["system"]
+    },
+    "hasVerifiedEmail": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Verifierad epost",
+      "is_available_in_reference": true
+    },
+    "approved": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Godkänd",
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "is_available_in_reference": true,
+      "localized_name": "Aktiv"
+    },
+    "deactivationComment": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Inaktiveringskommentar",
+      "is_available_in_reference": true,
+      "display_if": "entity.active === false"
+    }
+  },
+  "events": {
+    "SHOP_USER_UPDATED": {
+      "localized_name": "Kundinlogg uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_CREATED": {
+      "localized_name": "Kundinlogg skapdes",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_APPROVED": {
+      "localized_name": "Kundinlogg godkänt",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_DISAPPROVED": {
+      "localized_name": "Kundinlogg icke godkänt",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_ACTIVATED": {
+      "localized_name": "Kundkonto aktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_DEACTIVATED": {
+      "localized_name": "Kundkonto inaktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_EMAIL_VERIFIED": {
+      "localized_name": "Kundens epost verifierad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_SENT_FORGOT_PASSWORD_LINK": {
+      "localized_name": "Skickat lösenordsåterställningsmail",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_PASSWORD_CHANGED": {
+      "localized_name": "Bytt lösenord",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_USER_SUPPLIER_CUSTOMER_CHANGED": {
+      "localized_name": "Bytt vilken kund inloggningen är kopplad till",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "registerWithNewCustomerSubUnit": {
+      "name": "registerWithNewCustomerSubUnit",
+      "localized_name": "Registrera användare",
+      "availableForCustomer": true,
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "linked_field": "email"
+        },
+        "password": {
+          "linked_field": "password",
+          "required": true
+        },
+        "repeatPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Upprepa Lösenord",
+          "require_repeat_of": "password",
+          "required": false,
+          "required_in_ui": true
+        },
+        "firstName": {
+          "linked_field": "firstName",
+          "max_length": 24
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "max_length": 24
+        },
+        "phone": {
+          "linked_field": "phone"
+        },
+        "customerSubUnitName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Företagsnamn",
+          "required": true,
+          "max_length": 255
+        },
+        "organisationNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Organisationsnummer",
+          "required": true
+        },
+        "invoiceDeliveryType": {
+          "tab": "Fakturering",
+          "type": "enum",
+          "values": [
+            {
+              "key": "PRINT",
+              "label": "Utskrift"
+            },
+            {
+              "key": "EMAIL",
+              "label": "E-post"
+            },
+            {
+              "key": "ELECTRONICINVOICE",
+              "label": "E-faktura"
+            }
+          ],
+          "default": "'EMAIL'",
+          "required_in_ui": true,
+          "localized_name": "Fakturaleveranssätt"
+        },
+        "emailInvoice": {
+          "tab": "Fakturering",
+          "localized_name": "E-post för faktura",
+          "type": "email"
+        },
+        "invoiceAddress": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Adress",
+          "required": true
+        },
+        "invoiceZipCode": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required": true,
+          "max_length": 10
+        },
+        "invoiceCity": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Stad",
+          "required": true
+        },
+        "deliveryName": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Name",
+          "required": true
+        },
+        "deliveryAddress": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Adress",
+          "required": true
+        },
+        "deliveryZipCode": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required": true,
+          "max_length": 10
+        },
+        "deliveryCity": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Stad",
+          "required": true
+        },
+        "confirmTerms": {
+          "tab": "Slutligen",
+          "type": "confirm",
+          "ui_only": true,
+          "localized_name": "Godkänn",
+          "helpLinkText": "Köpvillkor",
+          "helpLink": "/generalTerms"
+        }
+      }
+    },
+    "registerWithExistingCustomerSubUnit": {
+      "name": "registerWithExistingCustomerSubUnit",
+      "localized_name": "Registrera användare",
+      "availableForCustomer": true,
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "firstName": {
+          "linked_field": "firstName",
+          "max_length": 24
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "max_length": 24
+        },
+        "phone": {
+          "linked_field": "phone"
+        },
+        "email": {
+          "linked_field": "email"
+        },
+        "customerSubUnitId": {
+          "linked_field": "customerSubUnitId",
+          "required": true
+        },
+
+        "password": {
+          "linked_field": "password",
+          "required": true
+        },
+        "repeatPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+
+          "localized_name": "Upprepa Lösenord",
+          "require_repeat_of": "password",
+          "required": false,
+          "required_in_ui": true
+        },
+        "confirmTerms": {
+          "tab": "Slutligen",
+          "type": "confirm",
+          "ui_only": true,
+          "localized_name": "Godkänn",
+          "helpLinkText": "Köpvillkor",
+          "helpLink": "/generalTerms"
+        }
+      }
+    },
+    "registerWithNewSupplierCustomer": {
+      "name": "registerWithNewSupplierCustomer",
+      "localized_name": "Registrera kundanvändare",
+      "availableForCustomer": true,
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "linked_field": "email"
+        },
+        "password": {
+          "linked_field": "password",
+          "required": true
+        },
+        "repeatPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Upprepa Lösenord",
+          "require_repeat_of": "password",
+          "required": false,
+          "required_in_ui": true
+        },
+        "firstName": {
+          "linked_field": "firstName",
+          "max_length": 24
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "max_length": 24
+        },
+        "phone": {
+          "linked_field": "phone"
+        },
+        "supplierCustomerName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Företagsnamn",
+          "required": true,
+          "max_length": 255
+        },
+        "organisationNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+
+          "localized_name": "Organisationsnummer",
+          "required": true
+        },
+
+        "invoiceDeliveryType": {
+          "tab": "Fakturering",
+          "type": "enum",
+          "values": [
+            {
+              "key": "PRINT",
+              "label": "Utskrift"
+            },
+            {
+              "key": "EMAIL",
+              "label": "E-post"
+            },
+            {
+              "key": "ELECTRONICINVOICE",
+              "label": "E-faktura"
+            }
+          ],
+          "default": "'EMAIL'",
+          "required_in_ui": true,
+          "localized_name": "Fakturaleveranssätt"
+        },
+        "emailInvoice": {
+          "tab": "Fakturering",
+          "localized_name": "E-post för faktura",
+          "type": "email"
+        },
+        "invoiceAddress": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Adress",
+          "required": true
+        },
+        "invoiceZipCode": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required": true,
+          "max_length": 10
+        },
+        "invoiceCity": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Stad",
+          "required": true
+        },
+        "deliveryName": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Name",
+          "required": true
+        },
+        "deliveryAddress": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Adress",
+          "required": true
+        },
+        "deliveryZipCode": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required": true,
+          "max_length": 10
+        },
+        "deliveryCity": {
+          "tab": "Leverans",
+          "type": "string",
+          "localized_name": "Stad",
+          "required": true
+        },
+        "confirmTerms": {
+          "tab": "Slutligen",
+          "type": "confirm",
+          "ui_only": true,
+          "localized_name": "Godkänn",
+          "helpLinkText": "Köpvillkor",
+          "helpLink": "/general-terms"
+        }
+      }
+    },
+    "registerWithExistingSupplierCustomer": {
+      "name": "registerWithExistingSupplierCustomer",
+      "localized_name": "Registrera kundanvändare",
+      "availableForCustomer": true,
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "firstName": {
+          "linked_field": "firstName",
+          "max_length": 24
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "max_length": 24
+        },
+        "phone": {
+          "linked_field": "phone"
+        },
+        "email": {
+          "linked_field": "email"
+        },
+        "supplierCustomerId": {
+          "linked_field": "supplierCustomerId",
+          "required": true
+        },
+        "password": {
+          "linked_field": "password",
+          "required": true
+        },
+        "repeatPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+
+          "localized_name": "Upprepa Lösenord",
+          "require_repeat_of": "password",
+          "required": false,
+          "required_in_ui": true
+        },
+        "confirmTerms": {
+          "tab": "Slutligen",
+          "type": "confirm",
+          "ui_only": true,
+          "localized_name": "Godkänn",
+          "helpLinkText": "Köpvillkor",
+          "helpLink": "/generalTerms"
+        }
+      }
+    },
+    "registerThroughInvite": {
+      "name": "registerThroughInvite",
+      "localized_name": "Registrera användare med inbjudan",
+      "availableForCustomer": true,
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "firstName": {
+          "linked_field": "firstName",
+          "max_length": 24
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "max_length": 24
+        },
+        "phone": {
+          "linked_field": "phone"
+        },
+        "email": {
+          "linked_field": "email"
+        },
+        "customerSubUnitId": {
+          "linked_field": "customerSubUnitId"
+        },
+        "supplierCustomerId": {
+          "linked_field": "supplierCustomerId"
+        },
+        "shopConfig": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "shopConfig",
+          "referenceDomain": "supplier-gateway",
+          "description": "Webbshop Konfiguration",
+          "localized_name": "Webbshop Konfiguration"
+        },
+        "password": {
+          "linked_field": "password",
+          "required": true
+        }
+      }
+    },
+    "login": {
+      "name": "login",
+      "localized_name": "Logga in",
+      "availableForCustomer": true,
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "linked_field": "email"
+        },
+        "password": {
+          "linked_field": "password",
+          "required": false
+        }
+      }
+    },
+    "changeActiveMembership": {
+      "name": "changeActiveMembership",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "endCustomerOrganizationMembershipId": {
+          "type": "string",
+          "required": "true",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "me": {
+      "name": "me",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {}
+    },
+    "restaurantReport": {
+      "name": "restaurantReport",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaser"
+      ],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "range": {
+          "type": "object",
+          "required": "true",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "changePassword": {
+      "name": "changePassword",
+      "submitButtonText": "Ändra lösenord",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaser"
+      ],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "password": {
+          "linked_field": "password",
+          "required": true
+        },
+        "newPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Nytt Lösenord",
+          "min_length": 6,
+          "default": "''"
+        },
+        "repeatNewPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Upprepa nytt lösenord",
+          "require_repeat_of": "newPassword",
+          "required": false,
+          "required_in_ui": true,
+          "default": "''"
+        }
+      }
+    },
+    "sendForgotPasswordLink": {
+      "name": "sendForgotPasswordLink",
+      "requiredRole": [],
+      "availableForCustomer": true,
+      "localized_name": "Skicka glömt lösenords länk",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "linked_field": "email",
+          "required": true
+        },
+        "shopConfigId": {
+          "linked_field": "shopConfigId",
+          "display_if": "false"
+        }
+      }
+    },
+    "restorePassword": {
+      "name": "restorePassword",
+      "requiredRole": [],
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "password": {
+          "linked_field": "password",
+          "required": false
+        },
+        "token": {
+          "required": true,
+          "tab": "Detaljer",
+          "type": "string"
+        }
+      }
+    },
+    "validatePasswordToken": {
+      "name": "validatePasswordToken",
+      "requiredRole": [],
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "token": {
+          "required": true,
+          "tab": "Detaljer",
+          "type": "string"
+        }
+      }
+    },
+
+    "updateMe": {
+      "name": "updateMe",
+      "requiredRole": [
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaser"
+      ],
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Redigera dig själv",
+      "description": "Uppdatera dina uppgifter",
+      "parameters": {
+        "phone": {
+          "linked_field": "phone",
+          "required": false
+        },
+        "firstName": {
+          "linked_field": "firstName",
+          "required": false
+        },
+        "lastName": {
+          "linked_field": "lastName",
+          "required": false
+        }
+      }
+    },
+    "writeShopUser": {
+      "name": "writeShopUser",
+      "requiredRole": ["super"],
+      "localized_name": "Uppdatera användare",
+
+      "description": "upsert med begränsade fält",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["password", "forgotPasswordToken"]
+      }
+    },
+    "approve": {
+      "name": "approve",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Godkänn användare",
+      "availableIf": "!entity.approved",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        }
+      }
+    },
+    "disapprove": {
+      "name": "disapprove",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Underkänn användare",
+      "color": "danger",
+      "availableIf": "entity.approved",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        }
+      }
+    },
+    "verifyEmail": {
+      "name": "verifyEmail",
+      "requiredRole": [],
+      "localized_name": "Aktivera",
+      "availableForCustomer": true,
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "emailVerificationToken": {
+          "linked_field": "emailVerificationToken",
+          "required": true
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Aktivera",
+      "availableIf": "entity.active === false",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Spärra konto",
+      "color": "danger",
+      "availableIf": "entity.active",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "deactivationComment": {
+          "linked_field": "deactivationComment",
+          "required_in_ui": true
+        }
+      }
+    },
+    "changeCustomer": {
+      "name": "changeCustomer",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Byt kund inlogget är kopplat till",
+      "availableIf": "entity.active",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "supplierCustomer": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "supplierCustomer",
+          "referenceDomain": "crm",
+          "localized_name": "Kund",
+          "is_available_in_reference": true,
+          "required": true
+        }
+      }
+    },
+    "getCustomerForSessionUser": {
+      "name": "getCustomerForSessionUser",
+      "snowflakeAccessControlPattern": true,
+      "requiredRole": [
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "super"
+      ],
+      "localized_name": "Hämta kundinfo",
+      "parameters": {
+        "customerSubUnitId": {
+          "type": "string",
+          "tab": "Detaljer",
+          "required": false
+        },
+        "supplierCustomerId": {
+          "type": "string",
+          "tab": "Detaljer",
+          "required": false
+        }
+      }
+    }
+  },
+  "listeners": {
+    "SHOP_USER_CREATED": {
+      "name": "SHOP_USER_CREATED",
+      "reactions": ["alertStandAloneSupplier", "sendRegistrationEmail"]
+    }
+  }
+}

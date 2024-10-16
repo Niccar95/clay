@@ -1,0 +1,11 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    { "label": "Sverige", "value": "SE" },
+    { "label": "Finland", "value": "FI" },
+    { "label": "Norge", "value": "NO" },
+    { "label": "Danmark", "value": "DK" },
+    { "label": "Island", "value": "IS" }
+  ],
+  "max_length": 2
+}

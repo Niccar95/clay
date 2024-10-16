@@ -1,0 +1,371 @@
+{
+  "name": "shopConfig",
+  "localized_name": "Webbshop Konfiguration",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["organization"],
+  "defaultSimilaritySortField": "subdomain",
+  "children": {
+    "files": {
+      "localized_name": "Filer",
+      "tab": "Filer",
+      "type": "array",
+      "name": "files",
+      "actions": {},
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Filnamn",
+          "is_available_in_reference": true,
+          "required": true
+        },
+        "file": {
+          "tab": "Detaljer",
+          "type": "s3file",
+          "localized_name": "Fil",
+          "is_available_in_reference": true,
+          "required": true
+        }
+      }
+    },
+    "pages": {
+      "localized_name": "Sidor",
+      "tab": "Sidor",
+      "type": "array",
+      "name": "pages",
+      "actions": {},
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Sidnamn",
+          "is_available_in_reference": true,
+          "required": true
+        },
+        "type": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            { "label": "Landningssida", "value": "landingPage" },
+            { "label": "Kampanjsida", "value": "campaignPage" },
+            { "label": "Infosida", "value": "infoPage" },
+            { "label": "Dold sida", "value": "hiddenPage" }
+          ],
+          "description": "",
+          "localized_name": "Sidtyp",
+          "required": true,
+          "is_available_in_reference": true
+        },
+        "description": {
+          "tab": "Detaljer",
+          "type": "text",
+          "max_length": 255,
+          "localized_name": "Beskrivning i sökresultat",
+          "is_available_in_reference": false
+        },
+        "sortOrder": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Sidlist ordning",
+          "is_available_in_reference": true
+        },
+        "layout": {
+          "tab": "Detaljer",
+          "type": "pageLayout",
+          "localized_name": "Sidinnehåll",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "subdomain": {
+      "tab": "Detaljer",
+      "unique": true,
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Subdomän",
+      "is_available_in_reference": true,
+      "required": true,
+      "pattern": "[a-z0-9]+",
+      "explanation": "Subdomän får endast innehålla små bokstäver och siffror"
+    },
+    "logo": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Logotype",
+      "is_available_in_reference": true,
+      "width": 300,
+      "height": 120
+    },
+    "favicon": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Favicon",
+      "is_available_in_reference": false
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "text",
+      "max_length": 255,
+      "localized_name": "Beskrivning i sökresultat",
+      "is_available_in_reference": false
+    },
+    "googleAnalyticsKey": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Google Analytics Nyckel",
+      "is_available_in_reference": true,
+      "required": false
+    },
+    "emailFooterImage": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild i mailfot",
+      "is_available_in_reference": true,
+      "width": 300,
+      "height": 120
+    },
+    "address": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Adress",
+      "is_available_in_reference": false
+    },
+    "zipCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Postnummer",
+      "is_available_in_reference": false
+    },
+    "city": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Stad",
+      "is_available_in_reference": false
+    },
+    "country": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Land",
+      "is_available_in_reference": false
+    },
+    "aboutUs": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Om oss länk",
+      "is_available_in_reference": false
+    },
+    "homePage": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Hemsida länk",
+      "is_available_in_reference": false
+    },
+    "instagram": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Instagram Länk",
+      "is_available_in_reference": false
+    },
+    "facebook": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Facebook länk",
+      "is_available_in_reference": false
+    },
+    "youtube": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Youtube länk",
+      "is_available_in_reference": false
+    },
+    "linkedin": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Linkedin link",
+      "is_available_in_reference": false
+    },
+    "contactEmail": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "E-post för frågor",
+      "is_available_in_reference": false
+    },
+    "contactPhone": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Telefonnummer för frågor",
+      "is_available_in_reference": false
+    },
+    "companyName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Företagsnamn",
+      "is_available_in_reference": true
+    },
+    "organization": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "organization",
+      "description": "organization som äger configen",
+      "localized_name": "Organisation",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "isSellingAlcohol": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Säljer alkoholhaltiga produkter",
+      "default": true
+    },
+    "usesSupplierCustomer": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Använder leverantörskunder",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "baseUrl": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Shopaddress - t.ex. omnipollo.flaivymarket.com, alt. privab.se",
+      "is_available_in_reference": true,
+      "required": false
+    },
+    "articleFilterPanelConfig": {
+      "tab": "Detaljer",
+      "type": "articleFilterPanelConfig",
+      "localized_name": "Artikelfilterpanel konfiguration",
+      "is_available_in_reference": false
+    },
+    "navbarConfig": {
+      "tab": "Detaljer",
+      "type": "navbarConfig",
+      "localized_name": "Navbar konfiguration",
+      "is_available_in_reference": false
+    },
+    "cartProgressBarsColors": {
+      "tab": "Detaljer",
+      "type": "cartProgressBarsColors",
+      "localized_name": "Färg på kundvagnsprogression",
+      "is_available_in_reference": false
+    },
+    "intercomConfig": {
+      "tab": "Detaljer",
+      "type": "intercomConfig",
+      "localized_name": "Chat konfiguration",
+      "is_available_in_reference": false
+    },
+    "theme": {
+      "tab": "Detaljer",
+      "description": "theme",
+      "localized_name": "Tema",
+      "required_in_ui": true,
+      "type": "string",
+      "default": "'flaivyVarkalaTheme'",
+      "restrictedValues": [
+        {
+          "value": "flaivyVarkalaTheme",
+          "label": "Flaivy - Varkala"
+        },
+        {
+          "value": "privabTheme",
+          "label": "Privab"
+        }
+      ]
+    }
+  },
+  "actions": {
+    "resolveConfigForSubdomain": {
+      "name": "resolveConfigForSubdomain",
+      "localized_name": "Hämta whitelabel config",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "subdomain": {
+          "linked_field": "subdomain"
+        }
+      }
+    },
+    "writeShopConfig": {
+      "name": "writeShopConfig",
+      "localized_name": "Uppdatera webbsida",
+      "canCreate": false,
+      "requiredRole": ["super", "supplier"],
+      "parameters": {
+        "includeParameters": ["*"],
+        "excludeParameters": [
+          "organization",
+          "active",
+          "subdomain",
+          "usesSupplierCustomer",
+          "theme",
+          "baseUrl",
+          "isSellingAlcohol",
+          "navbarConfig"
+        ]
+      }
+    },
+    "writeNavbarConfig": {
+      "name": "writeNavbarConfig",
+      "localized_name": "Uppdatera navbar konfiguration",
+      "canCreate": false,
+      "requiredRole": ["super", "supplier"],
+      "parameters": {
+        "includeParameters": ["navbarConfig", "id"]
+      }
+    }
+  },
+  "events": {
+    "SHOP_CONFIG_UPDATED": {
+      "localized_name": "Webshop omkonfigurerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SHOP_CONFIG_CREATED": {
+      "localized_name": "Whitelabel skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {
+    "SHOP_CONFIG_UPDATED": {
+      "name": "SHOP_CONFIG_UPDATED",
+      "reactions": ["clearShopConfigCache"]
+    }
+  }
+}

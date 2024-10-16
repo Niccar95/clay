@@ -1,0 +1,37 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "label": "HoReCa",
+      "value": "horeca"
+    },
+    {
+      "label": "Dagligvaruhandel",
+      "value": "dvh"
+    },
+    {
+      "label": "Grossist",
+      "value": "wholesale"
+    },
+    {
+      "label": "Kontor",
+      "value": "office"
+    },
+    {
+      "label": "Systembolaget",
+      "value": "systembolaget"
+    },
+    {
+      "label": "Leverantör till Flaivy",
+      "value": "supplier"
+    },
+    {
+      "label": "Export",
+      "value": "export"
+    },
+    {
+      "label": "Övrigt",
+      "value": "other"
+    }
+  ]
+}

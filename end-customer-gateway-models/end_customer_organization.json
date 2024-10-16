@@ -1,0 +1,145 @@
+{
+  "name": "endCustomerOrganization",
+  "localized_name": "Kundorganisation",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+
+  "defaultSimilaritySortField": "name",
+  "children": {
+    "endCustomerOrganizationMemberships": {
+      "localized_name": "medlemsskap",
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "endCustomerOrganizationMemberships",
+      "mixin": ["default_actions", "linked_fields"],
+      "belongs_to": ["shopUser"],
+      "skipForeignReferenceIndex": true,
+      "actions": {},
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "shopUser": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "skipForeignReferenceIndex": true,
+          "relation": "shopUser",
+          "localized_name": "Kundanvändare",
+          "is_available_in_reference": true
+        },
+        "role": {
+          "tab": "Detaljer",
+          "include": "restricted_values/roles",
+          "description": "role",
+          "localized_name": "Roll",
+          "required": false,
+          "required_in_ui": true,
+          "is_available_in_reference": true
+        },
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "skipForeignReferenceIndex": true,
+          "referenceType": "customerSubUnit",
+          "referenceDomain": "oms",
+          "localized_name": "Kund",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "unique": true,
+      "type": "string",
+      "searchable": false,
+      "localized_name": "Organisationsnamn",
+      "is_available_in_reference": true
+    },
+    "logo": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Logotyp",
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false,
+      "width": 300,
+      "height": 100
+    },
+    "backgroundImageLoginPage": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "bakgrundsbild på inloggningssidan",
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false,
+      "width": 640,
+      "height": 360
+    }
+  },
+  "events": {
+    "END_CUSTOMER_ORGANIZATION_UPDATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "END_CUSTOMER_ORGANIZATION_CREATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "addShopUser": {
+      "name": "addShopUser",
+      "requiredRole": ["super"],
+      "localized_name": "Lägg till användare",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "shopUser": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "shopUser",
+          "localized_name": "Kundanvändare",
+          "required": true
+        },
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "customerSubUnit",
+          "referenceDomain": "oms",
+          "localized_name": "Bunden till kund",
+          "required": true
+        },
+        "role": {
+          "tab": "Detaljer",
+          "include": "restricted_values/roles",
+          "description": "role",
+          "localized_name": "Roll",
+          "required": true
+        }
+      }
+    }
+  },
+  "listeners": {
+    "CUSTOMER_SUB_UNIT_UPDATED": {
+      "name": "CUSTOMER_SUB_UNIT_UPDATED",
+      "reactions": ["updateEndCustomerOrganizationMemberships"]
+    }
+  }
+}

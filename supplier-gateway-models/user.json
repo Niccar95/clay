@@ -1,0 +1,359 @@
+{
+  "name": "user",
+  "localized_name": "Användare",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["organization"],
+  "defaultSimilaritySortField": "email",
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "firstName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Förnamn",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "lastName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Efternamn",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "ePost",
+      "searchable": true,
+      "required": true,
+      "unique": true,
+      "is_available_in_reference": true
+    },
+    "password": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Lösenord",
+      "roles_for_read": ["system"],
+      "min_length": 6,
+      "is_available_in_reference": false,
+      "required_in_ui": true
+    },
+    "avatar": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild",
+      "is_available_in_reference": true
+    },
+    "organization": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "organization",
+      "localized_name": "Organisation",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "roles": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Roll",
+      "restrictedValues": [
+        {
+          "value": "super",
+          "label": "Allsmäktig"
+        },
+        {
+          "value": "supplier",
+          "label": "Leverantör"
+        }
+      ],
+      "required": true,
+      "is_available_in_reference": true
+    }, 
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "is_available_in_reference": true,
+      "localized_name": "Aktiverad"
+    },
+    "verified": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": false,
+      "readonly": true,
+      "is_available_in_reference": false,
+      "localized_name": "Verifierad"
+    },
+    "token": {
+      "tab": "Detaljer",
+      "type": "string",
+      "roles_for_read": ["system"],
+      "readonly": true,
+      "is_available_in_reference": false
+    },
+    "resetTokenExpires": {
+      "tab": "Detaljer",
+      "type": "date",
+      "roles_for_read": ["system"],
+      "readonly": true,
+      "is_available_in_reference": false
+    },
+    "verificationToken": {
+      "tab": "Detaljer",
+      "type": "string",
+      "readonly": true,
+      "roles_for_read": ["system"],
+      "is_available_in_reference": false
+    },
+    "lastLoginAt": {
+      "tab": "Detaljer",
+      "type": "date",
+      "is_available_in_reference": true,
+      "readonly": true,
+      "localized_name": "Senast inloggad"
+    }
+  },
+  "events": {
+    "USER_UPDATED": {
+      "localized_name": "Användaren uppdaterades",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_CREATED": {
+      "localized_name": "Användaren skapades",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_DISABLED": {
+      "localized_name": "Användaren avaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_ENABLED": {
+      "localized_name": "Användaren aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_JOINED_ORGANIZATION": {
+      "localized_name": "Användaren lades till i organization",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_PASSWORD_CHANGED": {
+      "localized_name": "Lösenordet uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_REQUIRED_CHANGE_PASSWORD": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_VALIDATED": {
+      "localized_name": "Användaren validerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "USER_LOGGED_IN": {
+      "localized_name": "Användaren loggade in",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "register": {
+      "name": "register",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "describe": "this needs to be rewritten dont change from super unless that is done",
+      "parameters": {
+        "password": {
+          "linked_field": "password"
+        },
+        "email": {
+          "linked_field": "email"
+        },
+        "firstName": {
+          "linked_field": "firstName"
+        },
+        "lastName": {
+          "linked_field": "lastName"
+        },
+        "avatar": {
+          "linked_field": "avatar"
+        }
+      }
+    },
+    "writeUser": {
+      "name": "writeUser",
+      "requiredRole": ["super"],
+      "localized_name": "Uppdatera användare",
+
+      "description": "upsert med begränsade fält",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": [
+          "verified",
+          "token",
+          "active",
+          "resetTokenExpires",
+          "verificationToken",
+          "lastLoginAt",
+          "password"
+        ],
+        "newPassword": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Nytt Lösenord (minst 6 tecken)",
+          "required": true
+        }
+      }
+    },
+    "verify": {
+      "name": "verify",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "token": {
+          "linked_field": "verificationToken"
+        }
+      }
+    },
+    "disable": {
+      "name": "disable",
+      "color": "danger",
+      "localized_name": "Inaktivera användare",
+      "availableIf": "entity.active === true",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "enable": {
+      "name": "enable",
+      "availableIf": "entity.active === false",
+      "localized_name": "Aktivera användare",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "forgotPassword": {
+      "name": "forgotPassword",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "email": {
+          "linked_field": "email"
+        }
+      }
+    },
+    "resetPassword": {
+      "name": "resetPassword",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "password": {
+          "linked_field": "password"
+        },
+        "token": {
+          "linked_field": "token"
+        }
+      }
+    },
+    "resolveToken": {
+      "name": "resolveToken",
+      "cache": {
+        "cacheKeys": ["token"],
+        "ttl": 300
+      },
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "password": {
+          "linked_field": "password"
+        },
+        "token": {
+          "linked_field": "token"
+        }
+      }
+    },
+    "changeActiveOrganization": {
+      "name": "changeActiveOrganization",
+      "requiredRole": ["super"],
+      "localized_name": "Byt organization",
+      "submitButtonText": "Byt organization",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "organization": {
+          "type": "relation",
+          "relation": "organization",
+          "localized_name": "Organisation",
+          "required": "true",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "endImpersonation": {
+      "name": "endImpersonation",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Byt organization",
+      "submitButtonText": "Byt organization",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {}
+    },
+    "login": {
+      "name": "login",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "password": {
+          "linked_field": "password"
+        },
+        "email": {
+          "linked_field": "email"
+        }
+      }
+    },
+    "socialLogin": {
+      "name": "socialLogin",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "profile": {
+          "tab": "Detaljer",
+          "type": "object"
+        },
+        "accessToken": {
+          "tab": "Detaljer",
+          "type": "string"
+        },
+        "refreshToken": {
+          "tab": "Detaljer",
+          "type": "string"
+        }
+      }
+    },
+    "me": {
+      "name": "me",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "parameters": {}
+    }
+  }
+}

@@ -1,0 +1,334 @@
+{
+  "name": "supplierConnection",
+  "localized_name": "Leverantörsanslutningar",
+  "description": "Kundens inställningar för hur de skall göra inköp mot en viss leverantör",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "id",
+  "defaultSimilaritySortField": "id",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "organization": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "organizationInPCSService",
+      "original_relation": "organization",
+      "localized_name": "Leverantörsorganisation",
+      "is_available_in_reference": true
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnitInPCSService",
+      "original_relation": "customerSubUnit",
+      "localized_name": "Kundavdelning",
+      "is_available_in_reference": true,
+      "unique_with": ["organizationId"]
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplierCustomerInPcsService",
+      "original_relation": "supplierCustomer",
+      "localized_name": "Leverantörskund",
+      "is_available_in_reference": true,
+      "required": false
+    },
+    "customerNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundnummer hos leverantören",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Identitet i Qvanti",
+      "unique_when": {
+        "active": true,
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "is_available_in_reference": true
+    },
+    "deliveryDays": {
+      "comment": "should become deliveryRules",
+      "tab": "Detaljer",
+      "type": "openingHours",
+      "localized_name": "Möjliga leveransdagar",
+      "required": false
+    },
+    "emailForOrderCopy": {
+      "tab": "Detaljer",
+      "type": "email",
+      "max_length": 255,
+      "allow_multiple": true,
+      "localized_name": "E-post för orderbekräftelse mm. hos leverantör",
+      "is_available_in_reference": true
+    },
+    "emailForComplaint": {
+      "tab": "Detaljer",
+      "type": "email",
+      "max_length": 255,
+      "allow_multiple": true,
+      "localized_name": "E-post för reklamationer mm. hos leverantör",
+      "is_available_in_reference": true
+    },
+    "willSendOrderCopy": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Jag vill ha mail när min orderstatus ändras",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "allowListSharing": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Tillåt leverantören dela listor med mig",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "kickbackPercentage": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Kickbackprocent vid prisjämförelser",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": 0
+    },
+    "defaultOrderComment": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Standard orderkommentar",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "onboardingState": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "Connection Requested",
+          "label": "Anslutning begärd"
+        },
+        {
+          "value": "Connection in progress",
+          "label": "Anslutning pågår"
+        },
+        {
+          "value": "Connection configured",
+          "label": "Anslutning uppsatt"
+        }
+      ],
+      "localized_name": "Anslutningstatus",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": "'Connection Requested'"
+    },
+    "externalCartType": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Typ av extern varukorgshantering (0 = ingen, 1 = external web shop)",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    }
+  },
+  "actions": {
+    "writeSupplierConnection": {
+      "name": "writeSupplierConnection",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Spara kundkoppling",
+      "description": "upsert med begränsade fält",
+      "canCreate": true,
+      "parameters": {
+        "organization": {
+          "linked_field": "organization",
+          "required": true
+        },
+        "customerSubUnit": {
+          "linked_field": "customerSubUnit",
+          "required": true
+        },
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "required": true
+        },
+        "includeParameters": [
+          "id",
+          "customerNumber",
+          "qvantiId",
+          "deliveryDays",
+          "emailForOrderCopy",
+          "emailForComplaint",
+          "willSendOrderCopy",
+          "allowListSharing",
+          "kickbackPercentage",
+          "defaultOrderComment",
+          "onboardingState",
+          "active"
+        ]
+      }
+    },
+    "changeSupplierCustomer": {
+      "name": "changeSupplierCustomer",
+      "comment": "THIS SHOULD BE REPLACED WITH A changeCustomerNumber ACTION",
+      "localized_name": "Ändra kundnummer",
+      "description": "Ändra kundnummer",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "required": false,
+          "readonly": false
+        },
+        "customerNumber": {
+          "linked_field": "customerNumber",
+          "required": true,
+          "readonly": false
+        }
+      }
+    },
+    "requestConnection": {
+      "name": "requestConnection",
+      "localized_name": "Begär anslutning",
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "customerSubUnit": {
+          "linked_field": "customerSubUnit",
+          "required": true,
+          "readonly": false
+        },
+        "customerNumber": {
+          "linked_field": "customerNumber",
+          "required": true,
+          "readonly": false
+        },
+        "organization": {
+          "linked_field": "organization",
+          "readonly": false
+        },
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "required": false,
+          "readonly": false
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "availableIf": "entity.active",
+      "color": "danger",
+      "localized_name": "Inaktivera anslutning",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "availableIf": "entity.active === false",
+      "color": "primary",
+      "localized_name": "Aktivera anslutning",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "completeConfiguration": {
+      "name": "completeConfiguration",
+      "color": "primary",
+      "localized_name": "Markera anslutning som uppsatt",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "startConfiguration": {
+      "name": "startConfiguration",
+      "color": "primary",
+      "localized_name": "Markera anslutning som påbörjad",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  },
+  "listeners": {
+    "ORDER_CONNECTED_TO_SUPPLIER_CUSTOMER": {
+      "name": "ORDER_CONNECTED_TO_SUPPLIER_CUSTOMER",
+      "reactions": ["upsertSupplierConnection"]
+    }
+  },
+  "events": {
+    "SUPPLIER_CONNECTION_REQUESTED": {
+      "localized_name": "Leverantörsanslutning begärd",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_IN_PROGRESS": {
+      "localized_name": "Leverantörsanslutning påbörjad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_CONFIGURED": {
+      "localized_name": "Leverantörsanslutning uppsatt",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_ACTIVATED": {
+      "localized_name": "Leverantörsanslutning aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_DEACTIVATED": {
+      "localized_name": "Leverantörsanslutning deaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_UPDATED": {
+      "localized_name": "Leverantörsanslutning uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SUPPLIER_CONNECTION_CREATED": {
+      "localized_name": "Leverantörsanslutning skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "name": "brand",
+  "localized_name": "Varumärke",
+  "description": "varumärken för artiklar",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {
+    "hasPublishedArticles": {
+      "tab": "Webshop",
+      "type": "boolean",
+      "selfContainedQuery": "EXISTS(select a.id FROM articles a WHERE a.\"brandId\" = ${globals.tableName}.id AND (a.\"isPublishedOnOurStore\" = true OR a.\"isPublishedOnWhitelabel\" = true) AND a.\"active\" = true)",
+      "localized_name": "Har detta varumärke artiklar?",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "required": true,
+      "max_length": 255,
+      "min_length": 1,
+      "is_available_in_reference": true,
+      "localized_name": "Namn"
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "html",
+      "localized_name": "Beskrivning",
+      "is_available_in_reference": false
+    },
+    "image": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild",
+      "description": "image from houdini",
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "width": 640,
+      "height": 360
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    }
+  },
+  "events": {
+    "BRAND_UPDATED": {
+      "localized_name": "Varumärket uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "BRAND_CREATED": {
+      "localized_name": "Varumärket skapat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "BRAND_ACTIVATED": {
+      "localized_name": "Varumärket aktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "BRAND_DEACTIVATED": {
+      "localized_name": "Varumärket inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "writeBrand": {
+      "requiredRole": ["super", "supplier", "customerSubUnitPurchaserManager"],
+      "canCreate": true,
+      "name": "writeBrand",
+      "localized_name": "Uppdatera varumärke",
+
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["active"]
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super"],
+      "localized_name": "Aktivera",
+      "availableIf": "entity.active === false",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super"],
+      "localized_name": "Inaktivera",
+      "availableIf": "entity.active",
+      "conditional": "Är du säker?",
+      "color": "danger",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    }
+  }
+}

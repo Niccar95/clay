@@ -1,0 +1,530 @@
+{
+  "name": "settlement",
+  "localized_name": "Avräkning",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-settlementNumber",
+  "defaultSimilaritySortField": "settlementNumber",
+  "children": {
+    "settlementRows": {
+      "tab": "settlementRows",
+      "localized_name": "Rader i leverantörsrapport",
+      "type": "array",
+      "name": "settlementRows",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet"
+        },
+        "article": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "article",
+          "referenceDomain": "oms",
+          "localized_name": "Artikel"
+        },
+        "deliveredQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "",
+          "localized_name": "Levererat antal"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "description": "namnet på artikeln som fakturaraden motsvarar",
+          "localized_name": "Produktnamn",
+          "is_available_in_reference": true
+        },
+        "price": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "description": "",
+          "localized_name": "pris",
+          "is_available_in_reference": true
+        },
+        "settlementOrderValue": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "ordervärde"
+        },
+        "discount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Discount",
+          "localized_name": "Rabatt"
+        },
+        "totalAlcoholTax": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Total alkoholskatt",
+          "localized_name": "Total alkoholskatt"
+        },
+        "totalPostponedAlcoholTax": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Total EMCS alkoholskatt",
+          "localized_name": "Total EMCS alkoholskatt"
+        },
+        "totalCommission": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "",
+          "localized_name": "Total provision för varan"
+        },
+        "commissionPercentage": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Provisionsprocent",
+          "localized_name": "Provisionsprocent"
+        },
+        "section": {
+          "tab": "Detaljer",
+          "type": "string",
+          "restrictedValues": [
+            {
+              "label": "Försäljning",
+              "value": "sales"
+            },
+            {
+              "label": "Försäljning till Systembolaget",
+              "value": "systembolaget"
+            },
+            {
+              "label": "Avgifter och justeringar",
+              "value": "adjustments"
+            }
+          ],
+          "description": "Sektion",
+          "localized_name": "Sektion"
+        },
+        "rowDetails": {
+          "tab": "Detaljer",
+          "typeScriptObject": "SettlementRowDetails[]",
+          "type": "object",
+          "description": "används för att spåra order/inköpskorder/reklamation som gjorde upphov till raden",
+          "localized_name": "Spårning"
+        },
+        "isAdjustment": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "description": "justeringsrad. Summeras annorlunda än övriga rader",
+          "localized_name": "Justeringsrad"
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "settlementNumber": {
+      "type": "integer",
+      "tab": "Detaljer",
+      "searchable": true,
+      "unique": true,
+      "readonly": true,
+      "description": "number",
+      "localized_name": "Avräkning",
+      "is_available_in_reference": true
+    },
+    "settlementState": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "values": [
+        {
+          "key": "created",
+          "label": "Skapad"
+        },
+        {
+          "key": "sentToSupplierOrganization",
+          "label": "Skickad"
+        },
+        {
+          "key": "invoiceReceivedFromSupplierOrganization",
+          "label": "Mottagen av Flaivy"
+        },
+        {
+          "key": "invoiceCompleted",
+          "label": "Bokförd"
+        }
+      ],
+      "description": "shows state in orderflow",
+      "localized_name": "Status",
+      "default": "'created'",
+      "is_available_in_reference": true
+    },
+    "cancelled": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "",
+      "readonly": true,
+      "localized_name": "Makulerad",
+      "is_available_in_reference": true
+    },
+    "copackAgreement": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "copackAgreement",
+      "localized_name": "Copack-avtal",
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "orderBrokerageAgreement": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "orderBrokerageAgreement",
+      "localized_name": "Ordermäklaravtal",
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "description": "Organisationen som äger rapporten",
+      "localized_name": "Levarantörsorganisation",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Faktura",
+      "readonly_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "startDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Rapportens startdatum",
+      "description": "Rapportens startdatum",
+      "is_available_in_reference": true
+    },
+    "endDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Rapportens slutdatum",
+      "description": "Rapportens slutdatum",
+      "is_available_in_reference": true
+    },
+    "settlementOrderValue": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "avräkningens ordervärde"
+    },
+    "totalAlcoholTax": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "Total alkoholskatt"
+    },
+    "totalPostponedAlcoholTax": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "Total EMCS alkoholskatt",
+      "localized_name": "Total EMCS alkoholskatt"
+    },
+    "totalInvoicedBySupplierOrganization": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "Belopp som leverantören har fakturerat"
+    },
+    "totalCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "Total provision"
+    },
+    "totalAdjustment": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "Total justering"
+    },
+    "totalToBill": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "Belopp att leverantören ska fakturera Flaivy",
+      "localized_name": "Belopp att fakturera",
+      "is_available_in_reference": true
+    },
+    "serviceAgreement": {
+      "tab": "Fakturering",
+      "type": "string",
+      "skipTSEnumGeneration": true,
+      "restrictedValues": [
+        {
+          "label": "v2.5 - minimum serviceavgift och taggade kunder - Använder order och reklamationer",
+          "value": "v2.5"
+        },
+        {
+          "label": "v3",
+          "value": "v3"
+        }
+      ],
+      "localized_name": "Serviceavtal",
+      "required_in_ui": true
+    },
+    "totalCost": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "",
+      "localized_name": "Totalkostnad för leverantören över perioden",
+      "roles_for_read": ["super"]
+    },
+    "VATSummary": {
+      "tab": "Detaljer",
+      "type": "object",
+      "description": "",
+      "localized_name": "Moms"
+    },
+    "receiverCompanyName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "description": "Namn på mottagande företag",
+      "localized_name": "Mottagande företag"
+    },
+    "receiverAddress": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Mottagarens adress",
+      "required_in_ui": false,
+      "max_length": 255
+    },
+    "receiverZipCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Mottagarens postnummer",
+      "required_in_ui": false,
+      "max_length": 10
+    },
+    "receiverCity": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Mottagarens stad",
+      "required_in_ui": false,
+      "max_length": 255
+    },
+    "receiverOrganisationNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Mottagarans organisationsnummer"
+    }
+  },
+  "listeners": {
+    "SETTLEMENT_CREATED": {
+      "name": "SETTLEMENT_CREATED",
+      "reactions": ["checkForAutoSend"]
+    }
+  },
+  "events": {
+    "SETTLEMENT_CREATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SETTLEMENT_UPDATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "SETTLEMENT_SENT_TO_SUPPLIER_ORGANIZATION": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "createForPeriod": {
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Skräddarsy en avräkning",
+      "name": "createForPeriod",
+      "parameters": {
+        "startDate": {
+          "linked_field": "startDate",
+          "required": true
+        },
+        "endDate": {
+          "linked_field": "endDate",
+          "required": true
+        },
+        "orderBrokerageAgreement": {
+          "linked_field": "orderBrokerageAgreement",
+          "required_in_ui": true,
+          "display_if": "!entity.copackAgreement"
+        },
+        "copackAgreement": {
+          "linked_field": "copackAgreement",
+          "required_in_ui": true,
+          "display_if": "!entity.orderBrokerageAgreement"
+        }
+      }
+    },
+    "sendToSupplierOrganization": {
+      "name": "sendToSupplierOrganization",
+      "requiredRole": ["super"],
+      "localized_name": "Skicka till leverantörsorganisation",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "receiveInvoiceFromSupplierOrganization": {
+      "name": "receiveInvoiceFromSupplierOrganization",
+      "requiredRole": ["super"],
+      "localized_name": "Ta emot faktura",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "markInvoiceAsDone": {
+      "name": "markInvoiceAsDone",
+      "requiredRole": ["super"],
+      "localized_name": "Markera som avslutad",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "resendReport": {
+      "name": "resendReport",
+      "requiredRole": ["super"],
+      "localized_name": "Skicka mail igen",
+      "description": "Skickar mail till leverantör igen",
+      "parameters": {
+        "extraEmail": {
+          "tab": "Extra",
+          "type": "email",
+          "name": "extraEmail",
+          "localized_name": "Skicka även kopia till"
+        },
+        "includeParameters": ["id"]
+      }
+    },
+    "setReceiver": {
+      "name": "setReceiver",
+      "requiredRole": ["super"],
+      "localized_name": "Sätt mottagare",
+      "description": "Sätter mottagare för rapporten - om du lämnar formuläret tomt så kommer mottagaren att sättas till den kund som specificeras i avtalet",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "receiverCompanyName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Mottagande företag"
+        },
+        "receiverAddress": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Mottagarens adress"
+        },
+        "receiverZipCode": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Mottagarens postnummer"
+        },
+        "receiverCity": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Mottagarens stad"
+        },
+        "receiverOrganisationNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Mottagarans organisationsnummer"
+        }
+      }
+    },
+
+    "cancel": {
+      "name": "cancel",
+      "requiredRole": ["super"],
+      "color": "danger",
+      "localized_name": "Makulera",
+      "description": "Makulerar rapport",
+      "conditional": "Det går inte att ångra en makulering av en rapport. Vill du fortsätta?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "addToReport": {
+      "name": "addToReport",
+      "requiredRole": ["super"],
+      "localized_name": "Lägg till justeringsrad",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "description": "namnet på artikeln som fakturaraden motsvarar",
+          "localized_name": "Text",
+          "required": true
+        },
+        "totalCommission": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Total (exkl moms)",
+          "required": true
+        }
+      }
+    },
+    "removeFromReport": {
+      "name": "removeFromReport",
+      "requiredRole": ["super"],
+      "localized_name": "Ta bort från rapport",
+      "color": "danger",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "rowId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Id för raden",
+          "required": true
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Produkt/tjänstenamn",
+          "ui_only": true,
+          "readonly": true
+        }
+      }
+    },
+    "sendToExternalFortnox": {
+      "name": "sendToExternalFortnox",
+      "requiredRole": ["super", "supplier"],
+      "overrideEntityAccessToUseReadAccess": true,
+      "localized_name": "Skicka till Fortnox",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

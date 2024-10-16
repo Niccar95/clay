@@ -1,0 +1,556 @@
+{
+  "name": "organization",
+  "localized_name": "Organisation",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSimilaritySortField": "name",
+  "defaultSort": "-createdAt",
+  "children": {
+    "zipCodeToOfcMaps": {
+      "localized_name": "Postnummer till lagerställe",
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "zipCodeToOfcMaps",
+      "mixin": ["default_actions", "linked_fields"],
+      "actions": {},
+      "fields": {
+        "id": {
+          "type": "string",
+          "max_length": 255,
+          "min_length": 1,
+          "primary": true,
+          "description": "id",
+          "localized_name": "id",
+          "required": true,
+          "is_available_in_reference": true
+        },
+        "zipCodeStart": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "required": true,
+          "localized_name": "Postnummer från och med",
+          "max_length": 10,
+          "is_available_in_reference": true
+        },
+        "zipCodeEnd": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "required": true,
+          "localized_name": "Postnummer till och med",
+          "max_length": 10,
+          "is_available_in_reference": true
+        },
+        "orderFullfillmentCenter": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "ofcInSupplierGateway",
+          "required": true,
+          "original_relation": "orderFullfillmentCenter",
+          "localized_name": "Leveranslager",
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "gatewaySuppliers": {
+      "localized_name": "Knutna leverantörer",
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "gatewaySupplier",
+      "mixin": ["default_actions", "linked_fields"],
+      "actions": {},
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "supplierNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leverantörsnummer",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "unique": true,
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Organisationsnamn",
+      "is_available_in_reference": true
+    },
+    "organizationNumber": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "OrganisationNumber",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Organisationsnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "subscriptionLevel": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "value": "basic",
+          "label": "Flaivy Basic"
+        },
+        {
+          "value": "flaivy",
+          "label": "Flaivy"
+        },
+        {
+          "value": "flaivyplus",
+          "label": "Flaivy+"
+        },
+        {
+          "value": "enterprise",
+          "label": "Flaivy Enterprise"
+        }
+      ],
+      "localized_name": "Typ av prenumeration",
+      "default": "'flaivy'",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "usesSupplierCustomer": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "This is more or less the signal to show that this organization has a complete standalone version of flaivy",
+      "localized_name": "Har eget kundregister",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "shouldFlaivyGenerateOrderNumbers": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Flaivy genererar ordernummer",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "shouldFlaivyGenerateArticleNumbers": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "description": "",
+      "localized_name": "Flaivy genererar artikelnummer",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "isPublished": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "explanation": "Bestämmer om kunden kan söka upp den här organisationen i inköpssystemet",
+      "localized_name": "Kan kund begära kundkoppling",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Leverantörens identitet i Qvanti",
+      "is_available_in_reference": true,
+      "unique_when": {
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "roles_for_read": ["super"]
+    },
+    "defaultOrderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "ofcInSupplierGateway",
+      "original_relation": "orderFullfillmentCenter",
+      "localized_name": "Leveranslager",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "GLNNumber": {
+      "tab": "Fakturering",
+      "type": "GLN",
+      "localized_name": "GLN-nummer",
+      "required_in_ui": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "ourCustomerNumber": {
+      "tab": "Fakturering",
+      "type": "string",
+      "roles_for_read": ["super", "supplier"],
+      "fortnox_equivalent": "OurCustomerNumber",
+      "localized_name": "Flaivys kundnummer",
+      "required_in_ui": false
+    },
+    "isUsingCrm": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Leverantören använder CRM",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "hasCopackAgreement": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Har copack-avtal",
+      "is_available_in_reference": true,
+      "default": false,
+      "readonly": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiv",
+      "is_available_in_reference": true,
+      "default": true
+    }
+  },
+  "events": {
+    "ORGANIZATION_UPDATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORGANIZATION_CREATED": {
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORGANIZATION_PUBLISHED_ON_QVANTI": {
+      "localized_name": "Leverantör publicerad på Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORGANIZATION_UNPUBLISHED_ON_QVANTI": {
+      "localized_name": "Leverantör avpublicerad från Qvanti",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {
+    "\"COPACK_AGREEMENT_*\"": {
+      "name": "COPACK_AGREEMENT_",
+      "reactions": ["ensureHasCopackAgreement"]
+    }
+  },
+  "actions": {
+    "createCopackAgreements": {
+      "name": "createCopackAgreements",
+      "requiredRole": ["super"],
+      "localized_name": "Skapar alla avtal",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "createSupplierAndOrganisation": {
+      "name": "createSupplierAndOrganisation",
+      "requiredRole": ["super"],
+      "localized_name": "Skapa leverantörsorganisation med användare",
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "image": {
+          "tab": "Detaljer",
+          "type": "croppedS3image",
+          "localized_name": "Bild",
+          "description": "image from houdini",
+          "required_in_ui": true,
+          "is_available_in_reference": true,
+          "width": 640,
+          "height": 360
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Företagsnamn",
+          "required": true,
+          "max_length": 255
+        },
+        "organisationNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Organisationsnummer",
+          "required_in_ui": true,
+          "max_length": 255
+        },
+        "firstName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Förnamn (första användaren)",
+          "required_in_ui": true,
+          "max_length": 50
+        },
+        "lastName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Efternamn (första användaren)",
+          "required_in_ui": true,
+          "max_length": 50
+        },
+        "email": {
+          "tab": "Detaljer",
+          "type": "email",
+          "localized_name": "E-post (första användaren)",
+          "required": false,
+          "max_length": 255,
+          "required_in_ui": true
+        },
+        "handlesOwnInvoicing": {
+          "tab": "Fakturering",
+          "type": "boolean",
+          "localized_name": "Leverantören fakturerar själv",
+          "required": false,
+          "default": true
+        },
+        "emailForInvoicing": {
+          "tab": "Fakturering",
+          "type": "email",
+          "allow_multiple": true,
+          "description": "email som skickas till leverantören med fakturaunderlag vid levererad order",
+          "localized_name": "E-post för fakturering - vid egen fakturering",
+          "max_length": 255,
+          "require_in_ui": true,
+          "display_if": "entity.handlesOwnInvoicing === true"
+        },
+        "password": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Lösenord",
+          "roles_for_read": ["system"],
+          "min_length": 6,
+          "required_in_ui": true
+        },
+        "emailForPurchaseOrder": {
+          "tab": "Detaljer",
+          "type": "email",
+          "allow_multiple": true,
+          "description": "email som skickas till leverantör vid beställning",
+          "localized_name": "E-post för inleverans",
+          "max_length": 255
+        },
+        "dispatchEmail": {
+          "tab": "Detaljer",
+          "type": "email",
+          "allow_multiple": true,
+          "description": "email som skickas till leverantör vid lagd order",
+          "localized_name": "E-post för orderläggning via dropshipping",
+          "max_length": 255
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Telefon",
+          "required_in_ui": true,
+          "max_length": 255
+        },
+        "emailInvoice": {
+          "tab": "Fakturering",
+          "type": "email",
+          "localized_name": "E-post för att ta emot faktura från Flaivy",
+          "required": false,
+          "max_length": 255,
+          "required_in_ui": true
+        },
+        "dropshippingCommission": {
+          "tab": "Avtal",
+          "type": "number",
+          "roles_for_read": ["super", "supplier"],
+          "localized_name": "Marginal på dropshiporder (%)",
+          "required_in_ui": true,
+          "step": 0.01,
+          "min_length": 0,
+          "max_length": 100,
+          "is_available_in_reference": false
+        },
+        "invoiceName": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Namn för fakturor till leverantör",
+          "required_in_ui": true,
+          "max_length": 255,
+          "searchable": true
+        },
+        "invoiceAddress": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Adress",
+          "required_in_ui": true,
+          "max_length": 255
+        },
+        "invoiceAddress2": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Adress 2",
+          "required_in_ui": false,
+          "max_length": 255
+        },
+        "invoiceZipCode": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required_in_ui": true,
+          "max_length": 10
+        },
+        "invoiceCity": {
+          "tab": "Fakturering",
+          "type": "string",
+          "localized_name": "Stad",
+          "required_in_ui": true,
+          "max_length": 255
+        },
+        "deliverySameAsInvoice": {
+          "tab": "Leveransadress",
+          "type": "boolean",
+          "localized_name": "Leveransadress samma som fakturaadress",
+          "required": false,
+          "default": false
+        },
+        "deliveryName": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "localized_name": "Namn",
+          "required_in_ui": true,
+          "max_length": 255,
+          "searchable": true,
+          "display_if": "entity.deliverySameAsInvoice === false"
+        },
+        "deliveryAddress": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "searchable": true,
+          "localized_name": "Adress",
+          "required_in_ui": true,
+          "max_length": 255,
+          "display_if": "entity.deliverySameAsInvoice === false"
+        },
+        "deliveryAddress2": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "localized_name": "Adress 2",
+          "required_in_ui": false,
+          "max_length": 255,
+          "display_if": "entity.deliverySameAsInvoice === false"
+        },
+        "deliveryZipCode": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "localized_name": "Postnummer",
+          "required_in_ui": true,
+          "max_length": 10,
+          "display_if": "entity.deliverySameAsInvoice === false"
+        },
+        "deliveryCity": {
+          "tab": "Leveransadress",
+          "type": "string",
+          "localized_name": "Stad",
+          "required_in_ui": true,
+          "max_length": 255,
+          "display_if": "entity.deliverySameAsInvoice === false"
+        },
+        "exciseNumberAtVinden": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Eget punktskattenummer hos vinden (om skiljt från flaivys) (13tecken)",
+          "max_length": 13,
+          "display_if": "entity.handlesOwnInvoicing === true"
+        },
+        "deliveryHeadsup": {
+          "tab": "Leveransadress",
+          "type": "integer",
+          "step": 1,
+          "min_length": 0,
+          "localized_name": "Beställning senast X dagar i förväg",
+          "required": false,
+          "display_if": "entity.dispatchEmail"
+        }
+      }
+    },
+    "publishOnQvanti": {
+      "name": "publishOnQvanti",
+      "requiredRole": ["super"],
+      "localized_name": "Publicera på Qvanti",
+      "availableIf": "!entity.qvantiId",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "qvantiId": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Leverantörens identitet i Qvanti",
+          "required": true,
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "unpublishOnQvanti": {
+      "name": "unpublishOnQvanti",
+      "requiredRole": ["super"],
+      "localized_name": "Avpublicera från Qvanti",
+      "availableIf": "entity.qvantiId",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "ensureDropshipOrganization": {
+      "name": "ensureDropshipOrganization",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "canCreate": true,
+      "localized_name": "Säkerställ att en DS leverantör har OFC och organization",
+      "explanation": "Skapar en OFC och en organization om det inte finns någon, säkrar qvanti id och att leveransuppgifterna finns på OFC",
+      "parameters": {
+        "supplierNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leverantörsnummer i flaivy registret",
+          "required": true
+        }
+      }
+    },
+    "ensureCopackOrganization": {
+      "name": "ensureCopackOrganization",
+      "requiredRole": ["super"],
+      "snowflakeAccessControlPattern": true,
+      "canCreate": true,
+      "localized_name": "ensureCopackOrganization",
+      "parameters": {
+        "supplierId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leverantörsid i flaivy registret",
+          "required": true
+        }
+      }
+    }
+  }
+}

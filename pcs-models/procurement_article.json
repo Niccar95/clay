@@ -1,0 +1,123 @@
+{
+  "name": "procurementArticle",
+  "localized_name": "inköpsartikel",
+  "description": "Motsvarar en råvara på en inköpslista",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["procurementList"],
+  "defaultSort": "sortOrder",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Identitet i Qvanti",
+      "unique_when": {
+        "active": true,
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "is_available_in_reference": true
+    },
+    "defaultArticle": {
+      "tab": "Detaljer",
+      "type": "reference",
+      "referenceType": "pricedArticle",
+      "referenceDomain": "oms",
+      "autoLoadReference": true,
+      "localized_name": "Standardartikel",
+      "readonly_in_ui": false,
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Namn på inköpsartikel",
+      "required": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true
+    },
+    "definition": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Sökdefinition",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": ["super"]
+    },
+    "unit": {
+      "tab": "Detaljer",
+      "type": "string",
+      "max_length": 255,
+      "localized_name": "Enhet",
+      "is_available_in_reference": true
+    },
+    "isInventoryArticle": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Är en inventeringsartikel",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "accounting": {
+      "comment": "should become sessionUserSpecific<String>",
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Bokföringskonto",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "isUsingKolli": {
+      "comment": "should become sessionUserSpecific<Boolean>",
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Beställdes som kolli vid senaste beställning",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "sortOrder": {
+      "comment": "should become sessionUserSpecific<Number>",
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Sorteringsordning",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    }
+  },
+  "actions": {},
+  "listeners": {},
+  "events": {
+    "PROCUREMENT_ARTICLE_UPDATED": {
+      "localized_name": "Inköpsartikel uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PROCUREMENT_ARTICLE_CREATED": {
+      "localized_name": "Inköpsartikel skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  }
+}

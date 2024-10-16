@@ -1,0 +1,213 @@
+{
+  "name": "emailTemplateConfig",
+  "localized_name": "Mail mall konfiguration",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSimilaritySortField": "from",
+  "children": {},
+
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Namn",
+      "default": "'Flaivy'",
+      "is_available_in_reference": true
+    },
+    "from": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "E-posten som mailet skickas från",
+      "explanation": "Detta fältet får bara ändras på av utvecklare",
+      "is_available_in_reference": true,
+      "default": "'hello@flaivy.com'"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "emailHeaderBackgroundImage": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild i mailhuvud",
+      "is_available_in_reference": false,
+      "width": 600,
+      "height": 250,
+      "default": "'images/header-background.png'"
+    },
+    "footerTextHeader": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Titel i mailfoten",
+      "is_available_in_reference": false
+    },
+    "footerTextBody": {
+      "tab": "Mailfot",
+      "type": "htmlTextArea",
+      "localized_name": "Text i mailfoten (HTML)",
+      "is_available_in_reference": false
+    },
+    "logo": {
+      "tab": "Mailfot",
+      "type": "croppedS3image",
+      "localized_name": "Logotype",
+      "is_available_in_reference": false,
+      "width": 300,
+      "height": 120,
+      "default": "'images/flaivy-logo-white.png'"
+    },
+    "firstButtonText": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 1 text",
+      "is_available_in_reference": false
+    },
+
+    "firstButtonLink": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 1 länk",
+      "is_available_in_reference": false
+    },
+    "secondButtonText": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 2 text",
+      "is_available_in_reference": false
+    },
+
+    "secondButtonLink": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 2 länk",
+      "is_available_in_reference": false
+    },
+    "thirdButtonText": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 3 text",
+      "is_available_in_reference": false
+    },
+
+    "thirdButtonLink": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Knapp 3 länk",
+      "is_available_in_reference": false
+    },
+    "instagram": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Instagram Länk",
+      "is_available_in_reference": false,
+      "default": "'https://www.instagram.com/flaivynation/'"
+    },
+    "facebook": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Facebook länk",
+      "is_available_in_reference": false,
+      "default": "'https://www.facebook.com/drycks.se'"
+    },
+    "linkedin": {
+      "tab": "Mailfot",
+      "type": "string",
+      "localized_name": "Linkedin länk",
+      "is_available_in_reference": false,
+      "default": "'https://linkedin.com/company/flaivy-nation-ab'"
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    },
+    "transactionName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Transaktionsnamn",
+      "is_available_in_reference": true,
+      "unique_with": ["owningSupplierOrganizationId"],
+      "default": "'default'",
+      "required_in_ui": true,
+      "restrictedValues": [
+        {
+          "value": "default",
+          "label": "Standard"
+        },
+        {
+          "value": "order-confirmed",
+          "label": "Order bekräftad"
+        }
+      ]
+    },
+    "aboutUs": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Om oss text",
+      "description": "Detta fält kommer försvinna",
+      "is_available_in_reference": false,
+      "default": "'Flaivy digitaliserar livsmedelsbranschen.'"
+    },
+    "homePage": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Hemsida länk",
+      "description": "Detta fält kommer försvinna",
+      "is_available_in_reference": false,
+      "default": "'www.flaivy.com'"
+    },
+    "emailFooterImage": {
+      "tab": "Detaljer",
+      "type": "croppedS3image",
+      "localized_name": "Bild i mailfot",
+      "description": "Detta fält kommer försvinna",
+      "is_available_in_reference": false,
+      "width": 300,
+      "height": 120,
+      "default": "'images/footer-image.png'"
+    },
+    "contactEmail": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "E-post för frågor",
+      "description": "Detta fält kommer försvinna",
+      "is_available_in_reference": false,
+      "default": "'hello@flaivy.com'"
+    },
+    "companyName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Företagsnamn",
+      "description": "Detta fält kommer försvinna",
+      "is_available_in_reference": false,
+      "default": "'Flaivy'"
+    }
+  },
+  "actions": {},
+  "events": {
+    "EMAIL_TEMPLATE_CONFIG_UPDATED": {
+      "localized_name": "Webshop omkonfigurerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "EMAIL_TEMPLATE_CONFIG_CREATED": {
+      "localized_name": "Whitelabel skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {}
+}

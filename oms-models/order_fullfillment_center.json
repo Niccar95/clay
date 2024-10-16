@@ -1,0 +1,424 @@
+{
+  "name": "orderFullfillmentCenter",
+  "localized_name": "Lagerställe",
+  "description": "Ett lagerställe är en plats som skickar order till kund, antingen är det flaivy copack, ditt egna lager eller en TPL som vi har integrerat med",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "children": {
+    "transportOptions": {
+      "tab": "Lager",
+      "name": "transportOptions",
+      "type": "array",
+      "localized_name": "Transportalternativ",
+      "description": "Vilka alternativ som det finnns för att skicka order, t.ex. express, hämta vid lager, etc.",
+      "fields": {
+        "id": {
+          "type": "string",
+          "max_length": 255,
+          "min_length": 1,
+          "primary": true,
+          "description": "id",
+          "localized_name": "id",
+          "is_available_in_reference": false,
+          "roles_for_read": ["super", "supplier"]
+        },
+        "name": {
+          "type": "string",
+          "max_length": 255,
+          "description": "Name",
+          "localized_name": "Name",
+          "is_available_in_reference": true,
+          "roles_for_read": ["super", "supplier"]
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "is_available_in_reference": true,
+      "localized_name": "Identitet"
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "required": true,
+      "max_length": 255,
+      "min_length": 1,
+      "comment": "used by emcs so needs to be in reference",
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "localized_name": "Namn",
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "html",
+      "localized_name": "Beskrivning",
+      "is_available_in_reference": false
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "is_available_in_reference": true,
+      "readonly": true
+    },
+    "exciseNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "ExciseNumber",
+      "comment": "used by emcs so needs to be in reference",
+      "explanation": "Det här används vid skapande av EMCS filer",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "taxWarehouseNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "TaxWarehouseNumber",
+      "comment": "used by emcs so needs to be in reference",
+      "explanation": "Det här används vid skapande av EMCS filer",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "address": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Address",
+      "explanation": "Det här används vid skapande av EMCS filer",
+      "comment": "used by emcs so needs to be in reference",
+      "is_available_in_reference": true
+    },
+    "zipCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "ZipCode",
+      "explanation": "Det här används vid skapande av EMCS filer",
+      "comment": "used by emcs so needs to be in reference",
+      "is_available_in_reference": true
+    },
+    "city": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "City",
+      "explanation": "Det här används vid skapande av EMCS filer",
+      "comment": "used by emcs so needs to be in reference",
+      "is_available_in_reference": true
+    },
+    "deliveryName": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "DeliveryName",
+      "is_available_in_reference": false
+    },
+    "deliveryAddress": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "DeliveryAddress",
+      "is_available_in_reference": false
+    },
+    "deliveryZipCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "DeliveryZipCode",
+      "is_available_in_reference": false
+    },
+    "deliveryCity": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "DeliveryCity",
+      "is_available_in_reference": false
+    },
+    "orderFlowType": {
+      "tab": "Detaljer",
+      "type": "string",
+      "include": "restricted_values/order_flow_types",
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "dispatchEmail": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "E-post för orderadministration",
+      "allow_multiple": true,
+      "description": "E-post för att ta emot mail för nya order (som ej är interna)",
+      "is_available_in_reference": true,
+      "required_in_ui": "entity.orderFlowType === 'email'",
+      "roles_for_read": ["super", "supplier"]
+    },
+    "reportRecipientEmail": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "E-post för rapportmottagare för lagret",
+      "allow_multiple": true,
+      "description": "E-post för att ta emot mail för rapporter om lagret",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "packagingRules": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Regler för förpackning",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "handlingCost": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Kostnad för hantering",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "deliveryBreakpointText": {
+      "tab": "Leveransvillkor",
+      "type": "string",
+      "localized_name": "Brytpunktsförklaring (brytpunktstid kan endast styras på heltimme)",
+      "required": false,
+      "default": "'Möjliga leveransdatum justeras beroende på brytpunkt (kl 13), leveranstider, och om det är order i Stockholm eller övriga Sverige.'",
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "deliveryBreakpoint": {
+      "tab": "Leveransvillkor",
+      "type": "integer",
+      "step": 1,
+      "min_length": 0,
+      "max_length": 24,
+      "localized_name": "Brytpunktstid för leverans (endast hela timmar stöds)",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "deliveryHeadsup": {
+      "tab": "Leveransvillkor",
+      "type": "integer",
+      "min_length": 0,
+      "step": 1,
+      "localized_name": "Beställning senast X dagar i förväg",
+      "default": 1,
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "deliveryDays": {
+      "tab": "Leveransvillkor",
+      "type": "openingHours",
+      "localized_name": "Leveransdagar",
+      "required": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "transportCost": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Transportkostnad",
+      "is_available_in_reference": false,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "phone": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "Phone1",
+      "type": "string",
+      "pattern": "[0-9,\\+,\\-,\\(,\\),\\s]*",
+      "localized_name": "Telefonnummer",
+      "required_in_ui": true,
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "isPossibleToPlaceOrderBelowOrderMinimum": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Det är möjligt att lägga order under kollikrav eller minsta ordervärde mot en ev.avgift.",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "shouldMergeOrders": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Ska slå ihop order till en order",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super", "supplier"]
+    },
+    "minOrderValueByRegion": {
+      "tab": "Detaljer",
+      "type": "regionSpecifics",
+      "localized_name": "Minsta ordervärde regionsvis",
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "minCollisOnOrderByRegion": {
+      "tab": "Detaljer",
+      "type": "regionSpecifics",
+      "localized_name": "Minsta antal kollin på order regionsvis",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "kegCountsAsNCollis": {
+      "tab": "Detaljer",
+      "type": "number",
+      "default": 3,
+      "localized_name": "Hur många kollin varje fat räknas som på en order",
+      "required": false,
+      "required_in_ui": true,
+      "is_available_in_reference": true,
+      "roles_for_read": [
+        "super",
+        "supplier",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaser",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy"
+      ]
+    },
+    "emailForInvoicing": {
+      "tab": "Fakturering",
+      "type": "email",
+      "roles_for_read": ["super", "supplier"],
+      "allow_multiple": true,
+      "description": "email som skickas till leverantören med fakturaunderlag vid levererad order",
+      "localized_name": "E-post för fakturering",
+      "max_length": 255,
+      "require_in_ui": true,
+      "display_if": "entity.handlesOwnInvoicing === true"
+    },
+    "emailForPurchaseOrder": {
+      "tab": "Detaljer",
+      "type": "email",
+      "allow_multiple": true,
+      "description": "email som skickas till leverantör vid beställning",
+      "localized_name": "E-post för inleverans",
+      "max_length": 255,
+      "roles_for_read": ["super", "supplier"],
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "ORDER_FULLFILLMENT_CENTER_UPDATED": {
+      "localized_name": "Lagerställe uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_FULLFILLMENT_CENTER_CREATED": {
+      "localized_name": "Lagerställe skapat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_FULLFILLMENT_CENTER_ACTIVATED": {
+      "localized_name": "Lagerställe aktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_FULLFILLMENT_CENTER_DEACTIVATED": {
+      "localized_name": "Lagerställe inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super"],
+      "localized_name": "Aktivera",
+      "availableIf": "entity.active === false",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super"],
+      "localized_name": "Inaktivera",
+      "availableIf": "entity.active",
+      "conditional": "Är du säker?",
+      "color": "danger",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "writeOrderFullfillmentCenter": {
+      "name": "writeOrderFullfillmentCenter",
+      "canCreate": true,
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skapa nytt lagerställe",
+      "submitButtonText": "Spara",
+      "parameters": {
+        "includeParameters": ["*"]
+      }
+    }
+  }
+}

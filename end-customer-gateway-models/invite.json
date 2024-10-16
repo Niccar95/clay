@@ -1,0 +1,256 @@
+{
+  "name": "invite",
+  "localized_name": "Inbjudan",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSimilaritySortField": "email",
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "WARNING": "The below structure 'literal' should not be duplicated, its postgres + sequelize combination leaking into our domain model, which should be more pure",
+      "unique_with_literal": ["((\"shopConfig\"->>'id')::varchar(255))"],
+      "localized_name": "Epost",
+      "is_available_in_reference": true,
+      "required": true,
+      "searchable": true
+    },
+    "message": {
+      "tab": "Detaljer",
+      "type": "text",
+      "explanation": "Meddelandet kommer komma med i mailet till kund, lägg dubbla radbrytningar för att säkerställa att det ser snyggt ut i mailet.",
+      "localized_name": "Meddelande",
+      "required": false,
+      "required_in_ui": false,
+      "is_available_in_reference": false
+    },
+    "customerSubUnitId": {
+      "comment": "this field will be deprecated now and can be removed in a few months - 2022-08-30",
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kund-Id",
+      "is_available_in_reference": false,
+      "required": false
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "reference",
+      "referenceType": "customerSubUnit",
+      "referenceDomain": "oms",
+      "localized_name": "Bunden till kund",
+      "readonly_in_ui": false,
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "reference",
+      "referenceType": "supplierCustomer",
+      "referenceDomain": "crm",
+      "localized_name": "Bunden till leverantörs kund",
+      "readonly_in_ui": false,
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "shopConfig": {
+      "tab": "Detaljer",
+      "type": "reference",
+      "referenceType": "shopConfig",
+      "referenceDomain": "supplier-gateway",
+      "description": "Webbshop Konfiguration",
+      "localized_name": "Webbshop Konfiguration"
+    },
+    "purchasing": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Till Flaivy Pro",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "endCustomerOrganization": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "endCustomerOrganization",
+      "localized_name": "Bunden till kundorganization",
+      "readonly_in_ui": false,
+      "required": false,
+      "is_available_in_reference": true,
+      "display_if": "entity.purchasing === true"
+    },
+    "role": {
+      "tab": "Detaljer",
+      "include": "restricted_values/roles",
+      "description": "role",
+      "localized_name": "Roll",
+      "required": false,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "INVITE_UPDATED": {
+      "localized_name": "Skickat påminnelse om inbjudan",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "INVITE_CREATED": {
+      "localized_name": "Skickat inbjudan",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "sendCustomerSubUnitInvite": {
+      "name": "sendCustomerSubUnitInvite",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Skicka inbjudan till webbshop",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "email": {
+          "linked_field": "email",
+          "required": true
+        },
+        "message": {
+          "linked_field": "message"
+        },
+        "customerSubUnit": {
+          "linked_field": "customerSubUnit",
+          "required": true
+        },
+        "shopConfig": {
+          "linked_field": "shopConfig",
+          "required": true,
+          "immutableQuery": { "usesSupplierCustomer": false }
+        }
+      }
+    },
+    "sendSupplierCustomerInvite": {
+      "name": "sendSupplierCustomerInvite",
+      "requiredRole": ["super", "supplier"],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Skicka inbjudan till webbshop",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "email": {
+          "linked_field": "email",
+          "required": true
+        },
+        "message": {
+          "linked_field": "message",
+          "required": true
+        },
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "required": true
+        },
+        "shopConfig": {
+          "linked_field": "shopConfig",
+          "required": true,
+          "immutableQuery": { "usesSupplierCustomer": true }
+        }
+      }
+    },
+    "sendPurchasingInvite": {
+      "name": "sendPurchasingInvite",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "snowflakeAccessControlPattern": true,
+      "localized_name": "Skicka inbjudan till Flaivy Pro",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "email": {
+          "linked_field": "email",
+          "required": true
+        },
+        "message": {
+          "linked_field": "message"
+        },
+        "customerSubUnit": {
+          "linked_field": "customerSubUnit",
+          "required": true
+        },
+        "endCustomerOrganization": {
+          "linked_field": "endCustomerOrganization",
+          "required": true
+        },
+        "role": {
+          "linked_field": "role",
+          "required": true
+        }
+      }
+    },
+    "accept": {
+      "name": "accept",
+      "requiredRole": [],
+      "snowflakeAccessControlPattern": true,
+      "availableForCustomer": true,
+      "localized_name": "Acceptera inbjudan",
+      "description": "Acceptera inbjudan",
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "firstName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "searchable": true,
+          "localized_name": "Förnamn",
+          "required": true
+        },
+        "lastName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "searchable": true,
+          "localized_name": "Efternamn",
+          "required": true
+        },
+        "phone": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Telefon",
+          "max_length": 255,
+          "is_available_in_reference": false,
+          "required": false,
+          "required_in_ui": true
+        },
+        "password": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Lösenord",
+          "roles_for_read": ["system"],
+          "min_length": 6,
+          "explanation": "Lösenordet måste vara minst 6 tecken långt.",
+          "is_available_in_reference": false,
+          "required": true
+        },
+        "repeatPassword": {
+          "tab": "Detaljer",
+          "type": "password",
+          "localized_name": "Upprepa Lösenord",
+          "require_repeat_of": "password",
+          "required": false,
+          "required_in_ui": true
+        }
+      }
+    }
+  }
+}

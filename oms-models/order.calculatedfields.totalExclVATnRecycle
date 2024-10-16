@@ -1,0 +1,8 @@
+COALESCE(
+  (
+    SELECT SUM("orderRows"."total")
+    FROM "orderRows" JOIN "articles" ON "articles"."id" = "orderRows"."articleId"
+    WHERE "orderRows"."orderId" = ${globals.tableName}.id
+    ${globals.supplierQuery}
+  )
+,0)

@@ -1,0 +1,38 @@
+{
+  "name": "crm",
+  "generators": [
+    {
+      "generator": "clay-generator-model-documentation",
+      "output": "docs"
+    },
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/crm/dataaccess"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/crm"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/default_actions.mixin.js" },
+    { "include": "mixins/linked_fields.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "crm-model/supplierCustomer.json" },
+      { "include": "crm-model/ofc_in_crm" },
+      { "include": "crm-model/activity.json" },
+      { "include": "crm-model/user_in_crm.json" }
+    ]
+  }
+}

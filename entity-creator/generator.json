@@ -1,0 +1,11 @@
+{
+  "partials": ["partials/faker-types.js"],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "entity-creators",
+      "select": "$.model",
+      "target": "./lib/shared-service/lib/entity-creators/"
+    }
+  ]
+}

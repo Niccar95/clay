@@ -1,0 +1,78 @@
+{
+  "name": "incomingMessage",
+  "localized_name": "Inkommande meddelande",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "createdAt",
+  "belongs_to": ["integration"],
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "integration": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "integration",
+      "localized_name": "Integration",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "failedActionCall": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "failedActionCall",
+      "localized_name": "Misslyckade skrivningar",
+      "is_available_in_reference": true
+    },
+    "incoming": {
+      "tab": "Kanal",
+      "type": "object",
+      "localized_name": "Kanal",
+      "is_available_in_reference": true
+    },
+    "requestBodyS3Path": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Inkommande meddelande",
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "INCOMING_MESSAGE_CREATED": {
+      "localized_name": "Meddelande skapat",
+      "should_inform_user": false,
+      "should_inform_service": false,
+      "retention": 60
+    },
+    "INCOMING_MESSAGE_UPDATED": {
+      "localized_name": "Meddelande uppdaterat",
+      "should_inform_user": false,
+      "should_inform_service": false,
+      "retention": 60
+    }
+  },
+  "actions": {
+    "writeIncomingMessage": {
+      "name": "writeIncomingMessage",
+      "localized_name": "Skapa ett inkomande meddelande",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "request": {
+          "tab": "Detaljer",
+          "type": "object",
+          "localized_name": "Inkommande meddelande",
+          "required": true
+        }
+      }
+    }
+  }
+}

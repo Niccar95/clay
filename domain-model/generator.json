@@ -1,0 +1,69 @@
+{
+  "partials": ["partials/typescript-fields.js", "partials/description.js"],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "generate": "template",
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "create-search-string-query.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "properties.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "invariants.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "properties.spec.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "invariants.spec.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "index.extras.js",
+      "touch": true,
+      "select": "$.model.types.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    },
+    {
+      "generate": "events.js",
+      "select": "$.model",
+      "target": "./lib/domain-model/models/events/{{kebabCase clay_parent.name}}/"
+    },
+    {
+      "generate": "types-extension/index.ts",
+      "touch": true,
+      "select": "$.model",
+      "target": "./lib/domain-model/types/{{kebabCase clay_parent.name}}/extension/"
+    },
+    {
+      "generate": "types/index.ts",
+      "select": "$.model",
+      "target": "./lib/domain-model/types/{{kebabCase clay_parent.name}}/"
+    },
+    {
+      "generate": "create-search-string-query.js",
+      "touch": true,
+      "select": "$.model.projections.*",
+      "target": "./lib/domain-model/models/{{name}}"
+    }
+  ]
+}

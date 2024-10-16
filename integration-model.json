@@ -1,0 +1,37 @@
+{
+  "name": "integration",
+  "nonServiceOutputPath": "integration-gateway",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "integration-gateway/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "integration-gateway"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "integration-models/integration.json" },
+      { "include": "integration-models/mapping-template.json" },
+      { "include": "integration-models/oauth-token.json" },
+      { "include": "integration-models/outgoing-message.json" },
+      { "include": "integration-models/incoming-message.json" },
+      { "include": "integration-models/failed-action-call.json" }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "name": "label",
+  "localized_name": "Etikett",
+  "description": "varumärken för artiklar",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "required": true,
+      "max_length": 255,
+      "min_length": 1,
+      "is_available_in_reference": true,
+      "localized_name": "Namn"
+    },
+    "color": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Färg",
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        { "label": "Lila", "value": "primary" },
+        { "label": "Grå", "value": "secondary" },
+        { "label": "Blå", "value": "info" },
+        { "label": "Grön", "value": "success" },
+        { "label": "Orange", "value": "warning" },
+        { "label": "Röd", "value": "danger" }
+      ]
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "default": true,
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "LABEL_UPDATED": {
+      "localized_name": "Etikett uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "LABEL_CREATED": {
+      "localized_name": "Etikett skapat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "LABEL_ACTIVATED": {
+      "localized_name": "Etikett aktiverat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "LABEL_DEACTIVATED": {
+      "localized_name": "Etikett inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "activate": {
+      "name": "activate",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Aktivera",
+      "availableIf": "entity.active === false",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Inaktivera",
+      "availableIf": "entity.active",
+      "conditional": "Är du säker?",
+      "color": "danger",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "writeLabel": {
+      "name": "writeLabel",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skapa etikett",
+      "canCreate": true,
+      "description": "upsert med begränsade fält",
+      "availableIf": "domainModel.user.hasAtLeastSubscriptionLevel(sessionUser, 'flaivyplus')",
+      "parameters": {
+        "owningSupplierOrganizationId": {
+          "type": "relation",
+          "localized_name": "owningSupplierOrganizationId",
+          "required_in_ui": true
+        },
+        "includeParameters": [
+          "id",
+          "name",
+          "color",
+          "owningSupplierOrganizationId"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,2101 @@
+{
+  "name": "order",
+  "localized_name": "Order",
+  "description": "En order att skicka varor till en kund  \n action           event           state      \n  upsert           created         created     \n setFnxData       exported 2 fnx  received        \n approve          approved        approved      \n markAsReady      orderPicked     readyForShipping  \n       send             sent            enRoute           \n   deliver          delivered       delivered         \n invoice          invoice_created invoiced",
+  "mixin": ["default_actions", "linked_fields", "import_field"],
+  "belongs_to": ["customerSubUnit"],
+  "defaultSort": "orderState,-createdAt",
+  "defaultSimilaritySortField": "orderNumber",
+  "calculatedFields": {
+    "hasExternalReference": {
+      "type": "boolean",
+      "selfContainedQuery": "exists(SELECT 1 from JSONB_OBJECT_KEYS(${globals.tableName}.metadata) metadatakeys where metadatakeys ilike 'externalReference%')",
+      "is_available_in_reference": true,
+      "localized_name": "Har referens till annat system"
+    },
+    "totalExclVATnRecycle": {
+      "type": "money",
+      "import_field": {
+        "fileName": "./clay/oms-models/order.calculatedfields.totalExclVATnRecycle",
+        "fieldName": "selfContainedQuery"
+      },
+      "is_available_in_reference": true,
+      "localized_name": "Total"
+    },
+    "requiresSupplierCustomer": {
+      "type": "boolean",
+      "selfContainedQuery": "COALESCE((SELECT org.\"usesSupplierCustomer\" FROM \"organizationInOmsServices\" AS org WHERE org.id = ${globals.tableName}.\"owningSupplierOrganizationId\"), false)",
+      "localized_name": "Ska ha leverantörskund",
+      "is_available_in_reference": true
+    }
+  },
+  "children": {
+    "orderRows": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "orderrader",
+      "name": "orderRows",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["article"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "required": false
+        },
+        "deliveredBatchNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Levererad batch",
+          "required": false,
+          "readonly": true
+        },
+        "orderedBatchNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Önskad batch",
+          "required": false
+        },
+        "deliveredQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Levererat antal",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "DeliveredQuantity"
+        },
+        "orderedQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Beställt antal",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0,
+          "fortnox_equivalent": "OrderedQuantity"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "description": "namnet på artikeln som orderraden motsvarar",
+          "localized_name": "Namn",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Description"
+        },
+        "discount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Rabatt",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Discount"
+        },
+        "discountType": {
+          "tab": "crap",
+          "type": "string",
+          "readonly": true,
+          "localized_name": "Rabattyp",
+          "required": false,
+          "fortnox_equivalent": "DiscountType"
+        },
+        "price": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Pris",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Price"
+        },
+        "total": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Total",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Total"
+        },
+        "totalIncludingRecycle": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Total ink pant",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "unit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Enhet",
+          "required": false,
+          "fortnox_equivalent": "Unit"
+        },
+        "supplierUnit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leverantörens enhet",
+          "required": false
+        },
+        "accountNumber": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Field to allow us to control the AccountNumber as we have to set it so fortnox will update",
+          "localized_name": "Försäljningskonto",
+          "required": false,
+          "fortnox_equivalent": "AccountNumber"
+        },
+        "totalRecycle": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "",
+          "localized_name": "Pant",
+          "required": false
+        },
+        "VAT": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "Field to allow us to control the VAT as we have to set it so fortnox will update",
+          "localized_name": "Moms",
+          "required": false,
+          "fortnox_equivalent": "VAT"
+        },
+        "alcoholTax": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "",
+          "localized_name": "Alkoholskatt",
+          "required": false
+        },
+        "comment": {
+          "tab": "Detaljer",
+          "type": "string",
+          "description": "",
+          "localized_name": "Anmärkning"
+        },
+        "priceList": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "priceList",
+          "referenceDomain": "oms",
+          "description": "",
+          "localized_name": "Pris lista"
+        },
+        "owningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "userAccessString",
+          "localized_name": "owningSupplierOrganizationId",
+          "searchable": true,
+          "readonly": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "orderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "orderFullfillmentCenter",
+      "localized_name": "Leveranslager",
+      "is_available_in_reference": true
+    },
+    "orderNumber": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "fortnox_equivalent": "DocumentNumber",
+      "type": "string",
+      "localized_name": "Ordernummer",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "qvantiOrderNumber": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Ordernummer i Qvanti",
+      "readonly": true,
+      "is_available_in_reference": true
+    },
+    "supplierOrderNumber": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Leverantörens ordernummer",
+      "is_available_in_reference": true
+    },
+    "orderState": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "values": [
+        {
+          "key": "draft",
+          "label": "Utkast"
+        },
+        {
+          "key": "created",
+          "label": "Skapad"
+        },
+        {
+          "key": "received",
+          "label": "Granskas"
+        },
+        {
+          "key": "waitingForRestock",
+          "label": "Väntar på inleverans"
+        },
+        {
+          "key": "waitingForAdvancePayment",
+          "label": "Väntar på administrativ hantering"
+        },
+        {
+          "key": "approved",
+          "label": "Skickad till lager"
+        },
+        {
+          "key": "approvedByDropshipSupplier",
+          "label": "Leverantören har godkänt order"
+        },
+        {
+          "key": "inWarehouseProcess",
+          "label": "Hanteras av lager"
+        },
+        {
+          "key": "readyForShipping",
+          "label": "Plockad"
+        },
+        {
+          "key": "enRoute",
+          "label": "På väg"
+        },
+        {
+          "key": "delivered",
+          "label": "Levererad"
+        },
+        {
+          "key": "returned",
+          "label": "Retur till lager"
+        },
+        {
+          "key": "invoiced",
+          "label": "Fakturerad"
+        }
+      ],
+      "description": "shows state in orderflow",
+      "localized_name": "Status",
+      "default": "'draft'",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "orderOrigin": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "include": "enums/order_origin",
+      "default": "'internal'",
+      "description": "State handling for where the orders are arriving from",
+      "localized_name": "Orderursprung",
+      "readonly": true,
+      "is_available_in_reference": true
+    },
+    "requiresEMCS": {
+      "readonly": true,
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Kräver ordern EMCS?",
+      "is_available_in_reference": true
+    },
+    "mergedOrderReference": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "order",
+      "localized_name": "Sammanslagen med",
+      "is_available_in_reference": true
+    },
+    "cancelled": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "readonly": true,
+      "localized_name": "Makulerad",
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "Cancelled"
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "required": false,
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "is_available_in_reference": true,
+      "default": "'SEK'"
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnit",
+      "localized_name": "Centrala kunder",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "original_relation": "supplierCustomer",
+      "relation": "supplierCustomerInOmsService",
+      "localized_name": "Mina kunder",
+      "forignKeyOverride": true,
+      "is_available_in_reference": true
+    },
+    "deliveryName": {
+      "tab": "Leverans",
+      "type": "string",
+      "localized_name": "Namn för leverans",
+      "required": false,
+      "max_length": 255,
+      "fortnox_equivalent": "DeliveryName",
+      "fortnox_nullable": true
+    },
+    "deliveryAddress": {
+      "tab": "Leverans",
+      "type": "string",
+      "localized_name": "Leveransaddress",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "DeliveryAddress1",
+      "fortnox_nullable": true
+    },
+    "deliveryAddress2": {
+      "tab": "Leverans",
+      "fortnox_equivalent": "DeliveryAddress2",
+      "type": "string",
+      "localized_name": "Leveransadress 2",
+      "required_in_ui": false,
+      "max_length": 255,
+      "fortnox_nullable": true
+    },
+    "deliveryCity": {
+      "tab": "Leverans",
+      "type": "string",
+      "localized_name": "Stad",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "DeliveryCity",
+      "fortnox_nullable": true
+    },
+    "deliveryZipCode": {
+      "tab": "Leverans",
+      "type": "string",
+      "localized_name": "Postkod",
+      "required": false,
+      "max_length": 10,
+      "fortnox_equivalent": "DeliveryZipCode",
+      "fortnox_nullable": true
+    },
+    "deliveryCounty": {
+      "tab": "Leverans",
+      "include": "restricted_values/delivery_countries",
+      "localized_name": "Län",
+      "required": false,
+      "readonly": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "deliveryCountry": {
+      "tab": "Leverans",
+      "type": "string",
+      "localized_name": "Land",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "DeliveryCountry",
+      "fortnox_nullable": true
+    },
+    "deliveryInformation": {
+      "tab": "Leverans",
+      "type": "text",
+      "localized_name": "Övrig leveransinformation så som t.ex. portkod eller våning",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "deliveryDate": {
+      "type": "deliveryDate",
+      "tab": "Detaljer",
+      "localized_name": "Leverantörens leveransdatum",
+      "required": false,
+      "fortnox_equivalent": "DeliveryDate",
+      "is_available_in_reference": true
+    },
+    "requestedDeliveryDate": {
+      "type": "deliveryDate",
+      "tab": "Detaljer",
+      "localized_name": "Önskat leveransdatum",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "invoiceDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Fakturadatum",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "flaivyPaysForHandling": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Flaivy betalar för hantering",
+      "required": false
+    },
+    "notCompleted": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Ej klar",
+      "required": false,
+      "fortnox_equivalent": "NotCompleted"
+    },
+    "orderDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Orderdatum",
+      "required": false,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "OrderDate"
+    },
+    "orderType": {
+      "tab": "Detaljer",
+      "type": "string",
+      "readonly": true,
+      "description": "order type bör ändras över tid",
+      "localized_name": "Ordertyp",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "OrderType",
+      "restrictedValues": [
+        {
+          "label": "Order",
+          "value": "Order"
+        },
+        {
+          "label": "Restorder",
+          "value": "Backorder"
+        }
+      ]
+    },
+    "termsOfPayment": {
+      "tab": "Detaljer",
+      "include": "restricted_values/terms_of_payments",
+      "description": "Must have a value if not readonly else fortnox bails",
+      "localized_name": "Betalningsvillkor",
+      "required": false,
+      "max_length": 2,
+      "fortnox_equivalent": "TermsOfPayment"
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "OrganisationNumber",
+      "required": false,
+      "max_length": 255,
+      "fortnox_equivalent": "OrganisationNumber"
+    },
+    "remarks": {
+      "tab": "Detaljer",
+      "type": "text",
+      "description": "Must have a value if not readonly else fortnox bails",
+      "localized_name": "Ordertext",
+      "required": false,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "Remarks"
+    },
+    "yourReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Er referens",
+      "required": false,
+      "max_length": 50,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "YourReference"
+    },
+    "yourOrderNumber": {
+      "tab": "Detaljer",
+      "type": "string",
+      "description": "from fortnox, customers order number for purchase",
+      "localized_name": "Kundordernummer",
+      "required": false,
+      "max_length": 50,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "YourOrderNumber"
+    },
+    "trackingCode": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Spårningskod",
+      "required": false,
+      "max_length": 50,
+      "searchable": true
+    },
+    "transportProvider": {
+      "tab": "Detaljer",
+      "restrictedValues": [
+        {
+          "label": "PostNord",
+          "value": "POSTNORD"
+        },
+        {
+          "label": "Budcompaniett",
+          "value": "BUDCOMPANIETT"
+        },
+        {
+          "label": "DLP",
+          "value": "DLP"
+        },
+        {
+          "label": "DSV",
+          "value": "DSV"
+        }
+      ],
+      "type": "string",
+      "localized_name": "Transportör",
+      "required": false,
+      "max_length": 20,
+      "searchable": true
+    },
+    "phone": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Telefonnummer",
+      "required": false,
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "Phone1"
+    },
+    "ourReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Leverantörens referens",
+      "required": false,
+      "max_length": 50,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "OurReference"
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "localized_name": "E-post",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "invoiceReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Fakturareferens",
+      "required": false,
+      "readonly": true,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "InvoiceReference"
+    },
+    "advanceInvoiceReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Fakturareferens - förskottsfaktura",
+      "required": false,
+      "max_length": 255
+    },
+    "orderReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Refererande order",
+      "required": false,
+      "readonly": true,
+      "max_length": 255
+    },
+    "deliveryPalletTypes": {
+      "tab": "Detaljer",
+      "type": "stringArray",
+      "localized_name": "Order packas på",
+      "default": "[]",
+      "readonly": true
+    },
+    "deliveryPalletType": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        { "value": "SRS_EUR6", "label": "SRS halvpall" },
+        { "value": "SRS_EPAL", "label": "SRS helpall" },
+        {
+          "value": "EPAL",
+          "label": "Helpall"
+        },
+        {
+          "value": "QUARTER_PALLET",
+          "label": "Kvartspall"
+        },
+        {
+          "value": "EUR6",
+          "label": "Halvpall"
+        },
+        {
+          "value": "OTHER",
+          "label": "Annat (paket, styck kolli)"
+        }
+      ],
+      "localized_name": "Order packad på",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "ARCNumber": {
+      "type": "string",
+      "tab": "Detaljer",
+      "localized_name": "ARC-nummer",
+      "required": false,
+      "max_length": 50,
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "needSpecialHandling": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Behöver specialhantering kring order",
+      "is_available_in_reference": true
+    },
+    "supplierComment": {
+      "tab": "Detaljer",
+      "type": "markdown",
+      "localized_name": "Meddelande till kund",
+      "is_available_in_reference": true
+    },
+    "isMergedOrder": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Sammanslagen order",
+      "is_available_in_reference": true
+    },
+    "shippedBy": {
+      "tab": "Detaljer",
+      "type": "string",
+      "readonly": true,
+      "localized_name": "Skickas av",
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "orderFlowType": {
+      "tab": "Detaljer",
+      "type": "string",
+      "include": "restricted_values/order_flow_types",
+      "is_available_in_reference": true
+    },
+    "shouldFlaivyShipOrder": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Är copack order"
+    },
+    "labels": {
+      "tab": "Detaljer",
+      "type": "labels",
+      "referenceType": "label",
+      "referenceDomain": "oms",
+      "localized_name": "Etiketter",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": "[]"
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    },
+    "cartId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "CartId för den varukorg som användes vi beställning",
+      "required": false,
+      "readonly": true,
+      "unique": true,
+      "max_length": 255
+    }
+  },
+  "events": {
+    "ORDER_UPDATED": {
+      "localized_name": "Order uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_CREATED": {
+      "localized_name": "Order skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_CANCELLED": {
+      "localized_name": "Order makulerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_INVOICED": {
+      "localized_name": "Order fakturerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_CHANGED_DURING_DELIVERY": {
+      "localized_name": "Order ändrats av lagret",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_DELIVERED": {
+      "localized_name": "Order levererad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_READY_FOR_SHIPPING": {
+      "localized_name": "Order packad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_PLACED": {
+      "localized_name": "Order lagd",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_APPROVED": {
+      "localized_name": "Order godkänd",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_APPROVED_BY_DROPSHIPSUPPLIER": {
+      "localized_name": "Order godkänd av dropshipleverantör",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_WAITING_FOR_RESTOCK": {
+      "localized_name": "Order väntar på inleverans",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_WAITING_FOR_ADMIN": {
+      "localized_name": "Order väntar på administrativ hantering",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_WAREHOUSE_PROCESSING_STARTED": {
+      "localized_name": "Plockning av order påbörjad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_EXTENDED": {
+      "localized_name": "Order kompletterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_SENT": {
+      "localized_name": "Order skickad till kund",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_DELIVERY_DATE_CHANGED": {
+      "localized_name": "Leveransdatum för order ändrad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_ADVANCE_PAYMENT_RECEIVED": {
+      "localized_name": "Förskottsbetalning mottagen",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_MERGED": {
+      "localized_name": "Order sammanslagen",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_DELIVERY_DEVIATION": {
+      "localized_name": "Leveransavvikelse",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_OFC_CHANGED": {
+      "localized_name": "Leveranslager ändrat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_CONNECTED_TO_SUPPLIER_CUSTOMER": {
+      "localized_name": "Order kopplad till kund",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ORDER_METADATA_CHANGED": {
+      "localized_name": "Order metadata ändrad",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  },
+  "listeners": {
+    "ORDER_CREATED": {
+      "name": "ORDER_CREATED",
+      "reactions": ["setOrderNumber"]
+    },
+    "ORDER_UPDATED": {
+      "name": "ORDER_UPDATED",
+      "reactions": ["sendMailToStandAloneOrderAdministrator"]
+    },
+    "ORDER_CANCELLED": {
+      "name": "ORDER_CANCELLED",
+      "reactions": [
+        "sendMailToDropshipSupplier",
+        "raiseFlaivyAlert",
+        "emailCustomer"
+      ]
+    },
+    "ORDER_APPROVED": {
+      "name": "ORDER_APPROVED",
+      "reactions": [
+        "autoMergeOrders",
+        "sendOrderConfirmationEmail",
+        "sendMailToDropshipSupplier"
+      ]
+    },
+    "ORDER_APPROVED_BY_DROPSHIPSUPPLIER": {
+      "name": "ORDER_APPROVED_BY_DROPSHIPSUPPLIER",
+      "reactions": ["sendOrderConfirmationEmail"]
+    },
+    "ORDER_SENT": {
+      "name": "ORDER_SENT",
+      "reactions": ["sendOrderSentEmail"]
+    },
+    "ORDER_WAITING_FOR_RESTOCK": {
+      "name": "ORDER_WAITING_FOR_RESTOCK",
+      "reactions": ["raiseAlerts", "emailCustomerAboutOrderWaitingForRestock"]
+    },
+    "ORDER_PLACED": {
+      "name": "ORDER_PLACED",
+      "reactions": ["setOrderNumber", "setSupplierCustomer"]
+    },
+    "ORDER_DELIVERED": {
+      "name": "ORDER_DELIVERED",
+      "reactions": ["sendMailToSupplierThatHandlesInvoicing"]
+    },
+    "ORDER_DELIVERY_DATE_CHANGED": {
+      "name": "ORDER_DELIVERY_DATE_CHANGED",
+      "reactions": ["emailCustomerAboutDeliveryDateChange"]
+    },
+    "ORDER_DELIVERY_DEVIATION": {
+      "name": "ORDER_DELIVERY_DEVIATION",
+      "reactions": ["emailCustomerAboutDeliveryDeviation"]
+    }
+  },
+  "actions": {
+    "changeOrigin": {
+      "name": "changeOrigin",
+      "availableIf": "entity.orderState !== 'invoiced' && !entity.cancelled",
+      "requiredRole": ["super"],
+      "localized_name": "Ändra ordertyp",
+      "description": "Ändra ordertyp",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "orderOrigin": {
+          "linked_field": "orderOrigin",
+          "required": true,
+          "readonly": false
+        }
+      }
+    },
+    "placeOrder": {
+      "name": "placeOrder",
+      "availableIf": "(entity.orderState === 'created' || entity.orderState === 'draft')  && !entity.cancelled",
+      "requiredRole": [
+        "super",
+        "supplier",
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaser"
+      ],
+      "localized_name": "Lägg order",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "orderFullfillmentCenter": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "orderFullfillmentCenter",
+          "localized_name": "Lagerställe ordern skickas ifrån",
+          "required_in_ui": true
+        },
+        "requestedDeliveryDate": {
+          "tab": "Leveransdatum",
+          "linked_field": "requestedDeliveryDate",
+          "required_in_ui": true,
+          "localized_name": "Önskat leveransdatum"
+        },
+        "overrideFallbackDate": {
+          "tab": "Lås upp kalendern",
+          "type": "boolean",
+          "description": "",
+          "display_if": "entity.supplierCustomer || _.includes(sessionUser.roles, 'super')",
+          "localized_name": "Låter dig sätta ett historiskt datum"
+        },
+        "customerType": {
+          "tab": "Kundtyp",
+          "include": "restricted_values/customer_types",
+          "description": "kundtyp",
+          "required_in_ui": true,
+          "localized_name": "Vänligen ange kundtyp",
+          "display_if": "entity.customerType === null"
+        },
+        "customerSubUnitEmailInvoice": {
+          "tab": "Elektronisk faktura",
+          "type": "email",
+          "description": "",
+          "localized_name": "Kundens E-post för faktura",
+          "required_in_ui": true,
+          "max_length": 255,
+          "display_if": "entity.approvedCustomer === false && entity.mustHavePrint === false"
+        },
+        "mustHavePrint": {
+          "tab": "Elektronisk faktura",
+          "type": "boolean",
+          "description": "",
+          "localized_name": "Kunden har uttryckligen efterfrågat pappersfaktura",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "approvedCustomer": {
+          "tab": "Fakturering",
+          "type": "boolean",
+          "readonly": true,
+          "description": "",
+          "localized_name": "Godkänd kund",
+          "display_if": "entity.approvedCustomer && false"
+        },
+        "endCustomerInvoiceAddress": {
+          "tab": "Fakturering",
+          "type": "string",
+          "description": "",
+          "localized_name": "Adress",
+          "required_in_ui": true,
+          "max_length": 255,
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "endCustomerInvoiceAddress2": {
+          "tab": "Fakturering",
+          "type": "string",
+          "description": "",
+          "localized_name": "Adress2",
+          "required_in_ui": false,
+          "max_length": 255,
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "endCustomerInvoiceZipCode": {
+          "tab": "Fakturering",
+          "type": "string",
+          "description": "",
+          "localized_name": "Postnummer",
+          "required_in_ui": true,
+          "max_length": 10,
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "endCustomerInvoiceCity": {
+          "tab": "Fakturering",
+          "type": "string",
+          "description": "",
+          "localized_name": "Stad",
+          "required_in_ui": true,
+          "max_length": 255,
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "deliveryName": {
+          "linked_field": "deliveryName",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "deliveryAddress": {
+          "linked_field": "deliveryAddress",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "deliveryCity": {
+          "linked_field": "deliveryCity",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "deliveryZipCode": {
+          "linked_field": "deliveryZipCode",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "confirmForm": {
+          "tab": "Slutligen",
+          "ui_only": true,
+          "type": "confirm",
+          "description": "",
+          "localized_name": "För att kunden ska bli nöjd med leveransen och inte få problem med fakturan har jag kontrollerat att uppgifterna stämmer",
+          "display_if": "entity.approvedCustomer === false"
+        },
+        "yourOrderNumber": {
+          "linked_field": "yourOrderNumber",
+          "tab": "Slutligen",
+          "required_in_ui": true,
+          "display_if": "_.get(entity, 'customerSubUnit.customerType') === 'wholesale'",
+          "explanation": "Försäljning till grossist kräver deras ordernummer för att fakturering skall bli korrekt"
+        },
+        "confirmSendToWarehouse": {
+          "tab": "Slutligen",
+          "ui_only": true,
+          "type": "confirm",
+          "description": "",
+          "localized_name": "Artiklar utan saldo kommer resultera i att hela ordern stannar tills saldo finns, vill du lägga ordern ändå?",
+          "display_if": "(entity.orderFlowType === 'standard') && entity.allOrderRowsInStock === false"
+        }
+      }
+    },
+    "sendToWarehouse": {
+      "name": "sendToWarehouse",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skicka till lager",
+      "availableIf": "(entity.orderState === 'received' || entity.orderState === 'waitingForRestock')  && !entity.cancelled",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "deliveryDate": {
+          "linked_field": "deliveryDate"
+        },
+        "overrideFallbackDate": {
+          "tab": "Lås upp kalendern",
+          "type": "boolean",
+          "description": "",
+          "display_if": "entity.supplierCustomer || _.includes(sessionUser.roles, 'super')",
+          "localized_name": "Låter dig sätta ett historiskt datum"
+        },
+        "confirmSendToWarehouse": {
+          "tab": "Slutligen",
+          "ui_only": true,
+          "type": "confirm",
+          "description": "",
+          "localized_name": "Artiklar utan saldo kommer resultera i att hela ordern stannar tills saldo finns, vill du lägga ordern ändå?",
+          "display_if": "(entity.orderFlowType === 'standard') && entity.allOrderRowsInStock === false"
+        },
+        "needSpecialHandling": {
+          "tab": "Slutligen",
+          "linked_field": "needSpecialHandling"
+        },
+        "deliveryInformation": {
+          "tab": "Slutligen",
+          "linked_field": "deliveryInformation",
+          "display_if": "entity.needSpecialHandling"
+        }
+      }
+    },
+    "changeDeliveryDate": {
+      "name": "changeDeliveryDate",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ändra leveransdatum",
+      "availableIf": "!entity.cancelled",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "deliveryDate": {
+          "linked_field": "deliveryDate",
+          "required": true
+        },
+        "overrideFallbackDate": {
+          "tab": "Lås upp kalendern",
+          "type": "boolean",
+          "description": "",
+          "display_if": "entity.supplierCustomer || _.includes(sessionUser.roles, 'super')",
+          "localized_name": "Låter dig sätta ett historiskt datum"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        }
+      }
+    },
+    "startWarehouseProcessing": {
+      "name": "startWarehouseProcessing",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Påbörja lagerhantering",
+      "description": "Starta lagerprocess, order låses för komplettering",
+      "availableIf": "entity.orderFlowType === 'standard' && entity.orderState === 'approved' && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "setInDraftState": {
+      "name": "setInDraftState",
+      "requiredRole": ["supplier"],
+      "localized_name": "Dra tillbaka till utkast",
+      "description": "Ordern borde inte fastna i skapad. Genom att dra tillbaka den till utkast kan du prova att lägga den igen",
+      "color": "danger",
+      "confirm": "Är du säker på att du vill dra tillbaka ordern till utkast?",
+      "availableIf": "domainModel.order.isStandardOrderOnNotCoPack(entity) && entity.orderState === 'created' && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "orderState": {
+          "linked_field": "orderState",
+          "display_if": "false"
+        }
+      }
+    },
+    "setInWaitingForRestockState": {
+      "name": "setInWaitingForRestockState",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Pausa ordern i väntan på inleverans",
+      "description": "Pausa ordern i väntan på inleverans",
+      "availableIf": "entity.orderFlowType === 'standard' && entity.orderState === 'received'  && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "needSpecialHandling": {
+          "linked_field": "needSpecialHandling"
+        },
+        "deliveryInformation": {
+          "linked_field": "deliveryInformation",
+          "display_if": "entity.needSpecialHandling"
+        }
+      }
+    },
+    "setInWaitingForAdvancePaymentState": {
+      "name": "setInWaitingForAdvancePaymentState",
+      "requiredRole": ["super"],
+      "availableIf": "entity.orderState === 'receieved'  && !entity.cancelled",
+      "localized_name": "Pausa ordern i väntan på förskottsbetalning",
+      "description": "Pausa ordern i väntan på förskottsbetalning",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "setEMCSInformation": {
+      "name": "setEMCSInformation",
+      "requiredRole": ["super", "supplier"],
+      "availableIf": "entity.orderState === 'waitingForAdvancePayment'  && !entity.cancelled",
+      "localized_name": "Sätt EMCS information",
+      "description": "Färdigställer ordern med EMCS så den kan skickas till grossist eller utomlands",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "ARCNumber": {
+          "linked_field": "ARCNumber",
+          "required": true
+        },
+        "advanceInvoiceReference": {
+          "linked_field": "advanceInvoiceReference"
+        },
+        "advanceInvoiceAmount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Förskottsbetalningsbelopp"
+        }
+      }
+    },
+    "markAsReady": {
+      "name": "markAsReady",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Plocka order",
+      "description": "Meddelar att ordern är färdigplockad",
+      "availableIf": "entity.orderState ==='inWarehouseProcess' && !entity.cancelled",
+      "parameters": {
+        "includeParameters": ["id"],
+        "deliveryDate": {
+          "tab": "Detaljer",
+          "linked_field": "deliveryDate",
+          "localized_name": "Leveransdatum"
+        },
+        "orderRows": {
+          "type": "array",
+          "editMode": "no-add-no-delete",
+          "tab": "Detaljer",
+          "localized_name": "Artiklar som skickats",
+          "name": "orderRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "rowNumberReference": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "orderradsnummerreferens",
+              "display_if": "false"
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Beställt antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "min_length": 0
+            },
+            "deliveredQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Levererat antal",
+              "default": 0,
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0,
+              "warehouseIsWeighingForDistribution": true
+            },
+            "deviationReason": {
+              "tab": "Detaljer",
+              "type": "string",
+              "localized_name": "Kommentar",
+              "restrictedValues": [
+                {
+                  "value": "ORDER_LINE_IS_ADDED",
+                  "label": "Orderraden har lagts till"
+                },
+                {
+                  "value": "ORDER_LINE_IS_CHANGED",
+                  "label": "Orderraden är mottagen men med ändringar"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ACCEPTED",
+                  "label": "Orderraden är mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_REJECTED",
+                  "label": "Orderraden är inte mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ALREADY_DELIVERED",
+                  "label": "Orderraden är redan levererad"
+                }
+              ]
+            },
+            "quantityDiff": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Diff på orderrad",
+              "display_if": "false"
+            }
+          }
+        },
+        "createBackOrderOnDeviation": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Skapa restorder på avvikelse",
+          "display_if": "!entity.supplierCustomer"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        },
+        "yourOrderNumber": {
+          "tab": "detaljer",
+          "type": "string",
+          "localized_name": "yourOrderNumber",
+          "display_if": "false"
+        }
+      }
+    },
+    "setEmailSent": {
+      "name": "setEmailSent",
+      "requiredRole": ["super"],
+      "localized_name": "mail har skickats",
+      "availableIf": "!entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "emailType": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "typ av mail",
+          "required": true
+        },
+        "emailId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "mail id",
+          "required": true
+        }
+      }
+    },
+    "shipOrder": {
+      "name": "shipOrder",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skicka",
+      "description": "Skicka en order till kund",
+      "availableIf": "entity.orderState === 'readyForShipping' && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "trackingCode": {
+          "linked_field": "trackingCode",
+          "display_if": "!entity.supplierCustomer"
+        },
+        "transportProvider": {
+          "linked_field": "transportProvider",
+          "display_if": "!entity.supplierCustomer"
+        },
+        "deliveryPalletType": {
+          "linked_field": "deliveryPalletType",
+          "display_if": "!entity.supplierCustomer"
+        },
+        "deliveryPalletTypes": {
+          "linked_field": "deliveryPalletTypes",
+          "display_if": "!entity.supplierCustomer"
+        }
+      }
+    },
+    "deliverOrder": {
+      "name": "deliverOrder",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Markera som levererad",
+      "description": "Sätter en order till levererad",
+      "availableIf": "(entity.orderState === 'enRoute' || entity.orderState === 'approvedByDropshipSupplier') && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "invoiceOrder": {
+      "name": "invoiceOrder",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Fakturera",
+      "description": "Fakturerar ordern",
+      "availableIf": "entity.orderState === 'delivered' && !entity.cancelled",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "invoiceDate": {
+          "linked_field": "invoiceDate"
+        }
+      }
+    },
+    "cancel": {
+      "name": "cancel",
+      "requiredRole": ["super", "supplier"],
+      "color": "danger",
+      "localized_name": "Makulera",
+      "availableIf": "!entity.cancelled",
+      "description": "Makulerar ordern, om ordern inte längre är ett utkast går ett mail till kund och informerar dem om makuleringen.",
+      "conditional": "Det går inte att ångra en makulering av en order. Vill du fortsätta?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        }
+      }
+    },
+    "writeOrder": {
+      "name": "writeOrder",
+      "requiredRole": [
+        "super",
+        "supplier",
+        "customerSubUnit",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitEconomy",
+        "customerSubUnitPurchaser"
+      ],
+      "localized_name": "Skapa order",
+      "description": "upsert med behörighets check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["orderState"]
+      }
+    },
+    "writeSystembolagetOrder": {
+      "name": "writeSystembolagetOrder",
+      "requiredRole": ["super"],
+      "localized_name": "Skapa order med systembolaget checkar",
+      "description": "upsert med systembolaget check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["orderOrigin", "orderRows"],
+        "orderRows": {
+          "type": "array",
+          "tab": "rader från dlp-fil",
+          "localized_name": "rader från dlp-fil",
+          "name": "orderRows",
+          "add_button_text": "rad",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "name": {
+              "type": "string",
+              "required": false,
+              "description": "name",
+              "localized_name": "name"
+            },
+            "article": {
+              "tab": "Detaljer",
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false
+            },
+            "deliveredQuantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "deliveredQuantity",
+              "required": false
+            },
+            "orderedQuantity": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "orderedQuantity",
+              "required": false
+            },
+            "price": {
+              "tab": "Detaljer",
+              "type": "number",
+              "step": 0.01,
+              "localized_name": "Price",
+              "required": true
+            }
+          }
+        },
+        "force": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "force",
+          "required": false,
+          "default": false
+        }
+      }
+    },
+    "setTrackingCode": {
+      "name": "setTrackingCode",
+      "requiredRole": ["super"],
+      "availableIf": "entity.orderState === 'delivered' && !entity.cancelled",
+      "localized_name": "Sätt aviseringskod",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "trackingCode": {
+          "linked_field": "trackingCode"
+        }
+      }
+    },
+    "fortnoxOrder": {
+      "name": "fortnoxOrder",
+      "requiredRole": ["super"],
+      "localized_name": "Skapa order från fortnox",
+      "description": "upsert med check på fortnox order och orderstate",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "orderRows": {
+          "type": "array",
+          "editMode": "no-add-no-delete",
+          "tab": "Detaljer",
+          "localized_name": "Artiklar som skickats",
+          "name": "orderRows",
+          "props": {
+            "rowId": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "orderradsreferens",
+              "display_if": "false"
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Beställt antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "min_length": 0
+            },
+            "deliveredQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Levererat antal",
+              "default": 0,
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0
+            },
+            "unit": {
+              "tab": "Detaljer",
+              "type": "string",
+              "localized_name": "Enhet",
+              "display_if": "false"
+            },
+            "price": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Pris",
+              "display_if": "false"
+            },
+            "discount": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Rabatt",
+              "display_if": "false"
+            },
+            "discountType": {
+              "tab": "Detaljer",
+              "type": "string",
+              "readonly": true,
+              "localized_name": "Rabattyp",
+              "required": false
+            },
+            "VAT": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Moms",
+              "display_if": "false"
+            },
+            "remark": {
+              "tab": "Detaljer",
+              "type": "string",
+              "localized_name": "Anmärkning"
+            }
+          }
+        }
+      }
+    },
+    "deviationInDelivery": {
+      "name": "deviationInDelivery",
+      "requiredRole": ["system"],
+      "localized_name": "Leveransavvikelse",
+      "description": "används för att markera avvikelser från leverans",
+      "parameters": {
+        "includeParameters": ["id", "orderRows"]
+      }
+    },
+    "updateOwningSupplierOrganization": {
+      "name": "updateOwningSupplierOrganization",
+      "requiredRole": ["super"],
+      "localized_name": "Uppdatera leverantörsorganisation på orderrader och order",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "isDropshipping": {
+          "required": true,
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "är droppshipping"
+        },
+        "isStandAlone": {
+          "required": true,
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "är fristående"
+        }
+      }
+    },
+    "ensureInvariants": {
+      "name": "ensureInvariants",
+      "requiredRole": ["super"],
+      "localized_name": "Räkna om totaler",
+      "availableIf": "!entity.cancelled",
+      "description": "Stöd action för att kontrollera orderraders total",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "pushToState": {
+      "name": "pushToState",
+      "requiredRole": ["super"],
+      "localized_name": "Pusha till state",
+      "description": "om vi får in en order från en extern källa så kan vi pusha den till ett specifikt state och ända skicka mail och sätta ordernummer",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "orderState": {
+          "linked_field": "orderState"
+        },
+        "cancelled": {
+          "linked_field": "cancelled"
+        }
+      }
+    },
+    "mergeOrder": {
+      "name": "mergeOrder",
+      "requiredRole": ["super"],
+      "localized_name": "Slå ihop med",
+      "availableIf": "!entity.cancelled",
+      "description": "Slår ihop en order med en annan. Denna ordern inaktiveras. Orderader flyttas till nya ordern",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "mergeTarget": {
+          "linked_field": "mergedOrderReference"
+        }
+      }
+    },
+    "approveDropshipOrder": {
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Informera kund om leverans",
+      "name": "approveDropshipOrder",
+      "availableIf": "entity.orderFlowType=== 'email' && entity.orderState === 'approved' && !entity.cancelled",
+      "parameters": {
+        "includeParameters": ["id"],
+        "deliveryDate": {
+          "tab": "Detaljer",
+          "linked_field": "deliveryDate",
+          "localized_name": "Leveransdatum"
+        },
+        "orderRows": {
+          "type": "array",
+          "editMode": "no-add-no-delete",
+          "tab": "Detaljer",
+          "localized_name": "Artiklar som skickats",
+          "name": "orderRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "rowNumberReference": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "orderradsnummerreferens",
+              "display_if": "false"
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Beställt antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "min_length": 0
+            },
+            "deliveredQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Levererat antal",
+              "default": 0,
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0
+            },
+            "deviationReason": {
+              "tab": "Detaljer",
+              "type": "string",
+              "localized_name": "Kommentar",
+              "restrictedValues": [
+                {
+                  "value": "ORDER_LINE_IS_ADDED",
+                  "label": "Orderraden har lagts till"
+                },
+                {
+                  "value": "ORDER_LINE_IS_CHANGED",
+                  "label": "Orderraden är mottagen men med ändringar"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ACCEPTED",
+                  "label": "Orderraden är mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_REJECTED",
+                  "label": "Orderraden är inte mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ALREADY_DELIVERED",
+                  "label": "Orderraden är redan levererad"
+                }
+              ]
+            },
+            "quantityDiff": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Diff på orderrad",
+              "display_if": "false"
+            }
+          }
+        },
+        "createBackOrderOnDeviation": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Skapa restorder på avvikelse"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        },
+        "yourOrderNumber": {
+          "tab": "detaljer",
+          "type": "string",
+          "localized_name": "yourOrderNumber",
+          "display_if": "false"
+        }
+      }
+    },
+    "shipDropshipOrder": {
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skicka en order till kund",
+      "name": "shipDropshipOrder",
+      "parameters": {
+        "includeParameters": ["id"],
+        "deliveryDate": {
+          "tab": "Detaljer",
+          "linked_field": "deliveryDate",
+          "localized_name": "Leveransdatum"
+        },
+        "yourOrderNumber": {
+          "tab": "detaljer",
+          "type": "string",
+          "localized_name": "yourOrderNumber",
+          "display_if": "false"
+        },
+        "createBackOrderOnDeviation": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Skapa restorder på avvikelse"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        },
+        "orderRows": {
+          "type": "array",
+          "editMode": "no-add-no-delete",
+          "tab": "Detaljer",
+          "localized_name": "Artiklar som skickats",
+          "name": "orderRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "rowNumberReference": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "orderradsnummerreferens",
+              "display_if": "false"
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Beställt antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "min_length": 0
+            },
+            "deliveredQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Levererat antal",
+              "default": 0,
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0
+            },
+            "deviationReason": {
+              "tab": "Detaljer",
+              "type": "string",
+              "localized_name": "Kommentar",
+              "restrictedValues": [
+                {
+                  "value": "ORDER_LINE_IS_ADDED",
+                  "label": "Orderraden har lagts till"
+                },
+                {
+                  "value": "ORDER_LINE_IS_CHANGED",
+                  "label": "Orderraden är mottagen men med ändringar"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ACCEPTED",
+                  "label": "Orderraden är mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_REJECTED",
+                  "label": "Orderraden är inte mottagen"
+                },
+                {
+                  "value": "ORDER_LINE_IS_ALREADY_DELIVERED",
+                  "label": "Orderraden är redan levererad"
+                }
+              ]
+            },
+            "quantityDiff": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Diff på orderrad",
+              "display_if": "false"
+            },
+            "total": {
+              "tab": "Detaljer",
+              "type": "number",
+              "localized_name": "Total",
+              "display_if": "false"
+            }
+          }
+        }
+      }
+    },
+    "publicCancelOrder": {
+      "requiredRole": [],
+      "localized_name": "Makulera order",
+      "name": "publicCancelOrder",
+      "alternateEndpoint": "public/cancelOrder",
+      "conditional": "Det går inte att ångra en makulering av en order. Vill du fortsätta?",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "includeParameters": ["id"],
+        "supplierComment": {
+          "linked_field": "supplierComment",
+          "required_in_ui": true
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "required": true
+        }
+      }
+    },
+    "publicApproveOrder": {
+      "requiredRole": [],
+      "localized_name": "Informera kund om leverans",
+      "name": "publicApproveOrder",
+      "snowflakeAccessControlPattern": true,
+      "alternateEndpoint": "public/approveOrder",
+      "parameters": {
+        "includeParameters": ["id"],
+        "orderFullfillmentCenterId": {
+          "tab": "userinfo",
+          "type": "string",
+          "required": false,
+          "localized_name": "Lagerställets id"
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "required": true
+        }
+      }
+    },
+    "publicChangeOrder": {
+      "requiredRole": [],
+      "localized_name": "Informera kund om leverans",
+      "description": "Redigera order",
+      "name": "publicChangeOrder",
+      "alternateEndpoint": "public/changeOrder",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "includeParameters": ["id"],
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "required": true
+        },
+        "deliveryDate": {
+          "tab": "Detaljer",
+          "type": "date",
+          "minDate": true,
+          "expanded": true,
+          "linked_field": "deliveryDate",
+          "localized_name": "Ändra leveransdatum"
+        },
+        "supplierComment": {
+          "linked_field": "supplierComment"
+        },
+        "orderRows": {
+          "type": "array",
+          "editMode": "no-add-no-delete",
+          "tab": "Detaljer",
+          "localized_name": "Beställda artiklar",
+          "name": "orderRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet"
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false,
+              "immutableQuery": { "salesType": "DropShipping" }
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "localized_name": "Beställt antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "article_reference": "article"
+            },
+            "deliveredQuantity": {
+              "type": "articleQuantity",
+              "localized_name": "Levererat antal",
+              "required": false,
+              "is_available_in_reference": true,
+              "article_reference": "article"
+            }
+          }
+        }
+      }
+    },
+    "publicGetOrder": {
+      "requiredRole": [],
+      "localized_name": "Informera kund om leverans",
+      "name": "publicGetOrder",
+      "alternateEndpoint": "public/orders",
+      "snowflakeAccessControlPattern": true,
+      "parameters": {
+        "includeParameters": ["id"],
+        "deliveryDate": {
+          "tab": "Detaljer",
+          "linked_field": "deliveryDate",
+          "localized_name": "Beräknat leveransdatum"
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "required": true
+        }
+      }
+    },
+    "changeOrderFullfillmentCenter": {
+      "name": "changeOrderFullfillmentCenter",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ändra lagerställe",
+      "description": "Ändra lagerställe",
+      "availableIf": "(entity.orderState === 'received' || entity.orderState === 'waitingForRestock')  && !entity.cancelled",
+      "parameters": {
+        "includeParameters": ["id"],
+        "orderFullfillmentCenter": {
+          "linked_field": "orderFullfillmentCenter"
+        }
+      }
+    },
+    "changeOrderFullfillmentCenterTemporarySolutionForSuper": {
+      "name": "changeOrderFullfillmentCenterTemporarySolutionForSuper",
+      "requiredRole": ["super"],
+      "localized_name": "Ändra lagerställe",
+      "description": "Ändra lagerställe",
+      "parameters": {
+        "includeParameters": ["id"],
+        "orderFullfillmentCenter": {
+          "linked_field": "orderFullfillmentCenter"
+        }
+      }
+    },
+    "connectSupplierCustomerToOrder": {
+      "name": "connectSupplierCustomerToOrder",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Koppla order till kund",
+      "description": "Koppla order till kund",
+      "parameters": {
+        "includeParameters": ["id"],
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "required": true,
+          "fallbackEntity": "entity.customerSubUnit"
+        },
+        "customerSubUnit": {
+          "linked_field": "customerSubUnit",
+          "display_if": "false",
+          "required": true
+        }
+      }
+    },
+    "upsertOrderWithQuantitiesPerColli": {
+      "name": "upsertOrderWithQuantitiesPerColli",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "localized_name": "upsertOrderWithQuantitiesPerColli",
+      "description": "upsertOrderWithQuantitiesPerColli",
+      "parameters": {
+        "includeParameters": "*",
+        "orderRowsChanges": {
+          "tab": "Detaljer",
+          "localized_name": "Artiklar som skickats",
+          "name": "orderRowsChanges",
+          "type": "childrenChanges",
+          "props": {
+            "article": {
+              "localized_name": "Artikel",
+              "relation": "article",
+              "type": "relation"
+            },
+            "deliveredQuantity": {
+              "localized_name": "Levererat antal",
+              "required": true,
+              "type": "number"
+            }
+          }
+        }
+      }
+    }
+  }
+}

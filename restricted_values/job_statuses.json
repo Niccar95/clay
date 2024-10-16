@@ -1,0 +1,21 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "value": "Error",
+      "label": "Fel"
+    },
+    {
+      "value": "Success",
+      "label": "OK"
+    },
+    {
+      "value": "Started",
+      "label": "Kör just nu"
+    },
+    {
+      "value": "Undetermined",
+      "label": "Något har hänt, kommer försöka igen"
+    }
+  ]
+}

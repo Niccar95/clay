@@ -1,0 +1,44 @@
+{
+  "name": "pcs",
+  "generators": [
+    {
+      "generator": "clay-generator-model-documentation",
+      "output": "docs"
+    },
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/pcs/dataaccess"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/pcs"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/default_actions.mixin.js" },
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/import_field.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "pcs-models/cart.json" },
+      { "include": "pcs-models/supplier_connection.json" },
+      { "include": "pcs-models/supplier_in_pcs_service.json" },
+      { "include": "pcs-models/supplier_customer_in_pcs_service.json" },
+      { "include": "pcs-models/procurement_article.json" },
+      { "include": "pcs-models/procurement_list.json" },
+      { "include": "pcs-models/customer_sub_unit_in_pcs_service.json" },
+      { "include": "pcs-models/organization_in_pcs_service.json" }
+    ],
+    "projections": []
+  }
+}

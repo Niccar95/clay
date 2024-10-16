@@ -1,0 +1,20 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "value": "standard",
+      "label": "standard"
+    },
+    {
+      "value": "email",
+      "label": "email"
+    },
+    {
+      "value": "freshx",
+      "label": "freshx"
+    }
+  ],
+  "max_length": 255,
+  "default": "'standard'",
+  "localized_name": "Typ av orderflöde"
+}

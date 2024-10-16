@@ -1,0 +1,217 @@
+{
+  "name": "activity",
+  "localizedName": "aktivitet",
+  "description": "något du utför på en konsument...",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["supplierCustomer", "user_in_crm"],
+  "defaultSort": "dueDate",
+  "defaultSimilaritySortField": "description",
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "string",
+      "required": true,
+      "max_length": 255,
+      "localized_name": "Beskrivning",
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "isDone": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "required": false,
+      "localized_name": "Klar",
+      "is_available_in_reference": true
+    },
+    "notes": {
+      "tab": "Detaljer",
+      "type": "text",
+      "required": false,
+      "max_length": 1000,
+      "localized_name": "Anteckningar",
+      "is_available_in_reference": true
+    },
+    "dueDate": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "required": true,
+      "description": "tid och klockslag",
+      "localized_name": "Datum och tid",
+      "is_available_in_reference": true
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplierCustomer",
+      "localized_name": "Kund",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "user": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "userInCrm",
+      "original_relation": "user",
+      "localized_name": "Användare",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "Leverantörs organisation",
+      "readonly": true,
+      "is_available_in_reference": false,
+      "is_available_in_reference_ui": false
+    },
+    "result": {
+      "tab": "Detaljer",
+      "type": "text",
+      "required": false,
+      "max_length": 255,
+      "localized_name": "Resultat"
+    }
+  },
+  "events": {
+    "ACTIVITY_UPDATED": {
+      "localized_name": "Aktivitet uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ACTIVITY_CREATED": {
+      "localized_name": "Aktivitet skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "ACTIVITY_FINISHED": {
+      "localized_name": "Aktivitet klar",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "writeActivity": {
+      "name": "writeActivity",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Skapa aktivitet",
+      "submitButtonText": "Spara",
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id",
+          "required": true
+        },
+        "description": {
+          "linked_field": "description",
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true,
+          "max_length": 255,
+          "localized_name": "Vad ska göras?"
+        },
+        "notes": {
+          "linked_field": "notes",
+          "tab": "Detaljer",
+          "type": "text",
+          "required": false,
+          "max_length": 1000,
+          "localized_name": "Anteckningar",
+          "is_available_in_reference": true
+        },
+        "isDone": {
+          "linked_field": "isDone",
+          "tab": "Detaljer",
+          "type": "boolean",
+          "required": false,
+          "localized_name": "Klar",
+          "is_available_in_reference": true
+        },
+        "dueDate": {
+          "linked_field": "dueDate",
+          "tab": "Detaljer",
+          "type": "datetime",
+          "required": true,
+          "description": "tid och klockslag",
+          "localized_name": "När?"
+        },
+        "supplierCustomer": {
+          "linked_field": "supplierCustomer",
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplierCustomer",
+          "localized_name": "Med vem?"
+        },
+        "owningSupplierOrganizationId": {
+          "linked_field": "owningSupplierOrganizationId",
+          "tab": "Detaljer",
+          "type": "userAccessString",
+          "localized_name": "Leverantörs organisation",
+          "readonly": true,
+          "is_available_in_reference": false,
+          "is_available_in_reference_ui": false
+        },
+        "user": {
+          "linked_field": "user",
+          "tab": "Detaljer",
+          "type": "relation",
+          "localized_name": "Leverantörens Användare",
+          "searchable": true,
+          "readonly": true,
+          "is_available_in_reference": false,
+          "is_available_in_reference_ui": false
+        }
+      }
+    },
+    "finish": {
+      "name": "finish",
+      "localized_name": "Klarmarkera",
+      "requiredRole": ["super", "supplier"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "result": {
+          "tab": "Detaljer",
+          "type": "text",
+          "required": true,
+          "max_length": 255,
+          "localized_name": "Resultat"
+        },
+        "shouldCreateNewActivity": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Skapa ny aktivitet?",
+          "default": true
+        },
+        "nextActivityDescription": {
+          "linked_field": "description",
+          "localized_name": "Vad ska göras?",
+          "required": false,
+          "required_in_ui": true,
+          "display_if": "entity.shouldCreateNewActivity"
+        },
+        "nextActivityNotes": {
+          "linked_field": "notes",
+          "localized_name": "Anteckningar",
+          "required": false,
+          "required_in_ui": false,
+          "display_if": "entity.shouldCreateNewActivity"
+        },
+        "nextActivityDueDate": {
+          "linked_field": "dueDate",
+          "localized_name": "När?",
+          "required": false,
+          "required_in_ui": true,
+          "display_if": "entity.shouldCreateNewActivity"
+        }
+      }
+    }
+  }
+}

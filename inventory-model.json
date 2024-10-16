@@ -1,0 +1,41 @@
+{
+  "name": "inventory",
+  "generators": [
+    {
+      "generator": "clay-generator-model-documentation",
+      "output": "docs"
+    },
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "services/inventory/dataaccess"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "services/inventory"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/default_actions.mixin.js" },
+    { "include": "mixins/linked_fields.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "inventory-models/stock-taking.json" },
+      {
+        "include": "inventory-models/article-in-inventory.json"
+      },
+      {
+        "include": "inventory-models/end-customer-in-inventory.json"
+      }
+    ]
+  }
+}

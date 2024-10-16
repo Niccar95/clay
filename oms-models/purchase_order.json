@@ -1,0 +1,720 @@
+{
+  "name": "purchaseOrder",
+  "localized_name": "Inleverans",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["supplier"],
+  "defaultSort": "-orderNumber",
+  "defaultSimilaritySortField": "orderNumber",
+  "calculatedFields": {
+    "hasInactiveArticle": {
+      "tab": "Lager",
+      "type": "boolean",
+      "selfContainedQuery": "select SUM(1) > 0  FROM \"purchaseOrderRows\" LEFT JOIN \"articles\" a ON a.id = \"purchaseOrderRows\".\"articleId\"  WHERE a.\"active\" = false AND \"purchaseOrderId\"=${globals.tableName}.id",
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false,
+      "localized_name": "Finns utgångna artiklar på lager"
+    },
+    "handledByFlaivy": {
+      "tab": "Lager",
+      "type": "boolean",
+      "selfContainedQuery": "select SUM(1) > 0  FROM \"purchaseOrderRows\" LEFT JOIN \"articles\" a ON a.id = \"purchaseOrderRows\".\"articleId\"  WHERE a.\"salesType\" = 'OwnedByDrycks' AND \"purchaseOrderId\"=${globals.tableName}.id",
+      "is_available_in_reference": true,
+      "localized_name": "Behöver specialhantering av flaivy"
+    }
+  },
+  "children": {
+    "purchaseOrderRows": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Rader i inköpsordern",
+      "name": "purchaseOrderRows",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["article"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "article": {
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "required": false,
+          "is_available_in_reference": true,
+          "immutableQuery": { "salesType": { "ne": "DropShipping" } }
+        },
+        "orderedQuantity": {
+          "type": "articleQuantity",
+          "article_reference": "article",
+          "localized_name": "Enheter i leverans",
+          "description": "this is units, units rule. we now speak the universal language of purchase orders",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0
+        },
+        "receivedQuantity": {
+          "type": "articleQuantity",
+          "article_reference": "article",
+          "localized_name": "Mottaget antal",
+          "description": "this is units, units rule. we now speak the universal language of purchase orders",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0
+        },
+        "orderedParcels": {
+          "type": "number",
+          "localized_name": "Beställda kollin",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0,
+          "readonly": true
+        },
+        "receivedParcels": {
+          "type": "number",
+          "localized_name": "Motagna kollin",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0,
+          "readonly": true
+        },
+        "price": {
+          "display_if": "_.get(entity, 'article.salesType') !== 'Commission'",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Inköpspris/styck",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "isSuggestion": {
+          "type": "boolean",
+          "localized_name": "Automatisk föreslagen påfyllning",
+          "required": false,
+          "is_available_in_reference": true,
+          "is_available_in_reference_ui": false
+        }
+      }
+    },
+    "purchaseOrderDeliveries": {
+      "tab": "Detaljer",
+      "type": "array",
+      "name": "purchaseOrderDeliveries",
+      "localized_name": "Leveranser för inköpsordern",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "deliveryRows": {
+          "type": "object",
+          "localized_name": "Leverans rader",
+          "required": true,
+          "is_available_in_reference": false
+        },
+        "deliveryId": {
+          "type": "string",
+          "localized_name": "Leveransnummer",
+          "required": true,
+          "is_available_in_reference": true,
+          "unique": true,
+          "min_length": 0
+        },
+        "deliveryDate": {
+          "type": "date",
+          "localized_name": "Leveransnummer",
+          "required": true,
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "orderNumber": {
+      "type": "integer",
+      "tab": "Detaljer",
+      "unique": true,
+      "required": false,
+      "readonly": true,
+      "description": "number",
+      "localized_name": "Ordernummer",
+      "is_available_in_reference": true
+    },
+    "supplierOrderNumber": {
+      "type": "string",
+      "tab": "Detaljer",
+      "required": false,
+      "description": "används för att hjälpa vinden hitta rätt order vid inleverans, följesedel är inte alltid märkt med vårt nummer.",
+      "localized_name": "Leverantörens ordernummer",
+      "is_available_in_reference": true
+    },
+    "purchaseOrderState": {
+      "type": "enum",
+      "tab": "Detaljer",
+      "values": [
+        {
+          "key": "draft",
+          "label": "Utkast"
+        },
+        {
+          "key": "waitingForFlaivyApproval",
+          "label": "Granskas"
+        },
+        {
+          "key": "sentToSupplier",
+          "label": "Beställd"
+        },
+        {
+          "key": "shipped",
+          "label": "På väg"
+        },
+        {
+          "key": "received",
+          "label": "Mottagen"
+        },
+        {
+          "key": "partialyDelivered",
+          "label": "Delleverans"
+        },
+        {
+          "key": "delivered",
+          "label": "Levererad"
+        }
+      ],
+      "description": "shows state in orderflow",
+      "localized_name": "Status",
+      "default": "'draft'",
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "supplierMessage": {
+      "tab": "Detaljer",
+      "type": "text",
+      "required": false,
+      "localized_name": "Meddelande till leverantör",
+      "is_available_in_reference": false
+    },
+    "deliveryDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Beräknat leveransdatum",
+      "required": false,
+      "required_in_ui": true,
+      "weekdaysOnly": true,
+      "is_available_in_reference": true
+    },
+    "receivedDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Datum då leveransen kom till lagret",
+      "required": false,
+      "required_in_ui": false,
+      "is_available_in_reference": true
+    },
+    "cancelled": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Makulerad",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "supplier": {
+      "type": "relation",
+      "tab": "Detaljer",
+      "relation": "supplier",
+      "localized_name": "Leverantör",
+      "required_in_ui": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "trackingCode": {
+      "type": "string",
+      "tab": "Detaljer",
+      "localized_name": "Spårningskod",
+      "required": false,
+      "max_length": 50,
+      "searchable": true,
+      "is_available_in_reference": true
+    },
+    "ARCNumber": {
+      "type": "string",
+      "tab": "Detaljer",
+      "localized_name": "ARC-nummer",
+      "required": false,
+      "max_length": 50,
+      "searchable": true,
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "display_if": "domainModel.purchaseOrder.requiresEMCS(entity)"
+    },
+    "isEMCSProcessed": {
+      "type": "boolean",
+      "tab": "Detaljer",
+      "localized_name": "Är EMCS-processad?",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "targetWarehouse": {
+      "tab": "Detaljer",
+      "type": "string",
+      "restrictedValues": [
+        {
+          "label": "Kungsängen",
+          "value": "vinden"
+        },
+        {
+          "label": "Karlskoga",
+          "value": "exacta"
+        }
+      ],
+      "localized_name": "Till lager",
+      "required_in_ui": true,
+      "default": "'vinden'",
+      "is_available_in_reference": true
+    },
+    "remarks": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Kommentarer",
+      "required": false,
+      "is_available_in_reference": true,
+      "is_available_in_reference_ui": false
+    },
+    "orderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "orderFullfillmentCenter",
+      "description": "Ett lagerställe är en plats som skickar order till kund, antingen är det flaivy copack, ditt egna lager eller en TPL som vi har integrerat med",
+      "localized_name": "Lagerställe",
+      "is_available_in_reference": true,
+      "use_minimum_reference": true
+    }
+  },
+  "events": {
+    "PURCHASE_ORDER_SENT_TO_SUPPLIER": {
+      "localized_name": "Inleveransorder skickad till leverantör",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_DELIVERY_RECEIVED": {
+      "localized_name": "Inleveransordern har ankommit till Vinden",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_DELIVERY_PROCESSED": {
+      "localized_name": "Inleveransorder inlevererad.",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_SENT": {
+      "localized_name": "Inleverans skickad från leverantör",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_EMCS_DOWNLOADED": {
+      "localized_name": "Inleverans skickad från leverantör",
+      "should_inform_service": true
+    },
+    "PURCHASE_ORDER_REQUESTED": {
+      "localized_name": "Inleveransorder skickad till granskning",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_CANCELLED": {
+      "localized_name": "Inleveransorder makulerad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_UPDATED": {
+      "localized_name": "Inleveransorder uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PURCHASE_ORDER_CREATED": {
+      "localized_name": "Inleveransorder skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "listeners": {
+    "PURCHASE_ORDER_CREATED": {
+      "name": "PURCHASE_ORDER_CREATED",
+      "reactions": ["raiseAlertsIfSuperCreated"]
+    },
+    "PURCHASE_ORDER_DELIVERY_PROCESSED": {
+      "name": "PURCHASE_ORDER_DELIVERY_PROCESSED",
+      "reactions": ["raiseAlerts"]
+    },
+    "PURCHASE_ORDER_DELIVERY_RECEIVED": {
+      "name": "PURCHASE_ORDER_DELIVERY_RECEIVED",
+      "reactions": ["raiseAlerts"]
+    }
+  },
+  "actions": {
+    "writeOrder": {
+      "name": "writeOrder",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Spara order",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "supplierOrderNumber",
+          "trackingCode",
+          "targetWarehouse",
+          "remarks"
+        ],
+        "supplier": {
+          "linked_field": "supplier",
+          "display_if": "!entity.orderNumber"
+        },
+        "purchaseOrderRows": {
+          "type": "array",
+          "tab": "Detaljer",
+          "localized_name": "Artiklar",
+          "name": "purchaseOrderRows",
+          "add_button_text": "rad",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet",
+              "is_available_in_reference": false
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false,
+              "is_available_in_reference": false,
+              "immutableQuery": { "salesType": { "ne": "DropShipping" } }
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "article_reference": "article",
+              "localized_name": "Enheter i leverans",
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0
+            },
+            "isSuggestion": {
+              "type": "boolean",
+              "localized_name": "Automatisk föreslagen påfyllning",
+              "required": false,
+              "display_if": "false"
+            }
+          }
+        }
+      }
+    },
+    "placeOrder": {
+      "name": "placeOrder",
+      "requiredRole": ["supplier", "super"],
+      "localized_name": "Begär inleverans",
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "supplierOrderNumber",
+          "trackingCode",
+          "deliveryDate",
+          "ARCNumber"
+        ]
+      }
+    },
+    "addRemark": {
+      "name": "addRemark",
+      "requiredRole": ["super"],
+      "localized_name": "Lägg anmärkning på inleverans",
+      "parameters": {
+        "includeParameters": ["id", "remarks"]
+      }
+    },
+    "setArcNumber": {
+      "name": "setArcNumber",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Lägg till ARC-nummer",
+      "parameters": {
+        "includeParameters": ["id", "ARCNumber"]
+      }
+    },
+    "markAsEmcsProcessed": {
+      "name": "markAsEmcsProcessed",
+      "requiredRole": ["super"],
+      "localized_name": "Markera EMCS som klar",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "sendToSupplier": {
+      "name": "sendToSupplier",
+      "requiredRole": ["super"],
+      "localized_name": "Godkänn inleverans",
+      "parameters": {
+        "includeParameters": ["id", "deliveryDate", "supplierMessage"]
+      }
+    },
+    "resendOrder": {
+      "name": "resendOrder",
+      "requiredRole": ["super"],
+      "localized_name": "Skicka order mail igen",
+      "parameters": {
+        "extraEmail": {
+          "tab": "Extra",
+          "type": "email",
+          "name": "extraEmail",
+          "localized_name": "Skicka även kopia till"
+        },
+        "includeParameters": ["id"]
+      }
+    },
+    "shipOrder": {
+      "name": "shipOrder",
+      "requiredRole": ["supplier", "super"],
+      "localized_name": "Skickad från leverantör",
+      "parameters": {
+        "includeParameters": [
+          "id",
+          "supplierOrderNumber",
+          "trackingCode",
+          "deliveryDate"
+        ]
+      }
+    },
+    "markAsReceived": {
+      "name": "markAsReceived",
+      "requiredRole": ["supplier", "super"],
+      "localized_name": "Ankommit till lagret",
+      "parameters": {
+        "includeParameters": ["id", "receivedDate"]
+      }
+    },
+    "cancel": {
+      "name": "cancel",
+      "requiredRole": ["supplier", "super"],
+      "color": "danger",
+      "localized_name": "Makulera",
+      "conditional": "Det går inte att ångra en makulering av en inleverans. Vill du fortsätta?",
+      "parameters": {
+        "includeParameters": ["id"]
+      }
+    },
+    "removeRow": {
+      "name": "removeRow",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ta bort",
+      "color": "secondary",
+      "parameters": {
+        "rowId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "radid",
+          "is_available_in_reference": false
+        }
+      }
+    },
+    "removeSuggestionRows": {
+      "name": "removeSuggestionRows",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ta bort automatiskt föreslagna rader",
+      "color": "secondary",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "resupplyArticle": {
+      "localized_name": "Lägg till artikel på inleverans",
+      "requiredRole": ["super", "supplier"],
+      "name": "resupplyArticle",
+      "canCreate": true,
+      "parameters": {
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "artikel",
+          "required": true
+        },
+        "orderedQuantity": {
+          "tab": "Detaljer",
+          "type": "articleQuantity",
+          "localized_name": "Enheter i leverans",
+          "required": true
+        },
+        "isSuggestion": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Automatisk förslagen påfyllning",
+          "display_if": "false"
+        }
+      }
+    },
+    "changeDeliveryDate": {
+      "name": "changeDeliveryDate",
+      "requiredRole": ["supplier", "super"],
+      "localized_name": "Ändra leveransdatum",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "deliveryDate": {
+          "linked_field": "deliveryDate"
+        }
+      }
+    },
+    "processDelivery": {
+      "requiredRole": ["super"],
+      "localized_name": "Leverera in gods",
+      "name": "processDelivery",
+      "description": "Uppdaterar leveransen med leveransstatus av gods, och sätter lagersaldon",
+      "parameters": {
+        "includeParameters": ["id", "receivedDate"],
+        "deliveryId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leveransid",
+          "description": "Id på leveransen som kom in"
+        },
+        "purchaseOrderRows": {
+          "type": "array",
+          "tab": "Detaljer",
+          "add_button_text": "rad",
+          "localized_name": "Beställt gods att ta emot",
+          "name": "purchaseOrderRows",
+          "props": {
+            "id": {
+              "type": "string",
+              "required": false,
+              "primary": true,
+              "description": "primary key",
+              "localized_name": "Identitet",
+              "is_available_in_reference": false
+            },
+            "article": {
+              "type": "relation",
+              "relation": "article",
+              "localized_name": "Artikel",
+              "required": false,
+              "is_available_in_reference": false
+            },
+            "orderedQuantity": {
+              "type": "articleQuantity",
+              "localized_name": "Enheter i leverans",
+              "required": false,
+              "is_available_in_reference": true,
+              "readonly": true,
+              "min_length": 0
+            },
+            "receivedQuantity": {
+              "type": "articleQuantity",
+              "localized_name": "Mottaget tidigare",
+              "readonly": true
+            },
+            "receivedQuantityInThisBatch": {
+              "type": "articleQuantity",
+              "localized_name": "Antal mottagna kollin i denna batch",
+              "default": 0,
+              "required": false,
+              "is_available_in_reference": true,
+              "min_length": 0
+            }
+          }
+        },
+        "complete": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Färdiglevererad?",
+          "description": "Sätts till sant om inga fler leveranser väntas."
+        }
+      }
+    },
+    "ensureInvariants": {
+      "name": "ensureInvariants",
+      "requiredRole": ["super"],
+      "localized_name": "Räkna om totaler",
+      "description": "Stöd action för att kontrollera orderraders total",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "downloadEMCS": {
+      "name": "downloadEMCS",
+      "requiredRole": ["super", "supplier"],
+      "localized_name": "Ladda ner EMCS",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "dispatcherExciseNumber": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Punktskattenummer (13tecken)",
+          "required_in_ui": true,
+          "max_length": 13
+        },
+        "dispatcherTaxWarehouseNumber": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Skatteupplagsnummer (13tecken)",
+          "required_in_ui": true,
+          "max_length": 13
+        },
+        "dispatcherName": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Bolagsnamn",
+          "required_in_ui": true
+        },
+        "dispatcherAddress": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Adress",
+          "required_in_ui": true
+        },
+        "dispatcherZipCode": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Postkod",
+          "required_in_ui": true
+        },
+        "dispatcherCity": {
+          "type": "string",
+          "tab": "Avsändare",
+          "localized_name": "Postort",
+          "required_in_ui": true
+        },
+        "targetWarehouse": {
+          "tab": "Mottagare",
+          "linked_field": "targetWarehouse"
+        },
+        "taxWarehouseNumberAtVinden": {
+          "type": "string",
+          "tab": "Mottagare",
+          "localized_name": "Eget skatteupplagsnummer hos Vinden (om skiljt från Flaivys) (13tecken)"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "supplierInPCSService",
+  "localized_name": "Leverantör i inköpstjänsten",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "name",
+  "defaultFuzzyLogicSearchField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "is_available_in_reference": true,
+      "is_available_in_minimum_reference": true,
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Leverantörens namn"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "actions": {},
+  "listeners": {
+    "\"SUPPLIER_*\"": {
+      "name": "SUPPLIER_",
+      "reactions": ["upsertSupplierInPcsService"]
+    }
+  },
+  "events": {
+    "SUPPLIER_IN_PCS_SERVICE_CREATED": {
+      "localized_name": "supplier in PCS service created",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+    "SUPPLIER_IN_PCS_SERVICE_UPDATED": {
+      "localized_name": "supplier in PCS service updated",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  }
+}

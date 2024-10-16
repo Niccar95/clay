@@ -1,0 +1,88 @@
+{
+  "partials": ["partials/service-params.js"],
+  "formatters": ["clay-generator-formatter-prettier"],
+  "steps": [
+    {
+      "copy": "base/migrate.js",
+      "target": ""
+    },
+    {
+      "copy": "base/lint-if-changes.sh",
+      "target": ""
+    },
+    {
+      "generate": "services/",
+      "target": "services/",
+      "select": "$.model.types[*]"
+    },
+    {
+      "generate": "projection-services/",
+      "target": "services/",
+      "select": "$.model.projections[*]",
+      "touch": true
+    },
+    {
+      "generate": "events/",
+      "target": "events/",
+      "select": "$.model.types[*]"
+    },
+    {
+      "generate": "updateWhenEmptyAction/updateWhenEmpty.ts",
+      "target": "actions/{{name}}/",
+      "select": "$.model.types[*]"
+    },
+    {
+      "generate": "updateWhenEmptyAction/updateWhenEmpty.spec.js",
+      "target": "actions/{{name}}/",
+      "select": "$.model.types[*]",
+      "touch": true
+    },
+    {
+      "generate": "upsertWhenEmptyAction/upsertWhenEmpty.ts",
+      "target": "actions/{{name}}/",
+      "select": "$.model.types[*]"
+    },
+    {
+      "generate": "upsertWhenEmptyAction/upsertWhenEmpty.spec.js",
+      "target": "actions/{{name}}/",
+      "select": "$.model.types[*]",
+      "touch": true
+    },
+    {
+      "generate": "actions/",
+      "target": "actions/{{clay_parent.clay_parent.name}}/",
+      "select": "$.model.types[*].actions.*",
+      "touch": true
+    },
+    {
+      "generate": "eventsIndex/index.js",
+      "target": "events/",
+      "select": "$.model"
+    },
+    {
+      "generate": "docker/Dockerfile",
+      "target": "",
+      "select": "$.model"
+    },
+    {
+      "generate": "eventservice/",
+      "target": "services/",
+      "select": "$.model"
+    },
+    {
+      "generate": "md5DbChecker.psql",
+      "target": "",
+      "select": "$.model"
+    },
+    {
+      "generate": "createEventsourceSnapshot.js",
+      "target": "",
+      "select": "$.model"
+    },
+    {
+      "generate": "createDBDigest.js",
+      "target": "",
+      "select": "$.model"
+    }
+  ]
+}

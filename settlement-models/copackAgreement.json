@@ -1,0 +1,314 @@
+{
+  "name": "copackAgreement",
+  "localized_name": "Copack-avtal",
+  "description": "Copack-avtal",
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "type": "string",
+      "localized_name": "Namn",
+      "required": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "startDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Startdatum",
+      "required_in_ui": true
+    },
+    "articleFilter": {
+      "type": "querySpecification",
+      "specificationForType": "article",
+      "localized_name": "Artikelfilter",
+      "tab": "Detaljer"
+    },
+    "serviceAgreement": {
+      "tab": "Detaljer",
+      "type": "string",
+      "skipTSEnumGeneration": true,
+      "restrictedValues": [
+        {
+          "label": "v2.5 - minimum serviceavgift och taggade kunder - Använder order och reklamationer",
+          "value": "v2.5"
+        },
+        {
+          "label": "v3",
+          "value": "v3"
+        },
+        {
+          "label": "Flaivy äger alla produkterna pã denna organisation",
+          "value": "articlesOwnedByFlaivy"
+        }
+      ],
+      "localized_name": "Serviceavtal",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "supplierCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "Kommision som utgår till leverantörer (B), I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på leverantörsorder(%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "customerCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "Kommision vid försäljning till (R). I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på weborder(%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "salesCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "description": "Kommission till säljare (S). I och med att vi importerar från fortnox kan det inte vara tvingande i api, men bör vara tvingande i ui.",
+      "localized_name": "Marginal på internorder (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "environmentFee": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Miljöavgift",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "purchaseOrderPriceExacta": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Kostnad inleverans Exacta (per artikel per pall)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "purchaseOrderPriceVinden": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Kostnad inleverans Vinden (per artikel per pall)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "monthlyBaseFee": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Basavgift per månad",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "monthlyExcessFee": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Månadsavgift per extra 10 artiklar",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "thresholdForEnvironmentFee": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Gränsvärde för miljöavgift",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "systembolagetCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Marginal på systembolag order (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "stockfillerCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Marginal på stockfiller order (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "whiteLabelCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Marginal på order från egen webshop (%)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 100,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "threasholdForDiscountedSupplierCommission": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Gränsvärde för storköp (exklusive pant och moms)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "largeOrderDiscount": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Rabatt på leverantörs kommission vid storköp (procentenheter)",
+      "required_in_ui": true,
+      "step": 0.01,
+      "min_length": 0,
+      "max_length": 20,
+      "display_if": "entity.serviceAgreement !== 'v3'"
+    },
+    "exactaFreightCostPerKg": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "exacta: fraktkostnad per kg",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "exactaHandlingCostPerColli": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Hanteringskostnad per DFP för Systembolaget",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "vindenHandlingCostPerColli": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Hanteringskostnad per DFP från Webblager",
+      "required_in_ui": true,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "freightDiscountPercentage": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Rabatterad distribution från Webblager (%)",
+      "required_in_ui": true,
+      "max_length": 4,
+      "step": 0.01,
+      "display_if": "entity.serviceAgreement === 'v3'"
+    },
+    "taxWarehouseNumberAtVinden": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Eget punktskattenummer hos vinden (om skiljt från flaivys) (13tecken)",
+      "max_length": 13,
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "default": true,
+      "max_length": 255,
+      "is_available_in_reference": true
+    },
+    "prognosisOrderCount": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Prognos antal order per 12 månader",
+      "required_in_ui": false
+    },
+    "prognosisRevenue": {
+      "tab": "Detaljer",
+      "type": "number",
+      "localized_name": "Prognos omsättning per 12 månader",
+      "required_in_ui": false
+    },
+    "email": {
+      "tab": "Detaljer",
+      "type": "email",
+      "allow_multiple": true,
+      "localized_name": "E-post",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "customerNumberInFortnox": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundnummer i Flaivys Fortnox",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "settlementPeriod": {
+      "tab": "Detaljer",
+      "include": "restricted_values/settlement_periods",
+      "localized_name": "Avräkningsperiod",
+      "required_in_ui": true,
+      "is_available_in_reference": true
+    },
+    "sendSettlementAutomatically": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Skicka avräkningar automatiskt",
+      "explanation": "Skickar inte avräkningar automatiskt om det skulle bli en faktura - då måste skickas den manuellt just nu på grund av moms blir fel på dem",
+      "is_available_in_reference": true,
+      "default": false
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "listeners": {
+    "SUPPLIER_UPDATED": {
+      "name": "SUPPLIER_UPDATED",
+      "reactions": ["ensureCopackAgreement"]
+    }
+  },
+  "events": {
+    "COPACK_AGREEMENT_CREATED": {
+      "localized_name": "Copack-avtal skapat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "COPACK_AGREEMENT_UPDATED": {
+      "localized_name": "Copack-avtal uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {}
+}

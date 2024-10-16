@@ -1,0 +1,261 @@
+{
+  "name": "job",
+  "localized_name": "Jobb",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-lastSuccess",
+  "belongs_to": [],
+  "defaultSimilaritySortField": "id",
+  "calculatedFields": {
+    "status": {
+      "tab": "Detaljer",
+      "include": "restricted_values/job_statuses",
+      "selfContainedQuery": "COALESCE( (SELECT r.\"status\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id AND status = 'Started' ORDER BY \"start\" desc LIMIT 1),COALESCE((SELECT r.\"status\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id ORDER BY \"start\" desc LIMIT 1), 'Undetermined'))",
+      "localized_name": "Status",
+      "is_available_in_reference": true
+    },
+    "lastSuccess": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "selfContainedQuery": "COALESCE((SELECT r.\"start\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id AND status = 'Success' ORDER BY \"start\" desc LIMIT 1), '1990-01-01')",
+      "localized_name": "Senaste lyckade körning",
+      "is_available_in_reference": true
+    },
+    "startedAt": {
+      "tab": "Detaljer",
+      "type": "datetime",
+      "selfContainedQuery": "COALESCE((SELECT r.\"start\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id AND status = 'Started' ORDER BY \"start\" desc LIMIT 1), NULL)",
+      "localized_name": "Senaste lyckade körning",
+      "is_available_in_reference": true
+    },
+    "isOverdue": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "selfContainedQuery": "COALESCE( ( SELECT r.\"status\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id AND status = 'Started' ORDER BY \"start\" desc LIMIT 1),COALESCE((SELECT r.\"status\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id ORDER BY \"start\" desc LIMIT 1), 'Undetermined')) <> 'Started' AND EXTRACT(epoch FROM (now() - COALESCE((SELECT r.\"start\" FROM runs r WHERE r.\"jobId\" = ${globals.tableName}.id AND status = 'Success' ORDER BY \"start\" desc LIMIT 1), '1990-01-01'))) > ${globals.tableName}.\"expectedRunInterval\"",
+      "localized_name": "Borde ha körts",
+      "is_available_in_reference": true
+    }
+  },
+  "children": {
+    "runs": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Körningar",
+      "name": "runs",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "status": {
+          "tab": "Detaljer",
+          "include": "restricted_values/job_statuses",
+          "required_in_ui": true,
+          "localized_name": "Status",
+          "is_available_in_reference": true
+        },
+        "start": {
+          "tab": "Detaljer",
+          "type": "datetime",
+          "localized_name": "Startad",
+          "required_in_ui": true,
+          "max_length": 255,
+          "is_available_in_reference": true
+        },
+        "end": {
+          "tab": "Detaljer",
+          "type": "datetime",
+          "localized_name": "Avslutad",
+          "required_in_ui": false,
+          "max_length": 255,
+          "is_available_in_reference": true
+        },
+        "message": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Felmeddelande",
+          "is_available_in_reference": true
+        },
+        "error": {
+          "tab": "Detaljer",
+          "type": "object",
+          "localized_name": "Teknisk information om fel",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet"
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn",
+      "is_available_in_reference": true,
+      "required_in_ui": true,
+      "unique": true
+    },
+    "description": {
+      "tab": "Detaljer",
+      "type": "html",
+      "localized_name": "Beskrivning",
+      "is_available_in_reference": false,
+      "required_in_ui": true
+    },
+    "expectedRunInterval": {
+      "tab": "Detaljer",
+      "fortnox_equivalent": "expectedRunInterval",
+      "restrictedValues": [
+        {
+          "value": 300,
+          "label": "var femte minut"
+        },
+        {
+          "value": 3600,
+          "label": "varje timme"
+        },
+        {
+          "value": 86400,
+          "label": "varje dag"
+        },
+        {
+          "value": 604800,
+          "label": "varje vecka"
+        },
+        {
+          "value": 2.628e6,
+          "label": "varje månad"
+        }
+      ],
+      "type": "number",
+      "localized_name": "Kör",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": 3600
+    }
+  },
+  "listeners": {
+    "JOB_STOPPED": {
+      "name": "JOB_STOPPED",
+      "reactions": ["notifyOnError"]
+    }
+  },
+  "events": {
+    "JOB_STARTED": {
+      "localized_name": "Jobb startat",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 60
+    },
+    "JOB_COMPLETED": {
+      "localized_name": "Jobb OK",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 60
+    },
+    "JOB_STOPPED": {
+      "localized_name": "Jobb stannat med fel",
+      "should_inform_service": true,
+      "should_inform_user": true,
+      "keep": 20,
+      "retention": 60
+    },
+    "JOB_CREATED": {
+      "localized_name": "Jobb skapat",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+    "JOB_UPDATED": {
+      "localized_name": "Jobb uppdaterat",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  },
+  "actions": {
+    "createJob": {
+      "canCreate": true,
+      "name": "createJob",
+      "localized_name": "Skapa jobb",
+      "requiredRole": ["super"],
+      "parameters": {
+        "name": {
+          "linked_field": "name"
+        }
+      }
+    },
+    "startJob": {
+      "canCreate": true,
+      "name": "startJob",
+      "localized_name": "Starta jobb",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "resetJob": {
+      "name": "resetJob",
+      "localized_name": "Återställ jobb",
+      "requiredRole": ["super"],
+      "availableIf": "entity.status !== 'Started'",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "stopJob": {
+      "name": "stopJob",
+      "localized_name": "Stanna jobb",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "message": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Felmeddelande"
+        },
+        "error": {
+          "tab": "Detaljer",
+          "type": "object",
+          "localized_name": "Teknisk information om fel"
+        },
+        "status": {
+          "tab": "Detaljer",
+          "include": "restricted_values/job_statuses",
+          "localized_name": "Status"
+        }
+      }
+    },
+    "runStandaloneJob": {
+      "name": "runStandaloneJob",
+      "localized_name": "Kör ett flaivy-cli job i en separat batch",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "jobParameters": {
+          "name": "jobParameters",
+          "tab": "Detaljer",
+          "type": "stringArray",
+          "localized_name": "Job mall"
+        }
+      }
+    }
+  }
+}

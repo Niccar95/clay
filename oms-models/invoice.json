@@ -1,0 +1,465 @@
+{
+  "name": "invoice",
+  "localized_name": "Faktura",
+  "description": "Faktura",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": ["customerSubUnit"],
+  "defaultSort": "-invoiceNumber",
+  "defaultSimilaritySortField": "invoiceNumber",
+  "calculatedFields": {
+    "isPayed": {
+      "type": "boolean",
+      "selfContainedQuery": "select \"finalPayDate\" is not null from \"invoices\" i where ${globals.tableName}.id = i.id",
+      "is_available_in_reference": true,
+      "localized_name": "Betald"
+    },
+    "totalExcludingVAT": {
+      "selfContainedQuery": "COALESCE((select sum(\"invoiceRows\".\"totalExcludingVAT\") from \"invoiceRows\" join \"articles\" on \"articles\".\"id\" = \"invoiceRows\".\"articleId\" join \"suppliers\" on \"suppliers\".\"id\" = \"articles\".\"supplierId\" where \"invoiceRows\".\"invoiceId\" = ${globals.tableName}.id ${globals.accessQuery('articles')}), 0)",
+      "is_available_in_reference": true,
+      "localized_name": "Fakturavärde"
+    },
+    "grandTotal": {
+      "selfContainedQuery": "COALESCE((select sum(\"invoiceRows\".\"totalIncludingRecycle\") from \"invoiceRows\" join \"articles\" on \"articles\".\"id\" = \"invoiceRows\".\"articleId\" join \"suppliers\" on \"suppliers\".\"id\" = \"articles\".\"supplierId\" where \"invoiceRows\".\"invoiceId\" = ${globals.tableName}.id ${globals.accessQuery('articles')}), 0)",
+      "is_available_in_reference": true,
+      "localized_name": "Fakturavärde"
+    }
+  },
+  "children": {
+    "invoiceRows": {
+      "tab": "invoiceRows",
+      "type": "array",
+      "name": "invoiceRows",
+      "localized_name": "Fakturarader",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["article"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "article": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "article",
+          "localized_name": "Artikel",
+          "required": false,
+          "is_available_in_reference": false,
+          "exclude_calculated_fields": true
+        },
+        "deliveredQuantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "DeliveredQuantity",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "DeliveredQuantity"
+        },
+        "name": {
+          "tab": "Detaljer",
+          "type": "string",
+          "description": "namnet på artikeln som orderraden motsvarar",
+          "localized_name": "Namn",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Description"
+        },
+        "discount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "Discount",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "Discount"
+        },
+        "discountType": {
+          "tab": "crap",
+          "type": "string",
+          "readonly": true,
+          "localized_name": "DiscountType",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "DiscountType"
+        },
+        "price": {
+          "tab": "Detaljer",
+          "type": "number",
+          "step": 0.01,
+          "localized_name": "pris",
+          "required": false,
+          "is_available_in_reference": true,
+          "fortnox_equivalent": "Price"
+        },
+        "commission": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Kommissionsmarginal",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "commissionDiscount": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Procentrabatt p.ga. storköp",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "totalExcludingVAT": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Total (excl moms)",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "TotalExcludingVAT"
+        },
+        "total": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Total",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "Total"
+        },
+        "totalIncludingRecycle": {
+          "tab": "calculate",
+          "readonly": true,
+          "type": "number",
+          "description": "needs to be calculated using non readonly data. Currently used for various reports",
+          "localized_name": "Total ink pant",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "totalRecycle": {
+          "tab": "Detaljer",
+          "type": "number",
+          "description": "",
+          "localized_name": "pant",
+          "required": false,
+          "is_available_in_reference": false
+        },
+        "comments": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Kommentar",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "Comments"
+        },
+        "unit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Enhet",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "Unit"
+        },
+        "VATPercentage": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Moms",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "VAT"
+        },
+        "accountNumber": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Konto",
+          "required": false,
+          "is_available_in_reference": false,
+          "fortnox_equivalent": "AccountNumber"
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "invoiceDate": {
+      "tab": "Detaljer",
+      "type": "date",
+      "localized_name": "Fakturadatum",
+      "required": false,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "InvoiceDate"
+    },
+    "invoiceNumber": {
+      "tab": "Detaljer",
+      "searchable": true,
+      "fortnox_equivalent": "DocumentNumber",
+      "type": "number",
+      "localized_name": "Fakturanummer",
+      "readonly": true,
+      "is_available_in_reference": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "invoiceOrigin": {
+      "tab": "Detaljer",
+      "type": "enum",
+      "values": [
+        {
+          "key": "supplier",
+          "label": "Manuell order"
+        },
+        {
+          "key": "export",
+          "label": "EMCS-order"
+        },
+        {
+          "key": "customer",
+          "label": "Flaivy.com"
+        },
+        {
+          "key": "systembolaget",
+          "label": "Systembolaget"
+        },
+        {
+          "key": "internal",
+          "label": "Intern order"
+        },
+        {
+          "key": "whitelabel",
+          "label": "E-handel"
+        },
+        {
+          "key": "purchasing",
+          "label": "Qvanti"
+        },
+        {
+          "key": "stockfiller",
+          "label": "Stockfiller"
+        },
+        {
+          "key": "dropshipping",
+          "label": "Mail-flöde"
+        },
+        {
+          "key": "returnToSupplier",
+          "label": "Utleverans"
+        }
+      ],
+      "default": "'internal'",
+      "description": "State handling for where the invoices are created from",
+      "localized_name": "Fakturaursprung",
+      "is_available_in_reference": false
+    },
+    "cancelled": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "readonly": true,
+      "localized_name": "Makulerad",
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "Cancelled"
+    },
+    "booked": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "readonly": true,
+      "localized_name": "Bokförd",
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "Booked"
+    },
+    "credit": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "readonly": true,
+      "localized_name": "Kredit",
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "Credit"
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "currency",
+      "localized_name": "Valuta",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "Currency",
+      "default": "'SEK'"
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnit",
+      "localized_name": "Kund",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "organisationNumber": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "string",
+      "localized_name": "OrganisationNumber",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "OrganisationNumber"
+    },
+    "OCR": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "OCR",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "readonly_in_ui": true,
+      "fortnox_equivalent": "OCR"
+    },
+    "yourOrderNumber": {
+      "explanation": "Keeps track of extend invoice numbers for matching",
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "YourOrderNumber",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "readonly_in_ui": true,
+      "fortnox_equivalent": "YourOrderNumber"
+    },
+    "ourReference": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Vår referens",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "readonly_in_ui": true,
+      "fortnox_equivalent": "OurReference"
+    },
+    "externalInvoiceReference1": {
+      "explanation": "Keeps track of extend invoice numbers for matching",
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "ExternalInvoiceReference1",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "readonly_in_ui": true,
+      "fortnox_equivalent": "ExternalInvoiceReference1"
+    },
+    "externalInvoiceReference2": {
+      "explanation": "Keeps track of extend invoice numbers for matching",
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "ExternalInvoiceReference2",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": false,
+      "readonly_in_ui": true,
+      "fortnox_equivalent": "ExternalInvoiceReference2"
+    },
+    "dueDate": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "date",
+      "localized_name": "Förfallodatum",
+      "required": false,
+      "max_length": 255,
+      "roles_for_read": ["super"],
+      "fortnox_equivalent": "DueDate",
+      "is_available_in_reference": true
+    },
+    "deliveryDate": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "date",
+      "localized_name": "leveransdatum",
+      "required": false,
+      "max_length": 255,
+      "is_available_in_reference": true,
+      "fortnox_equivalent": "DeliveryDate"
+    },
+    "creditInvoiceNumberReference": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "string",
+      "localized_name": "Refererande krediterat fakturanummer",
+      "required": false,
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "CreditInvoiceReference"
+    },
+    "invoiceNumberReference": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "string",
+      "localized_name": "Refererande fakturanummer",
+      "required": false,
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "InvoiceReference"
+    },
+    "finalPayDate": {
+      "tab": "Detaljer",
+      "readonly": true,
+      "type": "string",
+      "localized_name": "Betalningsdatum (när betalningen kom in)",
+      "required": false,
+      "is_available_in_reference": true,
+      "roles_for_read": ["super"],
+      "fortnox_equivalent": "FinalPayDate"
+    },
+    "remarks": {
+      "tab": "Detaljer",
+      "max_length": 1024,
+      "type": "string",
+      "localized_name": "remarks",
+      "required": false,
+      "is_available_in_reference": false,
+      "fortnox_equivalent": "Remarks"
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true
+    }
+  },
+  "events": {
+    "INVOICE_UPDATED": {
+      "localized_name": "Faktura uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "INVOICE_CREATED": {
+      "localized_name": "Faktura skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "writeInvoice": {
+      "name": "writeInvoice",
+      "requiredRole": ["super"],
+      "localized_name": "Skapa order",
+      "description": "upsert med behörighets check",
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*"
+      }
+    },
+    "ensureInvariants": {
+      "name": "ensureInvariants",
+      "requiredRole": ["super"],
+      "localized_name": "Räkna om totaler",
+      "description": "Stöd action räkna om totaler",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

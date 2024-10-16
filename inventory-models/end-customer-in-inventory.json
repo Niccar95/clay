@@ -1,0 +1,60 @@
+{
+  "name": "end-customer-in-inventory",
+  "localized_name": "konsument specifik för inventory-tjänsten",
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "children": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "customerNumber": {
+      "is_available_in_reference": true,
+      "tab": "Detaljer",
+      "namespace": "Detaljer",
+      "type": "string",
+      "localized_name": "Kundnummer"
+    },
+    "name": {
+      "is_available_in_reference": true,
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Företagsnamn på faktura"
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad"
+    }
+  },
+  "actions": {},
+  "listeners": {
+    "CUSTOMER_SUB_UNIT_UPDATED": {
+      "name": "CUSTOMER_SUB_UNIT_UPDATED",
+      "reactions": ["updateend-customer-in-inventory"]
+    },
+    "CUSTOMER_SUB_UNIT_CREATED": {
+      "name": "CUSTOMER_SUB_UNIT_CREATED",
+      "reactions": ["createend-customer-in-inventory"]
+    }
+  },
+  "events": {
+    "END_CUSTOMER_IN_INVENTORY_CREATED": {
+      "localized_name": "inventory end-customer created",
+      "should_inform_service": false,
+      "should_inform_user": false
+    },
+    "END_CUSTOMER_IN_INVENTORY_UPDATED": {
+      "localized_name": "inventory end-customer updated",
+      "should_inform_service": false,
+      "should_inform_user": false
+    }
+  }
+}

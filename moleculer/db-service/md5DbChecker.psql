@@ -1,0 +1,42 @@
+{{#each types}}
+SELECT '{{pluralize name}}' AS "tableName",
+md5(CAST(array_agg( {{#each fields}} {{#ifCond type "!=" "relation" }} COALESCE(CAST( t."{{@key}}" as text), '') || {{/ifCond}} {{/each}} ' ' ORDER BY "id","createdAt") AS text)),
+{{#each fields}}
+{{#switch type}}
+{{#case "number" "money" "articleQuantityInput"}}
+ SUM( t."{{@key}}") as {{@key}}Sum,
+{{/case}}
+{{#case "relation"}}
+{{/case}}
+{{#default ~}}
+ md5(CAST(array_agg( COALESCE(CAST( t."{{@key}}" as text), '') ORDER BY "id","createdAt") AS text)) as {{@key}},
+ {{/default}}
+ {{/switch}}
+{{/each}}
+count(*) AS nr_of_rows
+  FROM
+    "{{pluralize name}}" t;
+
+{{#each children}}
+SELECT '{{pluralize name}}' AS "tableName",
+md5(CAST(array_agg( {{#each fields}} {{#ifCond type "!=" "relation" }} COALESCE(CAST( t."{{@key}}" as text), '') || {{/ifCond}} {{/each}} ' ' ORDER BY "id","createdAt") AS text)),
+{{#each fields}}
+{{#switch type}}
+{{#case "number" "money" "articleQuantityInput"}}
+ SUM( t."{{@key}}") as {{@key}}Sum,
+{{/case}}
+{{#case "relation"}}
+{{/case}}
+{{#default ~}}
+ md5(CAST(array_agg( COALESCE(CAST( t."{{@key}}" as text), '') ORDER BY "id","createdAt") AS text)) as {{@key}},
+ {{/default}}
+ {{/switch}}
+{{/each}}
+count(*) AS nr_of_rows
+  FROM
+    "{{pluralize name}}" t;
+{{/each}}
+
+{{/each}}
+
+

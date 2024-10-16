@@ -1,0 +1,121 @@
+
+-- shows path out to nothing becomes null
+SELECT
+  "eventParams" #> '{pathTo,nothing}'
+FROM
+  eventsources
+WHERE
+  "entityModel" = 'priceList'
+LIMIT 1;
+
+-- finding new events
+SELECT
+  id,
+  "eventParams"
+FROM
+  eventsources
+WHERE
+  "entityModel" = 'priceList'
+  AND "eventParams" #> '{discountAgreementsChanges,rowsToInsert}' IS NOT NULL;
+
+-- doing the updates
+
+update eventsources set "eventParams" = '{"id":"8e455e86-dd6f-420e-8b46-c0e41cfbe95b","customerType":null,"discountAgreementsChanges":{"rowsToDelete":[],"rowsToInsert":[{"id":"622b71e1-3026-48f9-b7cc-464e3d7b9b29","rowNumber":1,"endCustomerId":"3d6bc5eb-6fe8-4006-900d-9e9f85409908"},{"id":"8400e305-6453-48fa-b417-28e40b7b27be","rowNumber":2,"endCustomerId":"18ab0cb4-2f46-4fb5-80a9-3f6aa4228539"}],"rowsToUpdate":[]}}' where id = 3123866;
+select "eventParams" from eventsources where id = 3123866;
+
+
+
+UPDATE eventsources
+  SET "eventParams" = CASE
+      WHEN "eventParams" #>'{discountAgreements}' is not null AND JSONB_ARRAY_LENGTH("eventParams" #>'{discountAgreements}') > 0 THEN
+          jsonb_set(
+              "eventParams",
+              '{discountAgreements}',
+              (
+                  SELECT jsonb_agg(
+                      COALESCE(jsonb_set(
+                          elem #- '{endCustomerId}',
+                          '{customerSubUnitId}',
+                          elem -> 'endCustomerId',
+                          true
+                      ), elem)
+                  )
+                  FROM jsonb_array_elements("eventParams" #>'{discountAgreements}') elem
+              ),
+              false
+          )
+      ELSE "eventParams"
+      END
+      WHERE "entityModel" = 'priceList'
+      and id = 3123866;
+UPDATE eventsources
+  SET "eventParams" = CASE
+      WHEN "eventParams" #>'{discountAgreementsChanges,rowsToInsert}' is not null AND JSONB_ARRAY_LENGTH("eventParams" #>'{discountAgreementsChanges,rowsToInsert}') > 0 THEN
+          jsonb_set(
+              "eventParams",
+              '{discountAgreementsChanges,rowsToInsert}',
+              (
+                  SELECT jsonb_agg(
+                      COALESCE(jsonb_set(
+                          elem #- '{endCustomerId}',
+                          '{customerSubUnitId}',
+                          elem -> 'endCustomerId',
+                          true
+                      ), elem)
+                  )
+                  FROM jsonb_array_elements("eventParams" #>'{discountAgreementsChanges,rowsToInsert}') elem
+              ),
+              false
+          )
+      ELSE "eventParams"
+      END
+      WHERE "entityModel" = 'priceList'
+      and id = 3123866;
+UPDATE eventsources
+  SET "eventParams" = CASE
+      WHEN "eventParams" #>'{discountAgreementsChanges,rowsToUpdate}' is not null AND JSONB_ARRAY_LENGTH("eventParams" #>'{discountAgreementsChanges,rowsToUpdate}') > 0 THEN
+          jsonb_set(
+              "eventParams",
+              '{discountAgreementsChanges,rowsToUpdate}',
+              (
+                  SELECT jsonb_agg(
+                      COALESCE(jsonb_set(
+                          elem #- '{endCustomerId}',
+                          '{customerSubUnitId}',
+                          elem -> 'endCustomerId',
+                          true
+                      ), elem)
+                  )
+                  FROM jsonb_array_elements("eventParams" #>'{discountAgreementsChanges,rowsToUpdate}') elem
+              ),
+              false
+          )
+      ELSE "eventParams"
+      END
+      WHERE "entityModel" = 'priceList'
+      and id = 3123866;
+UPDATE eventsources
+  SET "eventParams" = CASE
+      WHEN "eventParams" #>'{discountAgreementsChanges,rowsToDelete}' is not null AND JSONB_ARRAY_LENGTH("eventParams" #>'{discountAgreementsChanges,rowsToDelete}') > 0 THEN
+          jsonb_set(
+              "eventParams",
+              '{discountAgreementsChanges,rowsToDelete}',
+              (
+                  SELECT jsonb_agg(
+                      COALESCE(jsonb_set(
+                          elem #- '{endCustomerId}',
+                          '{customerSubUnitId}',
+                          elem -> 'endCustomerId',
+                          true
+                      ), elem)
+                  )
+                  FROM jsonb_array_elements("eventParams" #>'{discountAgreementsChanges,rowsToDelete}') elem
+              ),
+              false
+          )
+      ELSE "eventParams"
+      END
+      WHERE "entityModel" = 'priceList'
+      and id = 3123866;
+
+select "eventParams" from eventsources where id = 3123866;

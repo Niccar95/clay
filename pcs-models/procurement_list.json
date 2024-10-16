@@ -1,0 +1,303 @@
+{
+  "name": "procurementList",
+  "localized_name": "Inköpslista",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "defaultFuzzyLogicSearchField": "name",
+  "calculatedFields": {},
+  "children": {
+    "procurementListItems": {
+      "tab": "Detaljer",
+      "name": "procurementListItems",
+      "type": "array",
+      "localized_name": "Inköpsartiklar i den här inköpslistan",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["procurementArticle"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "procurementArticle": {
+          "type": "relation",
+          "relation": "procurementArticle",
+          "localized_name": "Inköpsartikel",
+          "required": false,
+          "is_available_in_reference": true,
+          "comment": "a procurement article can only exist in ONE procurement list",
+          "unique": true
+        },
+        "sortOrder": {
+          "comment": "should become sessionUserSpecific<Number>",
+          "tab": "Detaljer",
+          "type": "integer",
+          "localized_name": "Sorteringsordning",
+          "required": false,
+          "is_available_in_reference": true
+        }
+      }
+    },
+    "procurementListAccessItems": {
+      "tab": "Detaljer",
+      "name": "procurementListAccessItems",
+      "type": "array",
+      "localized_name": "Avdelningar som har tillgång till inköpslistan",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["customerSubUnitInPCSService"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "customerSubUnit": {
+          "type": "relation",
+          "relation": "customerSubUnitInPCSService",
+          "localized_name": "Avdelning som har tillgång till inköpslistan",
+          "skipForeignReferenceIndex": true,
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "isAdmin": {
+          "tab": "Detaljer",
+          "localized_name": "Rättigheter för denna inköpslista",
+          "is_available_in_reference": true,
+          "type": "boolean",
+          "required": false
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "qvantiId": {
+      "tab": "Detaljer",
+      "type": "integer",
+      "localized_name": "Identitet i Qvanti",
+      "unique_when": {
+        "active": true,
+        "qvantiId": { "ne": "<NULL>" }
+      },
+      "readonly": true,
+      "is_available_in_reference": true
+    },
+    "name": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "Namn på inköpslista",
+      "is_available_in_reference": true,
+      "required": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    }
+  },
+  "events": {
+    "PROCUREMENT_LIST_UPDATED": {
+      "localized_name": "Inköpslista uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PROCUREMENT_LIST_CREATED": {
+      "localized_name": "Inköpslista skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PROCUREMENT_LIST_ACTIVATED": {
+      "localized_name": "Inköpslista aktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "PROCUREMENT_LIST_DEACTIVATED": {
+      "localized_name": "Inköpslista inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "addArticleToProcurementList": {
+      "availableForCustomer": true,
+      "name": "addArticleToProcurementList",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Lägg till i inköpslista",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "procurementArticle": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "procurementArticle",
+          "localized_name": "Inköpsartikel",
+          "description": "",
+          "required": false
+        },
+        "sortOrder": {
+          "comment": "should become sessionUserSpecific<Number>",
+          "tab": "Detaljer",
+          "type": "integer",
+          "localized_name": "Sorteringsordning",
+          "required": false
+        }
+      }
+    },
+    "removeArticleFromProcurementList": {
+      "availableForCustomer": true,
+      "name": "removeArticleFromProcurementList",
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "localized_name": "Ta bort från inköpslista",
+      "description": "",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "procurementArticle": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "procurementArticle",
+          "localized_name": "Inköpsartikel",
+          "description": "",
+          "required": false
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "availableIf": "entity.active",
+      "color": "danger",
+      "localized_name": "Inaktivera Inköpslista",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "activate": {
+      "name": "activate",
+      "availableForCustomer": true,
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager"
+      ],
+      "availableIf": "entity.active === false",
+      "color": "primary",
+      "localized_name": "Aktivera Inköpslista",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    },
+    "syncVirtualArticle": {
+      "name": "syncVirtualArticle",
+      "availableForCustomer": false,
+      "requiredRole": ["super"],
+      "localized_name": "Synkronisera inköpsartikel från Qvanti",
+      "parameters": {
+        "qvantiId": {
+          "linked_field": "qvantiId"
+        },
+        "articleQvantiId": {
+          "tab": "Detaljer",
+          "type": "integer",
+          "localized_name": "Qvanti ID för inköpsartikeln",
+          "required": true
+        },
+        "articleFlaivyId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Flaivy ID för inköpsartikeln",
+          "required": false
+        },
+        "articleRowIndex": {
+          "tab": "Detaljer",
+          "type": "integer",
+          "localized_name": "Radnummer för inköpsartikeln i standardsorteringen",
+          "required": false
+        },
+        "articleName": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Inköpsartikelns namn",
+          "required": true
+        },
+        "articleDefinition": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Inköpsartikelns definition",
+          "required": false
+        },
+        "articleDefaultQvantiSuppId": {
+          "tab": "Detaljer",
+          "type": "integer",
+          "localized_name": "Standard Qvanti leverantör",
+          "required": false
+        },
+        "articleDefaultArticleNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Standard artikelnummer",
+          "required": false
+        },
+        "articleUnit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Inköpsartikelns Enhet",
+          "required": true
+        },
+        "articleIsInventory": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Är inköpsartikeln en manuell inventeringsartikel",
+          "required": false
+        },
+        "articleFXCategory": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Inköpsartikelns freshX-kategori",
+          "required": false
+        }
+      }
+    }
+  }
+}

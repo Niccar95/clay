@@ -1,0 +1,217 @@
+{
+  "name": "entitySettlement",
+  "localized_name": "Underlag till avräkning",
+  "belongs_to": ["copackAgreement", "orderBrokerageAgreement"],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "entityId",
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "entityType": {
+      "type": "enum",
+      "values": [
+        {
+          "key": "order",
+          "label": "Order"
+        },
+        {
+          "key": "purchaseOrder",
+          "label": "inköpsorder"
+        },
+        {
+          "key": "complaint",
+          "label": "Reklamation"
+        },
+        {
+          "key": "manual",
+          "label": "Manuell rad"
+        }
+      ],
+      "localized_name": "Entitetstyp",
+      "tab": "Detaljer",
+      "is_available_in_reference": true
+    },
+    "entityId": {
+      "type": "string",
+      "localized_name": "Entitetsid",
+      "tab": "Detaljer",
+      "is_available_in_reference": true
+    },
+    "entity": {
+      "type": "object",
+      "localized_name": "Entitet",
+      "tab": "Detaljer",
+      "is_available_in_reference": true
+    },
+    "cancelled": {
+      "type": "boolean",
+      "localized_name": "makulerad",
+      "tab": "Detaljer",
+      "is_available_in_reference": true
+    },
+    "copackAgreement": {
+      "type": "relation",
+      "relation": "copackAgreement",
+      "localized_name": "Copackningsavtal",
+      "tab": "Detaljer",
+      "is_available_in_reference": true,
+      "unique_with": ["cancelled", "entityId"]
+    },
+    "orderBrokerageAgreement": {
+      "type": "relation",
+      "relation": "orderBrokerageAgreement",
+      "localized_name": "Orderförmedlaravtal",
+      "tab": "Detaljer",
+      "is_available_in_reference": true,
+      "unique_with": ["cancelled", "entityId"]
+    },
+    "agreementDetails": {
+      "tab": "Detaljer",
+      "type": "object",
+      "typeScriptObject": "AgreementDetails",
+      "localized_name": "Detaljer",
+      "description": "details for the agreement. e.g. settlement for one agreement and one order",
+      "is_available_in_reference": true
+    },
+    "settlementDate": {
+      "type": "date",
+      "localized_name": "Avräkningsdatum",
+      "tab": "Detaljer",
+      "is_available_in_reference": true
+    },
+    "settlement": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "settlement",
+      "localized_name": "Avräkning",
+      "is_available_in_reference": true
+    },
+    "supplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "string",
+      "searchable": true,
+      "localized_name": "leverantörsorganisationsid",
+      "readonly": true
+    }
+  },
+  "listeners": {
+    "\"ORDER_*\"": {
+      "name": "ORDER_",
+      "reactions": ["ensureEntitySettlements"]
+    },
+    "\"PURCHASE_ORDER_*\"": {
+      "name": "PURCHASE_ORDER_",
+      "reactions": ["ensureEntitySettlements"]
+    },
+    "\"COMPLAINT_*\"": {
+      "name": "COMPLAINT_",
+      "reactions": ["ensureEntitySettlements"]
+    }
+  },
+  "events": {
+    "ENTITY_SETTLEMENT_CREATED": {
+      "localized_name": "Avräkningsunderlag skapat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    },
+    "ENTITY_SETTLEMENT_UPDATED": {
+      "localized_name": "Avräkningsunderlag uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    }
+  },
+
+  "actions": {
+    "upsertManualEntitySettlement": {
+      "requiredRole": ["super"],
+      "localized_name": "Skapa/ändra manuellt underlag",
+      "name": "upsertManualEntitySettlement",
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "settlementDate": {
+          "linked_field": "settlementDate",
+          "required": true
+        },
+        "orderBrokerageAgreement": {
+          "linked_field": "orderBrokerageAgreement",
+          "required_in_ui": true,
+          "display_if": "!entity.copackAgreement"
+        },
+        "copackAgreement": {
+          "linked_field": "copackAgreement",
+          "required_in_ui": true,
+          "display_if": "!entity.orderBrokerageAgreement"
+        },
+        "description": {
+          "type": "string",
+          "localized_name": "Beskrivning",
+          "required": true,
+          "tab": "Detaljer"
+        },
+        "amount": {
+          "type": "number",
+          "localized_name": "Belopp",
+          "required": true,
+          "tab": "Detaljer"
+        },
+        "cancelled": {
+          "type": "boolean",
+          "localized_name": "Makulerad",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "ensureBasedOnOrder": {
+      "name": "ensureBasedOnOrder",
+      "localized_name": "Skapa avräkningsunderlag baserat på order",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "order": {
+          "name": "order",
+          "type": "object",
+          "localized_name": "Order",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "ensureBasedOnComplaint": {
+      "name": "ensureBasedOnComplaint",
+      "localized_name": "Skapa avräkningsunderlag baserat på reklamation",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "complaint": {
+          "name": "complaint",
+          "type": "object",
+          "localized_name": "reklamation",
+          "tab": "Detaljer"
+        }
+      }
+    },
+    "ensureBasedOnPurchaseOrder": {
+      "name": "ensureBasedOnPurchaseOrder",
+      "localized_name": "Skapa avräkningsunderlag baserat på inköpsorder",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "purchaseOrder": {
+          "name": "purchaseOrder",
+          "type": "object",
+          "localized_name": "Inleverans",
+          "tab": "Detaljer"
+        }
+      }
+    }
+  }
+}

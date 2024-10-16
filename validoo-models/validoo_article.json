@@ -1,0 +1,188 @@
+{
+  "name": "validooArticle",
+  "localized_name": "validoo-artikel",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "GTIN",
+  "belongs_to": [],
+  "calculatedFields": {
+    "images": {
+      "selfContainedQuery": "(SELECT array_agg(\"validooArticleImages\".\"image\") FROM \"validooArticleImages\" WHERE \"validooArticleImages\".\"validooArticleId\" = ${globals.tableName}.id AND \"validooArticleImages\".\"image\" IS NOT NULL)",
+      "type": "number",
+      "localized_name": "bilder",
+      "is_available_in_reference": true
+    }
+  },
+
+  "children": {
+    "validooArticleImages": {
+      "tab": "Detaljer",
+      "type": "array",
+      "localized_name": "Bilder",
+      "name": "validooArticleImages",
+      "mixin": ["linked_fields"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": false
+        },
+        "image": {
+          "tab": "Detaljer",
+          "type": "S3image",
+          "localized_name": "Bild",
+          "description": "bild på article",
+          "required_in_ui": false,
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "GTIN": {
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "searchable": true,
+      "localized_name": "GTIN",
+      "is_available_in_reference": true,
+      "required": true,
+      "unique_with": ["owningSupplierOrganizationId"]
+    },
+    "info": {
+      "tab": "Detaljer",
+      "type": "object",
+      "localized_name": "info",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "parentGTIN": {
+      "tab": "Detaljer",
+      "type": "GTIN",
+      "localized_name": "parentGTIN",
+      "required": false,
+      "is_available_in_reference": true
+    },
+    "owningSupplierOrganizationId": {
+      "tab": "Detaljer",
+      "type": "userAccessString",
+      "localized_name": "owningSupplierOrganizationId",
+      "readonly": true,
+      "is_available_in_reference": true
+    }
+  },
+  "listeners": {
+    "VALIDOO_ARTICLE_CREATED": {
+      "name": "VALIDOO_ARTICLE_CREATED",
+      "reactions": ["setArticleFromValidooInfo"]
+    },
+    "VALIDOO_ARTICLE_UPDATED": {
+      "name": "VALIDOO_ARTICLE_UPDATED",
+      "reactions": ["setArticleFromValidooInfo"]
+    }
+  },
+  "events": {
+    "VALIDOO_ARTICLE_CREATED": {
+      "localized_name": "validoo-artikel skapat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    },
+    "VALIDOO_ARTICLE_UPDATED": {
+      "localized_name": "validoo-artikel uppdaterat",
+      "should_inform_service": true,
+      "should_inform_user": false
+    }
+  },
+  "actions": {
+    "resolveGtin": {
+      "canCreate": true,
+      "snowflakeAccessControlPattern": true,
+      "name": "resolveGtin",
+      "localized_name": "Slå upp GTIN",
+      "requiredRole": ["super", "supplier"],
+      "parameters": {
+        "baseGTIN": {
+          "linked_field": "GTIN"
+        },
+        "caseGTIN": {
+          "tab": "Detaljer",
+          "type": "GTIN",
+          "localized_name": "GTIN"
+        },
+        "palletGTIN": {
+          "tab": "Detaljer",
+          "type": "GTIN",
+          "localized_name": "GTIN"
+        },
+        "owningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "Leverantörs organisation"
+        }
+      }
+    },
+    "createFlaivyArticle": {
+      "canCreate": true,
+      "snowflakeAccessControlPattern": true,
+      "name": "createFlaivyArticle",
+      "localized_name": "skapa Flaivyartikel",
+      "requiredRole": ["super"],
+      "parameters": {
+        "GTIN": {
+          "linked_field": "GTIN"
+        },
+        "supplierArticleNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "localized_name": "leverantörens artikelnummer",
+          "required_in_ui": true
+        },
+        "onlyUseBrandAsName": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Använd endast varumärke som namn",
+          "description": "Använd varumärkesnamn som namn ignorera functionalName",
+          "default": false
+        },
+        "createBrandIfNotFound": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Skapa varumärke om det inte finns",
+          "default": false
+        },
+        "colliSize": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Kfp per Dft",
+          "description": "Kollistorlek",
+          "required_in_ui": true
+        },
+        "salesPrice": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Försäljningspris",
+          "required_in_ui": true
+        },
+        "isSingleUnitPickAndPackAllowed": {
+          "tab": "Detaljer",
+          "type": "boolean",
+          "localized_name": "Tillåt single plock och packning",
+          "description": "Tillåt single plock",
+          "required_in_ui": false
+        }
+      }
+    }
+  }
+}

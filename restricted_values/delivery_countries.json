@@ -1,0 +1,89 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "value": "SE-O",
+      "label": "Västra Götaland"
+    },
+    {
+      "value": "SE-N",
+      "label": "Halland"
+    },
+    {
+      "value": "SE-M",
+      "label": "Skåne"
+    },
+    {
+      "value": "SE-K",
+      "label": "Blekinge"
+    },
+    {
+      "value": "SE-I",
+      "label": "Gotland"
+    },
+    {
+      "value": "SE-H",
+      "label": "Kalmar"
+    },
+    {
+      "value": "SE-G",
+      "label": "Kronoberg"
+    },
+    {
+      "value": "SE-F",
+      "label": "Jönköping"
+    },
+    {
+      "value": "SE-E",
+      "label": "Östergötland"
+    },
+    {
+      "value": "SE-D",
+      "label": "Södermanland"
+    },
+    {
+      "value": "SE-C",
+      "label": "Uppsala"
+    },
+    {
+      "value": "SE-Z",
+      "label": "Jämtland"
+    },
+    {
+      "value": "SE-Y",
+      "label": "Västernorrland"
+    },
+    {
+      "value": "SE-X",
+      "label": "Gävleborg"
+    },
+    {
+      "value": "SE-W",
+      "label": "Dalarna"
+    },
+    {
+      "value": "SE-BD",
+      "label": "Norrbotten"
+    },
+    {
+      "value": "SE-T",
+      "label": "Örebro"
+    },
+    {
+      "value": "SE-S",
+      "label": "Värmland"
+    },
+    {
+      "value": "SE-U",
+      "label": "Västmanland"
+    },
+    {
+      "value": "SE-AC",
+      "label": "Västerbotten"
+    },
+    {
+      "value": "SE-AB",
+      "label": "Stockholm"
+    }
+  ]
+}

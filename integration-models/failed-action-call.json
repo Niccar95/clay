@@ -1,0 +1,146 @@
+{
+  "name": "failedActionCall",
+  "localized_name": "Misslyckade skrivningar",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "defaultSort": "-createdAt",
+  "defaultSimilaritySortField": "action",
+  "belongs_to": ["integration"],
+  "calculatedFields": {},
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "integration": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "integration",
+      "localized_name": "Integration",
+      "is_available_in_reference": true
+    },
+    "origin": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Ursprung"
+    },
+    "status": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Status",
+      "is_available_in_reference": true,
+      "restrictedValues": [
+        {
+          "value": "error",
+          "label": "Misslyckades"
+        },
+        {
+          "value": "resolved",
+          "label": "Åtgärdat"
+        },
+        {
+          "value": "obsolete",
+          "label": "Utdaterad"
+        }
+      ]
+    },
+    "errorMessage": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Felmeddelande",
+      "is_available_in_reference": true
+    },
+    "stackTrace": {
+      "tab": "Detaljer",
+      "type": "text",
+      "localized_name": "Spårning",
+      "is_available_in_reference": false
+    },
+    "brokerOptions": {
+      "tab": "Detaljer",
+      "type": "object",
+      "localized_name": "Användardata",
+      "is_available_in_reference": false
+    },
+    "action": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Åtgärd",
+      "is_available_in_reference": true
+    },
+    "actionParamsS3Path": {
+      "tab": "Detaljer",
+      "type": "string",
+      "localized_name": "Innehåll på S3",
+      "is_available_in_reference": true
+    }
+  },
+  "events": {
+    "FAILED_ACTION_CALL_CREATED": {
+      "localized_name": "Skrivning skapad",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    },
+    "FAILED_ACTION_CALL_UPDATED": {
+      "localized_name": "Skrivning uppdaterad",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    },
+    "FAILED_ACTION_CALL_RESENT": {
+      "localized_name": "Skrivning skickad igen",
+      "should_inform_service": false,
+      "should_inform_user": false,
+      "retention": 60
+    }
+  },
+  "listeners": {
+    "FAILED_ACTION_CALL_CREATED": {
+      "name": "FAILED_ACTION_CALL_CREATED",
+      "reactions": ["informOfFailedActionCall", "updateIncomingMessage"]
+    }
+  },
+  "actions": {
+    "writeFailedActionCall": {
+      "name": "writeFailedActionCall",
+      "localized_name": "Skapa misslyckad skriving",
+      "requiredRole": ["super"],
+      "canCreate": true,
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["status"],
+        "actionParams": {
+          "tab": "Innehåll",
+          "type": "object",
+          "disableValidations": true,
+          "localized_name": "Innehåll",
+          "is_available_in_reference": false
+        }
+      }
+    },
+    "retry": {
+      "name": "retry",
+      "localized_name": "Försök igen",
+      "requiredRole": ["super"],
+      "parameters": {
+        "includeParameters": "*",
+        "excludeParameters": ["errorMessage", "status", "integration", "origin"]
+      }
+    },
+    "markAsObsolete": {
+      "name": "markAsObsolete",
+      "localized_name": "Markera som utdaterad",
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

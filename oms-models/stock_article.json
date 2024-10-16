@@ -1,0 +1,11 @@
+{
+  "name": "stockArticle",
+  "projection": "true",
+  "localized_name": "Lagerartikel",
+  "defaultSort": "name",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "fields": {},
+  "actions": {},
+  "events": {}
+}

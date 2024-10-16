@@ -1,0 +1,329 @@
+{
+  "name": "cart",
+  "localized_name": "Varukorg",
+  "description": "",
+  "alias": [],
+  "mixin": ["default_actions", "linked_fields"],
+  "belongs_to": [],
+  "defaultSort": "id",
+  "calculatedFields": {},
+  "children": {
+    "cartRows": {
+      "tab": "Detaljer",
+      "name": "cartRows",
+      "type": "array",
+      "localized_name": "Varukorgsrader",
+      "mixin": ["linked_fields"],
+      "belongs_to": ["procurementArticle"],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": false,
+          "primary": true,
+          "description": "primary key",
+          "localized_name": "Identitet",
+          "is_available_in_reference": true
+        },
+        "procurementArticle": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "procurementArticle",
+          "localized_name": "Inköpsartikel",
+          "required": false,
+          "is_available_in_reference": true
+        },
+        "pricedArticle": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "pricedArticle",
+          "referenceDomain": "oms",
+          "autoLoadReference": true,
+          "comment": "Would be awesome to have a priced article reference type",
+          "localized_name": "Leverantörsartikel",
+          "readonly_in_ui": false,
+          "required": true
+        },
+        "quantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "localized_name": "Kvantitet",
+          "required": false,
+          "is_available_in_reference": true,
+          "min_length": 0,
+          "fortnox_equivalent": "OrderedQuantity"
+        },
+        "orderUnit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "max_length": 255,
+          "localized_name": "Enhet",
+          "is_available_in_reference": true
+        }
+      }
+    }
+  },
+  "fields": {
+    "id": {
+      "type": "string",
+      "primary": true,
+      "description": "primary key",
+      "localized_name": "Identitet",
+      "is_available_in_reference": true
+    },
+    "currency": {
+      "tab": "Detaljer",
+      "type": "currency",
+      "localized_name": "Valuta",
+      "required": true,
+      "max_length": 255,
+      "fortnox_equivalent": "Currency",
+      "is_available_in_reference": true
+    },
+    "active": {
+      "tab": "Detaljer",
+      "type": "boolean",
+      "localized_name": "Aktiverad",
+      "description": "Only active carts are used for setting current order quantities. When not active, is normally connected to order",
+      "required": false,
+      "is_available_in_reference": true,
+      "default": true
+    },
+    "cartOrigin": {
+      "tab": "Detaljer",
+      "type": "string",
+      "description": "Used to keep different carts for different origins",
+      "localized_name": "Varukorgsursprung",
+      "readonly": true,
+      "required": true,
+      "is_available_in_reference": true
+    },
+    "orderFullfillmentCenter": {
+      "tab": "Detaljer",
+      "type": "reference",
+      "referenceType": "orderFullfillmentCenter",
+      "referenceDomain": "oms",
+      "localized_name": "Leveranslager",
+      "is_available_in_reference": true,
+      "autoLoadReference": true,
+      "required": true
+    },
+    "cartType": {
+      "tab": "Detaljer",
+      "include": "restricted_values/cart_type"
+    },
+    "customerSubUnit": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "customerSubUnitInPCSService",
+      "original_relation": "customerSubUnit",
+      "localized_name": "Kundavdelning",
+      "is_available_in_reference": true,
+      "unique_with_literal": [
+        "((\"orderFullfillmentCenter\"->>'id')::varchar(255))"
+      ],
+      "unique_when": {
+        "active": true
+      },
+      "unique_with": ["cartOrigin", "currency"],
+      "required": false
+    },
+    "supplierCustomer": {
+      "tab": "Detaljer",
+      "type": "relation",
+      "relation": "supplierCustomerInPcsService",
+      "original_relation": "supplierCustomer",
+      "localized_name": "Leverantörskund",
+      "is_available_in_reference": true,
+      "unique_with_literal": [
+        "((\"orderFullfillmentCenter\"->>'id')::varchar(255))"
+      ],
+      "unique_when": {
+        "active": true
+      },
+      "unique_with": ["cartOrigin", "currency"],
+      "required": false
+    }
+  },
+  "events": {
+    "CART_CREATED": {
+      "localized_name": "Varukorg skapad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CART_UPDATED": {
+      "localized_name": "Varukorg uppdaterad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    },
+    "CART_DEACTIVATED": {
+      "localized_name": "Varukorg inaktiverad",
+      "should_inform_service": true,
+      "should_inform_user": true
+    }
+  },
+  "actions": {
+    "writeAndPlaceOrder": {
+      "name": "writeAndPlaceOrder",
+      "localized_name": "Lägg order från varukorg",
+      "parameters": {
+        "includeParameters": ["id"],
+        "requestedDeliveryDate": {
+          "tab": "Detaljer",
+          "type": "date",
+          "required": true
+        },
+        "remarks": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": false
+        }
+      }
+    },
+    "copyExistingOrderToCart": {
+      "name": "copyExistingOrderToCart",
+      "localized_name": "Kopiera order till varukorgen",
+      "canCreate": true,
+      "parameters": {
+        "order": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "order",
+          "referenceDomain": "oms",
+          "required": true
+        }
+      }
+    },
+    "setCartRow": {
+      "name": "setCartRow",
+      "localized_name": "Ändra antal av vara i varukorg",
+      "canCreate": true,
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "pricedArticle": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "comment": "Would be awesome to have a priced article reference type",
+          "referenceType": "pricedArticle",
+          "referenceDomain": "oms",
+          "required": true
+        },
+        "procurementArticle": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "procurementArticle"
+        },
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "customerSubUnitInPCSService",
+          "original_relation": "customerSubUnit"
+        },
+        "supplierCustomer": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplierCustomerInPcsService",
+          "original_relation": "supplierCustomer"
+        },
+        "orderFullfillmentCenter": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "orderFullfillmentCenter",
+          "referenceDomain": "oms",
+          "required": true
+        },
+        "cartOrigin": {
+          "linked_field": "cartOrigin"
+        },
+        "orderUnit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        },
+        "quantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "required": true
+        }
+      }
+    },
+    "setCartRowFromArticleNumber": {
+      "name": "setCartRowFromArticleNumber",
+      "localized_name": "Hämtar upp pricedArticle och anropar setCartRow",
+      "snowflakeAccessControlPattern": true,
+      "requiredRole": ["super"],
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        },
+        "articleOwningSupplierOrganizationId": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        },
+        "articleNumber": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        },
+        "procurementArticle": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "procurementArticle"
+        },
+        "customerSubUnit": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "customerSubUnitInPCSService",
+          "original_relation": "customerSubUnit"
+        },
+        "supplierCustomer": {
+          "tab": "Detaljer",
+          "type": "relation",
+          "relation": "supplierCustomerInPcsService",
+          "original_relation": "supplierCustomer"
+        },
+        "orderFullfillmentCenter": {
+          "tab": "Detaljer",
+          "type": "reference",
+          "referenceType": "orderFullfillmentCenter",
+          "referenceDomain": "oms",
+          "required": true
+        },
+        "cartOrigin": {
+          "linked_field": "cartOrigin"
+        },
+        "orderUnit": {
+          "tab": "Detaljer",
+          "type": "string",
+          "required": true
+        },
+        "quantity": {
+          "tab": "Detaljer",
+          "type": "number",
+          "required": true
+        }
+      }
+    },
+    "deactivate": {
+      "name": "deactivate",
+      "availableForCustomer": false,
+      "requiredRole": [
+        "super",
+        "customerSubUnitAdmin",
+        "customerSubUnitPurchaserManager",
+        "customerSubUnitPurchaser"
+      ],
+      "availableIf": "entity.active",
+      "color": "danger",
+      "localized_name": "Inaktivera varukorgen",
+      "conditional": "Är du säker?",
+      "parameters": {
+        "id": {
+          "linked_field": "id"
+        }
+      }
+    }
+  }
+}

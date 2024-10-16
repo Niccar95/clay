@@ -1,0 +1,11 @@
+{
+  "name": "pricedArticle",
+  "projection": "true",
+  "localized_name": "Prisad artikel",
+  "defaultSort": "-popularity",
+  "defaultSimilaritySortField": "name",
+  "calculatedFields": {},
+  "fields": {},
+  "actions": {},
+  "events": {}
+}

@@ -1,0 +1,37 @@
+{
+  "name": "supplier-gateway",
+  "nonServiceOutputPath": "supplier-gateway",
+  "generators": [
+    {
+      "generator": "dataaccess/generator.json",
+      "output": "supplier-gateway/dataaccess"
+    },
+    {
+      "generator": "moleculer/db-service/generator.json",
+      "output": "supplier-gateway"
+    },
+    {
+      "generator": "frontend/generator.json"
+    },
+    {
+      "generator": "domain-model/generator.json"
+    },
+    {
+      "generator": "entity-creator/generator.json"
+    }
+  ],
+  "mixins": [
+    { "include": "mixins/linked_fields.mixin.js" },
+    { "include": "mixins/default_actions.mixin.js" }
+  ],
+  "model": {
+    "types": [
+      { "include": "supplier-gateway-models/user.json" },
+      { "include": "supplier-gateway-models/organization.json" },
+      { "include": "supplier-gateway-models/shop_config.json" },
+      { "include": "supplier-gateway-models/alert.json" },
+      { "include": "supplier-gateway-models/ofc_in_supplier_gateway.json" },
+      { "include": "supplier-gateway-models/locale.json" }
+    ]
+  }
+}

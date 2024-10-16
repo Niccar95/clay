@@ -1,0 +1,17 @@
+{
+  "type": "string",
+  "restrictedValues": [
+    {
+      "label": "varje vecka",
+      "value": "weekly"
+    },
+    {
+      "label": "varje månad",
+      "value": "monthly"
+    },
+    {
+      "label": "hel och halv månad",
+      "value": "fullAndHalfMonth"
+    }
+  ]
+}
